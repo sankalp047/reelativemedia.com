@@ -104,6 +104,12 @@ Hold H at 100%. The section unpins.
 
 `docs/storyboard/` holds eight frames rendered in the site's real design system (tokens, fonts, components), one per hold. They are the layout targets for the motion designer: every element on screen at that hold, at its final position.
 
+## Status
+
+Built Sep 14, 2026 via the fast path below. Source of truth for copy and motion: `tools/scroll-video/scene.html`.
+Frames: 300 desktop (2560×1440) and 240 mobile (1080×1920) in `public/scroll/system/`, loaded by
+`src/components/home/ScrollVideo.tsx`. Re-render instructions are in the README.
+
 ## Fast path
 
 The whole piece can also be produced without After Effects: build the animation as a deterministic timeline in HTML/CSS with the site's own components, and render it offline frame by frame in headless Chrome into the same frame sequence. No animation code ships to the page; the output is identical to what a motion designer would deliver, and it guarantees the fonts, colours and pixel grid match the site exactly. Roughly two to three days.

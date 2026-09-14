@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Reelative · scroll video scene (offline render source)</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0A0F;--el:#12121A;--t:#F5F5F7;--m:#9A9AAF;--line:rgba(255,255,255,.10);--grad:linear-gradient(135deg,#5B2EFF 0%,#E23FA7 55%,#FF7A1A 100%);--v:#5B2EFF;--mg:#E23FA7;--o:#FF7A1A}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);width:1920px;height:1080px;overflow:hidden}
+body{font-family:Inter,sans-serif;color:var(--t);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg)}
+.abs{position:absolute}
+/* ambient light for the glass to refract */
+.blob{position:absolute;border-radius:50%;filter:blur(140px);opacity:0;pointer-events:none}
+.b1{width:760px;height:760px;left:260px;top:-40px;background:radial-gradient(circle,rgba(91,46,255,.16),rgba(91,46,255,0) 62%)}
+.b2{width:720px;height:720px;left:960px;top:200px;background:radial-gradient(circle,rgba(226,63,167,.13),rgba(255,122,26,.06) 40%,rgba(255,122,26,0) 66%)}
+/* type */
+.eyebrow{font:500 12px/1 "JetBrains Mono";letter-spacing:.18em;text-transform:uppercase;color:var(--m);white-space:nowrap}
+.mono{font:500 12px/1.4 "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase;color:var(--m);white-space:nowrap}
+.mono.w{color:var(--t)}
+.h2{font:700 72px/1 Syne;letter-spacing:-.02em}
+.ln{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
+.ln>span{display:block;will-change:transform}
+.crumb{font:700 22px/1.1 Syne;letter-spacing:-.01em;color:var(--m);white-space:nowrap}
+.intro{font-size:18px;line-height:1.6;color:var(--m);max-width:440px}
+.body{font-size:16px;line-height:1.6;color:var(--m);white-space:nowrap}
+.h3{font:600 26px/1.2 Inter;letter-spacing:-.01em}
+.closing{font:700 44px/1.15 Syne;letter-spacing:-.02em}
+.cur{display:inline-block;width:2px;height:1em;background:var(--mg);vertical-align:-.15em;margin-left:3px}
+/* liquid glass */
+.glass{position:relative;border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.025) 45%,rgba(255,255,255,.045) 100%);-webkit-backdrop-filter:blur(28px) saturate(170%);backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,.11);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.4),0 30px 90px rgba(0,0,0,.45)}
+.glass:before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(120% 60% at 12% 0%,rgba(255,255,255,.10),rgba(255,255,255,0) 55%);pointer-events:none}
+.card{padding:32px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;position:relative}
+.wave{display:flex;align-items:center;gap:3px;height:16px}
+.wave i{display:block;width:2px;height:6px;background:rgba(255,255,255,.55);border-radius:1px;transform-origin:center}
+.row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);font-size:16px;position:relative;white-space:nowrap}
+.row:last-child{border-bottom:0}
+.chk{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.3);flex:none;position:relative}
+.chk .f{position:absolute;inset:-1px;border-radius:50%;background:var(--grad);transform:scale(0)}
+.chk .f:after{content:"";position:absolute;left:6px;top:4px;width:5px;height:9px;border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+/* month grid */
+.grid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:22px 26px;align-items:center}
+.grid .rl{font:500 11px/1 "JetBrains Mono";letter-spacing:.14em;color:var(--m);padding-right:8px}
+.dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.14);justify-self:center;position:relative}
+.dot .on{position:absolute;inset:0;border-radius:50%;background:var(--mg);box-shadow:0 0 16px rgba(226,63,167,.6);transform:scale(0)}
+.dot .ring{position:absolute;inset:-5px;border-radius:50%;border:1.5px solid var(--o);transform:scale(0);opacity:0}
+.days{display:flex;justify-content:space-between;margin-top:26px}
+/* rail */
+.rail{display:flex;flex-direction:column;gap:38px;position:relative;padding-left:26px}
+.rail .track{position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:rgba(255,255,255,.12)}
+.rail .s{font:500 12px/1 "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase;color:rgba(154,154,175,.55);position:relative;white-space:nowrap}
+.rail .s i{position:absolute;left:-26px;top:0;width:13px;height:13px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:var(--bg)}
+.rail .s i b{position:absolute;inset:-1px;border-radius:50%;background:#fff;transform:scale(0)}
+/* tiles */
+.tile{width:36px;height:64px;border-radius:6px;border:1px solid rgba(255,255,255,.14);position:relative;overflow:hidden}
+.tile:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0) 40%)}
+.sq{width:36px;height:36px;border-radius:6px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06)}
+.t0{background:linear-gradient(160deg,#3a2470,#12121A)}.t1{background:linear-gradient(160deg,#6a1b4f,#12121A)}.t2{background:linear-gradient(160deg,#6b3417,#12121A)}.t3{background:linear-gradient(160deg,#1b2f55,#12121A)}
+.chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font:500 11px/1 "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase;color:var(--m);position:relative;overflow:hidden;background:rgba(255,255,255,.02)}
+.chip .g{position:absolute;inset:0;background:var(--grad);opacity:0}
+.chip span{position:relative}
+.chip.sm{padding:4px 7px;font-size:9px}
+.pbar{height:2px;background:rgba(255,255,255,.1);border-radius:2px;position:relative;overflow:hidden}
+.pbar i{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--grad);border-radius:2px;transform-origin:left;transform:scaleX(0)}
+.line{height:1px;background:rgba(255,255,255,.14)}
+.cap{height:3px;border-radius:2px;background:rgba(255,255,255,.35);transform-origin:left}
+.bar{width:28px;border-radius:4px 4px 0 0;transform-origin:bottom;transform:scaleY(0)}
+.node{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:var(--bg);position:relative}
+.node .g{position:absolute;inset:-1px;border-radius:50%;background:var(--grad);box-shadow:0 0 24px rgba(226,63,167,.55);transform:scale(0)}
+.avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);position:relative;flex:none}
+.avatar:before{content:"";position:absolute;left:9px;top:5px;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.6)}
+.avatar:after{content:"";position:absolute;left:5px;top:16px;width:17px;height:9px;border-radius:9px 9px 0 0;background:rgba(255,255,255,.6)}
+.widget{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
+.play{width:0;height:0;border-left:8px solid #fff;border-top:5px solid transparent;border-bottom:5px solid transparent;margin-left:2px}
+/* calendar */
+.cal{position:absolute;left:300px;top:250px;width:1320px}
+.cal .hdr{display:grid;grid-template-columns:60px repeat(7,1fr);gap:0 18px;align-items:end}
+.cal .rule{height:1px;background:var(--line);margin:16px 0 8px;transform-origin:left}
+.cal .cells{display:grid;grid-template-columns:60px repeat(7,1fr);gap:0 18px}
+.cell{padding:18px 0;border-bottom:1px solid var(--line);min-height:150px;position:relative}
+.cell .wk{padding-top:22px}
+
+/* ================= MOBILE LAYOUT (540×960 @2x) ================= */
+.mobile html,.mobile body,html.mobile,html.mobile body{width:540px !important;height:960px !important}
+html.mobile .stage{width:540px !important;height:960px !important}
+html.mobile #fly{width:540px !important;height:960px !important}
+html.mobile .b1{width:520px !important;height:520px !important;left:-60px !important;top:40px !important}
+html.mobile .b2{width:520px !important;height:520px !important;left:140px !important;top:420px !important}
+html.mobile .h2{font-size:44px !important}
+html.mobile .crumb{font-size:15px !important;white-space:normal !important;max-width:440px !important}
+html.mobile .intro{font-size:15px !important;max-width:400px !important}
+html.mobile .body{font-size:13px !important;white-space:normal !important}
+html.mobile .h3{font-size:19px !important}
+html.mobile .closing{font-size:30px !important}
+html.mobile .eyebrow{font-size:10px !important}
+html.mobile .mono{font-size:9.5px !important}
+html.mobile .card{padding:20px !important}
+html.mobile .row{font-size:13px !important;padding:9px 0 !important;gap:10px !important}
+html.mobile .chk{width:15px !important;height:15px !important}
+html.mobile .glass{border-radius:18px !important}
+html.mobile #s1{left:24px !important;top:0 !important;width:492px !important;height:600px !important;justify-content:flex-end !important;padding-bottom:20px !important}
+html.mobile #s1 .eyebrow{margin-bottom:18px !important}
+html.mobile #intro{margin-top:22px !important}
+html.mobile #crumb02,html.mobile #crumb03{left:24px !important;top:56px !important}
+html.mobile #rail{display:none !important}
+html.mobile #month{left:24px !important;top:660px !important;width:492px !important}
+html.mobile #month>div:first-child{margin-bottom:20px !important}
+html.mobile .grid{gap:14px 0 !important;grid-template-columns:34px repeat(7,1fr) !important}
+html.mobile .dot{width:10px !important;height:10px !important}
+html.mobile .days{margin-top:16px !important;padding-left:34px !important}
+html.mobile #c1w{left:24px !important;top:150px !important;width:492px !important}
+html.mobile #c1 .hd{margin-bottom:10px !important}
+html.mobile #c2w{left:24px !important;top:130px !important;width:492px !important}
+html.mobile #c2 .hd{margin-bottom:12px !important}
+html.mobile #shots{grid-template-columns:1fr 1fr !important;column-gap:20px !important}
+html.mobile #shots .shot{padding:6px 0 !important;font-size:9px !important}
+html.mobile #stackw{left:24px !important;top:575px !important}
+html.mobile #stackw>div:first-child{width:492px !important;margin-bottom:12px !important}
+html.mobile #stack{grid-template-columns:repeat(12,28px) !important;gap:8px !important}
+html.mobile #stack .tile{width:28px !important;height:50px !important}
+html.mobile #month.s3{top:680px !important}
+html.mobile #s4hdr{left:24px !important;top:64px !important;width:492px !important;flex-direction:column !important;align-items:flex-start !important;gap:10px !important}
+html.mobile .cal{left:24px !important;top:230px !important;width:492px !important}
+html.mobile .cal .hdr,html.mobile .cal .cells{grid-template-columns:34px repeat(7,1fr) !important;gap:0 8px !important}
+html.mobile .cell{min-height:118px !important;padding:12px 0 !important}
+html.mobile .cell .wk{padding-top:14px !important}
+html.mobile .cell .slot{width:30px !important;height:54px !important}
+html.mobile .cell .slot .tile{width:30px !important;height:54px !important}
+html.mobile .cell .gfx{width:30px !important;height:30px !important}
+html.mobile .cell .vchips{display:none !important}
+html.mobile .cell .cap{margin-top:8px !important}
+html.mobile #c3w{left:24px !important;top:170px !important;width:492px !important}
+html.mobile #c3{padding:22px !important}
+html.mobile #bars{height:170px !important;gap:18px !important}
+html.mobile #c3 .line+div{gap:18px !important}
+html.mobile .bar{width:16px !important}
+html.mobile #closing{left:24px !important;height:960px !important;width:492px !important}
+html.mobile #tokens{flex-direction:column !important;align-items:flex-start !important;gap:14px !important;margin-bottom:28px !important}
+html.mobile #tokens .line{display:none !important}
+html.mobile #s7{left:24px !important;width:492px !important}
+html.mobile #s7 .abs{padding-bottom:220px !important}
+html.mobile #pipe{left:24px !important;top:760px !important;width:492px !important}
+html.mobile #cards3{left:24px !important;top:160px !important;width:492px !important;grid-template-columns:1fr !important;gap:10px !important}
+html.mobile #cards3 .card{padding:14px 18px !important}
+html.mobile #cards3 .card>div{margin-top:8px !important}
+html.mobile #cards3 .card>p.mono{margin-bottom:6px !important}
+html.mobile #cards3 .h3{font-size:15px !important}
+html.mobile #cards3 .row{padding:3px 0 !important;font-size:12px !important}
+html.mobile .widget{width:26px !important;height:26px !important;border-radius:7px !important}
+html.mobile #pchips{margin-top:8px !important;gap:5px !important}
+html.mobile #pchips .chip{padding:5px 8px !important;font-size:9px !important}
+html.mobile #foot{left:24px !important;top:822px !important;max-width:440px !important}
+
+/* hidden by default helper */
+.h{opacity:0;visibility:hidden}
+</style></head>
+<body>
+<div class="stage" id="stage">
+  <div class="blob b1" id="b1"></div><div class="blob b2" id="b2"></div>
+
+  <!-- S1: claim -->
+  <div class="abs" id="s1" style="left:300px;top:0;width:640px;height:1080px;display:flex;flex-direction:column;justify-content:center">
+    <p class="eyebrow" style="margin-bottom:28px"><span id="ey02"></span></p>
+    <h2 class="h2" id="h2a"><span class="ln"><span>One focused shoot</span></span><span class="ln"><span>can power your</span></span><span class="ln"><span>whole month.</span></span></h2>
+    <p class="intro" id="intro" style="margin-top:34px">We plan the stories before the camera arrives, so every minute of capture produces usable content.</p>
+  </div>
+
+  <!-- crumb for 02 -->
+  <div class="abs h" id="crumb02" style="left:300px;top:120px"><p class="eyebrow">02 — The system</p><p class="crumb" style="margin-top:12px">One focused shoot can power your whole month.</p></div>
+
+  <!-- rail -->
+  <div class="abs rail h" id="rail" style="left:300px;top:270px"><span class="track"></span>
+    <span class="s" data-i="0"><i><b></b></i>01 — Strategy call</span><span class="s" data-i="1"><i><b></b></i>02 — Planned shoot</span><span class="s" data-i="2"><i><b></b></i>03 — Month of assets</span><span class="s" data-i="3"><i><b></b></i>04 — Clear scorecard</span>
+  </div>
+
+  <!-- month grid (right column) -->
+  <div class="abs" id="month" style="left:1180px;top:260px;width:440px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:34px"><span class="mono w" id="mHdr">Month · 4 weeks · 28 days</span><span class="mono"><span id="mCnt">00</span> / 28 planned</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="days" id="days"><span class="mono">Mon</span><span class="mono">Tue</span><span class="mono">Wed</span><span class="mono">Thu</span><span class="mono">Fri</span><span class="mono">Sat</span><span class="mono">Sun</span></div>
+  </div>
+
+  <!-- S2: strategy call card -->
+  <div class="abs h" id="c1w" style="left:630px;top:256px;width:520px">
+    <div class="glass card" id="c1">
+      <div class="hd"><span class="mono w"><span id="c1h"></span></span><span class="wave" id="wave1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="mono" id="timer">00:00:00</span></div>
+      <div class="row"><i class="chk"><i class="f"></i></i><span id="r1"></span></div>
+      <div class="row"><i class="chk"><i class="f"></i></i><span id="r2"></span></div>
+      <div class="row"><i class="chk"><i class="f"></i></i><span id="r3"></span></div>
+      <div class="row"><i class="chk"><i class="f"></i></i><span id="r4"></span><i class="cur" id="cur1"></i></div>
+    </div>
+    <p class="body h" id="c1b" style="margin-top:22px">Offers, priorities, audience and content angles.</p>
+  </div>
+
+  <!-- S3: shoot day card -->
+  <div class="abs h" id="c2w" style="left:630px;top:256px;width:560px">
+    <div class="glass card" id="c2">
+      <div class="hd"><span class="mono w"><span id="c2h"></span></span><span class="chip"><i class="g" id="c2chipg"></i><span><span id="c2n">00</span> / 12</span></span></div>
+      <div class="pbar" style="margin-bottom:22px"><i id="c2bar"></i></div>
+      <div id="shots" style="display:grid;grid-template-columns:1fr 1fr;column-gap:36px"></div>
+    </div>
+    <p class="body h" id="c2b" style="margin-top:22px">People, products, demonstrations and customer moments.</p>
+  </div>
+  <!-- raw clip stack -->
+  <div class="abs h" id="stackw" style="left:1260px;top:256px"><div style="display:flex;justify-content:space-between;margin-bottom:26px;width:300px"><span class="mono w">Raw clips</span><span class="mono"><span id="stackn">00</span> captured</span></div><div id="stack" style="display:grid;grid-template-columns:repeat(4,36px);gap:12px"></div></div>
+
+  <!-- S4: calendar -->
+  <div class="abs h" id="s4hdr" style="left:300px;top:120px;width:1320px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div><p class="eyebrow">02 — The system · Step 03</p><p class="h3" style="margin-top:14px">Month of assets</p><p class="body" style="margin-top:8px">Reels, graphics, captions and platform variants.</p></div>
+    <p class="mono w"><span id="k1">00</span> reels · <span id="k2">00</span> graphics · <span id="k3">0</span> weeks</p>
+  </div>
+  <div class="cal h" id="cal">
+    <div class="hdr"><span></span><span class="mono">Mon</span><span class="mono">Tue</span><span class="mono">Wed</span><span class="mono">Thu</span><span class="mono">Fri</span><span class="mono">Sat</span><span class="mono">Sun</span></div>
+    <div class="rule" id="calrule"></div>
+    <div class="cells" id="cells"></div>
+  </div>
+
+  <!-- S5: scorecard -->
+  <div class="abs h" id="c3w" style="left:630px;top:256px;width:700px">
+    <div class="glass card" id="c3" style="padding:40px 48px">
+      <div class="hd"><span class="mono w"><span id="c3h"></span></span><span class="mono">12 reels reviewed</span></div>
+      <div id="bars" style="display:grid;grid-template-columns:repeat(4,1fr);gap:48px;align-items:end;height:250px;padding-top:20px"></div>
+      <div class="line" style="margin:0 0 16px"></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:48px">
+        <div class="mono w">Keep <span style="color:var(--m)">· <span id="n1">0</span></span></div><div class="mono" id="stopl">Stop · <span id="n2">0</span></div><div class="mono w">Test <span style="color:var(--m)">· <span id="n3">0</span></span></div><div class="mono w">Amplify <span style="color:var(--m)">· <span id="n4">0</span></span></div>
+      </div>
+    </div>
+    <p class="body" style="margin-top:22px"><span id="c3b"></span><i class="cur h" id="cur3"></i></p>
+  </div>
+
+  <!-- S6: closing -->
+  <div class="abs h" id="closing" style="left:300px;top:0;height:1080px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
+    <div style="display:flex;align-items:center;gap:40px;margin-bottom:44px" id="tokens">
+      <div class="tok" style="display:flex;align-items:center;gap:14px"><i class="avatar"></i><span class="mono">Strategist</span></div>
+      <div class="tok line" style="width:60px"></div>
+      <div class="tok" style="display:flex;align-items:center;gap:14px"><div id="minigrid" style="display:grid;grid-template-columns:repeat(7,4px);gap:3px"></div><span class="mono">Calendar</span></div>
+      <div class="tok line" style="width:60px"></div>
+      <div class="tok" style="display:flex;align-items:center;gap:14px"><span class="chip"><i class="g" style="opacity:1"></i><span style="color:#fff">48 hr</span></span><span class="mono">Approval window</span></div>
+    </div>
+    <p class="closing" id="closeln"><span class="ln"><span>One strategist. One calendar.</span></span><span class="ln"><span>One approval window.</span></span></p>
+  </div>
+
+  <!-- S7: pipeline + 03 heading -->
+  <div class="abs h" id="s7" style="left:300px;top:0;width:1320px;height:1080px">
+    <div class="abs" style="left:0;top:0;height:1080px;display:flex;flex-direction:column;justify-content:center;padding-bottom:170px">
+      <p class="eyebrow" style="margin-bottom:28px"><span id="ey03"></span></p>
+      <h2 class="h2" id="h2b"><span class="ln"><span>Create the content.</span></span><span class="ln"><span>Distribute it.</span></span><span class="ln"><span>Amplify what works.</span></span></h2>
+    </div>
+  </div>
+  <div class="abs h" id="pipe" style="left:300px;top:890px;width:1320px">
+    <div style="position:relative;height:16px;display:flex;align-items:center"><div class="line" id="pipeline" style="position:absolute;left:0;right:0;transform-origin:left;transform:scaleX(0)"></div>
+      <div style="position:absolute;left:0;right:0;display:flex;justify-content:space-between" id="nodes"><i class="node"><i class="g"></i></i><i class="node"><i class="g"></i></i><i class="node"><i class="g"></i></i></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:22px" id="nodelabels"><span class="mono"><span id="nl1"></span></span><span class="mono"><span id="nl2"></span></span><span class="mono"><span id="nl3"></span></span></div>
+  </div>
+
+  <!-- S8/9: crumb 03 + three cards -->
+  <div class="abs h" id="crumb03" style="left:300px;top:96px"><p class="eyebrow">03 — What we do</p><p class="crumb" style="margin-top:12px">Create the content. Distribute it. Amplify what works.</p></div>
+  <div class="abs h" id="cards3" style="left:300px;top:250px;width:1320px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+    <div class="glass card cc" id="k1c" style="padding:36px">
+      <p class="mono w" style="margin-bottom:10px">01 · Create</p><p class="h3">Create</p>
+      <div style="margin-top:22px">
+        <div class="row" style="border:0;padding:10px 0"><span class="widget" id="w1"><i class="tile" style="width:16px;height:28px;border-color:rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.04)"><i class="play" style="border-left-width:5px;border-top-width:3px;border-bottom-width:3px"></i></i></span><span id="cb1"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><span class="widget"><i class="sq" id="w2" style="width:18px;height:18px;background:var(--grad);border:0"></i></span><span id="cb2"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><span class="widget"><span style="display:flex;flex-direction:column;gap:3px;width:22px"><i class="cap" id="w3a"></i><i class="cap" id="w3b" style="width:70%"></i></span></span><span id="cb3"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><span class="widget"><span style="font:600 12px Inter;color:var(--t)"><span id="w4">A</span><span style="color:var(--m)">/A</span></span></span><span id="cb4"></span></div>
+      </div>
+    </div>
+    <div class="glass card cc" id="k2c" style="padding:36px">
+      <p class="mono w" style="margin-bottom:10px">02 · Distribute</p><p class="h3">Distribute</p>
+      <div style="margin-top:22px">
+        <div class="row" style="border:0;padding:10px 0"><i class="chk"><i class="f"></i></i><span id="db1"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><i class="chk"><i class="f"></i></i><span id="db2"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><i class="chk"><i class="f"></i></i><span id="db3"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><i class="chk"><i class="f"></i></i><span id="db4"></span></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:22px" id="pchips"><span class="chip"><i class="g"></i><span>IG</span></span><span class="chip"><i class="g"></i><span>FB</span></span><span class="chip"><i class="g"></i><span>YT</span></span><span class="chip"><i class="g"></i><span>TT</span></span><span class="chip"><i class="g"></i><span>G</span></span><span class="chip"><i class="g"></i><span>WA</span></span></div>
+    </div>
+    <div class="glass card cc" id="k3c" style="padding:36px">
+      <p class="mono w" style="margin-bottom:10px">03 · Amplify</p><p class="h3">Amplify</p>
+      <div style="margin-top:22px">
+        <div class="row" style="border:0;padding:10px 0"><span class="widget"><span class="pbar" style="width:24px"><i id="w5"></i></span></span><span id="ab1"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><span class="widget"><span class="mono w" style="font-size:11px" id="w6">00</span></span><span id="ab2"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><span class="widget"><span class="wave" id="wave2" style="height:14px"><i></i><i></i><i></i><i></i><i></i></span></span><span id="ab3"></span><span class="mono" style="margin-left:auto" id="fm"></span></div>
+        <div class="row" style="border:0;padding:10px 0"><span class="widget"><span style="display:flex" id="avs"><i class="avatar" style="width:16px;height:16px"></i><i class="avatar" style="width:16px;height:16px;margin-left:-5px"></i><i class="avatar" style="width:16px;height:16px;margin-left:-5px"></i></span></span><span id="ab4"></span></div>
+      </div>
+    </div>
+  </div>
+  <p class="abs body h" id="foot" style="left:300px;top:760px;white-space:normal;max-width:640px">Start with consistent content. Add media only where it improves the business result.</p>
+
+  <!-- flight layer -->
+  <div class="abs" id="fly" style="left:0;top:0;width:1920px;height:1080px;pointer-events:none"></div>
+</div>
+
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../node_modules/gsap/dist/MotionPathPlugin.min.js"></script>
+<script>
+gsap.registerPlugin(MotionPathPlugin);
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const EXPO="expo.out";
+const MOBILE=new URLSearchParams(location.search).get('layout')==='mobile';
+if(MOBILE) document.documentElement.classList.add('mobile');
+const L=MOBILE
+  ? {monthS3:{x:0,y:0,scale:1},thumb:{scale:.4,x:0,y:-80,alpha:0},pipeUp:-640,tokensGap:18}
+  : {monthS3:{x:70,y:330,scale:.72},thumb:{scale:.42,x:290,y:-136,alpha:.55},pipeUp:-706,tokensGap:40};
+
+/* ---------- build repeated DOM ---------- */
+(function build(){
+  // month grid: 4 rows × 7 dots
+  const g=$('#grid'); let h='';
+  for(let w=0;w<4;w++){h+=`<span class="rl">W${w+1}</span>`; for(let d=0;d<7;d++) h+=`<i class="dot" data-w="${w}" data-d="${d}"><i class="on"></i><i class="ring"></i></i>`;}
+  g.innerHTML=h;
+  // shot list rows
+  const cats=['People','People','Products','Products','Demonstrations','People','Products','Demonstrations','Demonstrations','Customer moments','Customer moments','Customer moments'];
+  const tc=['00:00','00:40','01:05','01:20','01:40','01:55','02:10','02:35','03:10','03:30','03:55','04:20'];
+  const order=[0,6,1,7,2,8,3,9,4,10,5,11]; let sh='';
+  order.forEach((i,k)=>{sh+=`<div class="mono shot" data-i="${i}" style="padding:8px 0;${k<10?'border-bottom:1px solid var(--line);':''}color:var(--t);display:flex;justify-content:space-between;gap:12px"><span style="overflow:hidden;text-overflow:clip"><span class="sn">${String(i+1).padStart(2,'0')}</span>&nbsp;&nbsp;<span class="st"></span></span><span class="stc" style="color:var(--m);flex:none"></span></div>`;});
+  $('#shots').innerHTML=sh;
+  $$('.shot').forEach(el=>{el.dataset.label=cats[+el.dataset.i];el.dataset.tc=tc[+el.dataset.i];});
+  // stack tiles
+  let st=''; for(let i=0;i<12;i++) st+=`<i class="tile t${i%4}" data-i="${i}"></i>`; $('#stack').innerHTML=st;
+  // calendar cells
+  let cs=''; for(let w=0;w<4;w++){cs+=`<div class="mono wk">W${w+1}</div>`; for(let d=0;d<7;d++){const reel=(d===0||d===3||d===5), gfx=(d===1||d===4||d===6);
+    cs+=`<div class="cell" data-w="${w}" data-d="${d}">`;
+    if(reel){cs+=`<div class="slot" style="position:relative;width:44px;height:78px"><i class="tile v2 t${(w+d)%4}" style="position:absolute;left:0;top:0;width:44px;height:78px;opacity:.35"></i><i class="tile v1 t${(w+d)%4}" style="position:absolute;left:0;top:0;width:44px;height:78px;opacity:.6"></i><i class="tile land t${(w+d)%4}" style="position:absolute;left:0;top:0;width:44px;height:78px;opacity:0"></i></div><div class="cap c1" style="width:70%;margin-top:12px"></div><div class="cap c2" style="width:45%;margin-top:6px;opacity:.5"></div><div class="vchips" style="display:flex;gap:4px;margin-top:10px"><span class="chip sm"><i class="g"></i><span>IG</span></span><span class="chip sm"><i class="g"></i><span>FB</span></span><span class="chip sm"><i class="g"></i><span>YT</span></span></div>`;}
+    else if(gfx){cs+=`<i class="sq gfx" style="display:block;width:44px;height:44px"></i><div class="cap c1" style="width:55%;margin-top:12px"></div><div class="vchips" style="display:flex;gap:4px;margin-top:10px"><span class="chip sm"><i class="g"></i><span>IG</span></span><span class="chip sm"><i class="g"></i><span>G</span></span></div>`;}
+    else{cs+=`<i class="dot emp" style="display:block;margin-top:14px"></i>`;}
+    cs+=`</div>`;}}
+  $('#cells').innerHTML=cs;
+  // scorecard bars
+  const groups=[{c:'#5B2EFF',h:[70,86,62,78,58]},{c:'rgba(255,255,255,.18)',h:[26,18]},{c:'#E23FA7',h:[48,64,40]},{c:'grad',h:[100,92]}]; let bs='';
+  groups.forEach((gr,gi)=>{bs+=`<div class="grp" data-g="${gi}" style="display:flex;gap:8px;align-items:flex-end;height:100%">`; gr.h.forEach(hh=>{bs+=`<i class="bar" style="height:${hh}%;background:${gr.c==='grad'?'var(--grad)':gr.c};${gr.c==='grad'?'box-shadow:0 0 30px rgba(255,122,26,.35);':''}"></i>`}); bs+=`</div>`;});
+  $('#bars').innerHTML=bs;
+  // mini grid token
+  let mg=''; for(let i=0;i<28;i++){const on=(i%7===0||i%7===2||i%7===4||i%7===6); mg+=`<i style="width:4px;height:4px;border-radius:50%;background:${on?'var(--mg)':'rgba(255,255,255,.14)'}"></i>`;} $('#minigrid').innerHTML=mg;
+})();
+
+/* ---------- helpers ---------- */
+const tl=gsap.timeline({paused:true,defaults:{ease:EXPO,duration:.7}});
+function type(sel,text,at,cps=32){const el=$(sel);el.textContent='';const o={n:0};tl.to(o,{n:text.length,duration:text.length/cps,ease:'none',onUpdate(){el.textContent=text.slice(0,Math.round(o.n));}},at);return text.length/cps;}
+function count(sel,to,at,dur=.8,pad=2){const el=$(sel);const o={n:0};tl.to(o,{n:to,duration:dur,ease:'power2.out',onUpdate(){el.textContent=String(Math.round(o.n)).padStart(pad,'0');}},at);}
+function timer(sel,to,at,dur){const el=$(sel);const o={n:0};tl.to(o,{n:to,duration:dur,ease:'none',onUpdate(){const s=Math.round(o.n);el.textContent=`00:${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}},at);}
+function show(sel,at,opts={}){tl.fromTo(sel,{autoAlpha:0,y:24},{autoAlpha:1,y:0,...opts},at);}
+function hide(sel,at,opts={}){tl.to(sel,{autoAlpha:0,y:-16,duration:.5,...opts},at);}
+function lines(sel,at,stagger=.1){tl.fromTo(sel+' .ln > span',{yPercent:110},{yPercent:0,duration:.9,stagger},at);}
+function rect(el){const r=el.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height,l:r.left,t:r.top};}
+function flyDot(from,to,at,dur=.7,color='var(--mg)'){const d=document.createElement('i');d.style.cssText=`position:absolute;width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 12px ${color};left:${from.x-4}px;top:${from.y-4}px;opacity:0`;$('#fly').appendChild(d);
+  tl.set(d,{opacity:1},at); tl.to(d,{motionPath:{path:[{x:0,y:0},{x:(to.x-from.x)*.5,y:(to.y-from.y)*.5-90},{x:to.x-from.x,y:to.y-from.y}],curviness:1.3},duration:dur,ease:'power2.inOut'},at); tl.set(d,{opacity:0},at+dur);}
+
+/* measure while everything is laid out (hidden elements keep layout via visibility) */
+const dots=$$('#grid .dot');
+const dotAt=(w,d)=>dots[w*7+d];
+const planDays=[[0,1],[0,4],[1,2],[2,0],[2,4],[3,3]];
+const shootDay=[1,3];
+
+/* ---------- TIMELINE ---------- */
+// ambient
+tl.to('#b1',{opacity:1,duration:2,ease:'power2.out'},0); tl.to('#b2',{opacity:1,duration:2.4,ease:'power2.out'},.2);
+// cursor blink (global)
+tl.to('.cur',{opacity:0,duration:.45,repeat:33,yoyo:true,ease:'steps(1)'},0);
+// waveforms idle
+tl.to('#wave1 i',{scaleY:()=>gsap.utils.random(.3,2.6),duration:.35,repeat:41,yoyo:true,ease:'sine.inOut',stagger:.06},0);
+tl.to('#wave2 i',{scaleY:()=>gsap.utils.random(.3,2.4),duration:.35,repeat:41,yoyo:true,ease:'sine.inOut',stagger:.07},0);
+
+/* S1 · 0–3.6 */
+type('#ey02','02 — The system',.2);
+lines('#h2a',.6);
+show('#intro',1.4);
+tl.fromTo('#month',{autoAlpha:0},{autoAlpha:1,duration:.4},1.0);
+tl.fromTo('#grid .dot',{scale:0},{scale:1,duration:.5,stagger:{each:.025,grid:[4,7],from:'start'}},1.1);
+tl.fromTo('#days span',{autoAlpha:0,y:6},{autoAlpha:1,y:0,duration:.5,stagger:.04},1.9);
+/* HOLD A 2.8–3.6 */
+
+/* S2 · 3.6–8.8 · Strategy call */
+hide('#s1',3.6,{duration:.6});
+show('#crumb02',3.9,{duration:.6});
+tl.fromTo('#rail',{autoAlpha:0},{autoAlpha:1,duration:.4},3.9);
+tl.fromTo('#rail .s',{autoAlpha:0,x:-12},{autoAlpha:1,x:0,duration:.6,stagger:.06},3.95);
+tl.to('#rail .s[data-i="0"]',{color:'#F5F5F7',duration:.4},4.2); tl.to('#rail .s[data-i="0"] b',{scale:1,duration:.4},4.2);
+show('#c1w',4.2,{duration:.8});
+type('#c1h','Step 01 · Strategy call',4.6);
+timer('#timer',1930,4.6,3.2);
+const rows=[['#r1','Offers',4.9],['#r2','Priorities',5.55],['#r3','Audience',6.15],['#r4','Content angles',6.75]];
+const c1chk=$$('#c1 .chk .f');
+let tagI=0;
+rows.forEach(([sel,txt,at],i)=>{const d=type(sel,txt,at); const done=at+d+.05; tl.to(c1chk[i],{scale:1,duration:.45,ease:'back.out(2)'},done);
+  const emit=(i===0||i===3)?2:1; for(let e=0;e<emit;e++){const [w,dd]=planDays[tagI++]; const from=rect(c1chk[i]); const to=rect(dotAt(w,dd)); const fat=done+.08+e*.18; flyDot(from,to,fat,.7); tl.to(dotAt(w,dd).querySelector('.on'),{scale:1,duration:.4,ease:'back.out(2.5)'},fat+.7); count('#mCnt',tagI,fat+.7,.3);}
+});
+tl.to('#cur1',{autoAlpha:1,duration:.01},4.9);
+show('#c1b',7.55,{duration:.6});
+/* HOLD B 8.0–8.8 (cursor blinks, waveform, timer) */
+
+/* S3 · 8.8–13.0 · Planned shoot */
+const sd=rect(dotAt(...shootDay)); const c1r=rect($('#c1'));
+tl.to('#cur1',{autoAlpha:0,duration:.01},8.8);
+tl.to('#c1b',{autoAlpha:0,duration:.3},8.8);
+tl.to('#c1',{scale:.04,x:sd.x-c1r.x,y:sd.y-c1r.y,autoAlpha:0,duration:.75,ease:'power3.in'},8.8);
+tl.to('#rail .s[data-i="0"]',{color:'rgba(154,154,175,.55)',duration:.4},9.3); tl.to('#rail .s[data-i="0"] b',{background:'rgba(255,255,255,.5)',duration:.4},9.3);
+tl.to('#rail .s[data-i="1"]',{color:'#F5F5F7',duration:.4},9.4); tl.to('#rail .s[data-i="1"] b',{scale:1,duration:.4},9.4);
+tl.to(dotAt(...shootDay).querySelector('.ring'),{scale:1,opacity:1,duration:.5,ease:'back.out(2)'},9.45);
+tl.to('#month',{...L.monthS3,transformOrigin:'top left',duration:.9,ease:'expo.inOut'},9.6);
+const c2r=rect($('#c2'));
+tl.set('#c2w',{autoAlpha:1},9.5);
+tl.fromTo('#c2',{scale:.06,x:sd.x-c2r.x,y:sd.y-c2r.y,autoAlpha:0},{scale:1,x:0,y:0,autoAlpha:1,duration:.9,ease:'expo.out'},9.5);
+type('#c2h','Step 02 · Shoot day · Thu 14',10.1);
+tl.fromTo('#stackw',{autoAlpha:0,y:24},{autoAlpha:1,y:0,duration:.6},10.2);
+const shots=$$('#shots .shot'); const stackTiles=$$('#stack .tile');
+tl.set('#stack .tile',{scale:0,transformOrigin:'center'},0);
+shots.forEach((el,k)=>{const at=10.4+k*.14; const st=el.querySelector('.st'), stc=el.querySelector('.stc'); const label=el.dataset.label, tcs=el.dataset.tc;
+  st.textContent='';stc.textContent=''; const o={n:0};
+  tl.to(o,{n:1,duration:.3,ease:'none',onUpdate(){st.textContent=label.slice(0,Math.round(o.n*label.length));stc.textContent=o.n>.6?tcs:'';}},at);
+  const idx=+el.dataset.i; tl.to(stackTiles[idx],{scale:1,duration:.5,ease:'back.out(1.8)'},at+.25);
+  count('#stackn',k+1,at+.25,.15); count('#c2n',k+1,at+.25,.15);
+});
+tl.to('#c2bar',{scaleX:1,duration:1.9,ease:'none'},10.5);
+tl.to('#c2chipg',{opacity:1,duration:.4},12.3);
+show('#c2b',12.35,{duration:.6});
+/* HOLD C 12.9–13.6 */
+
+/* S4 · 13.6–17.4 · Month of assets */
+hide('#crumb02',13.6); hide('#rail',13.6); hide('#month',13.6); hide('#c2b',13.6);
+tl.to('#c2',{autoAlpha:0,scale:.96,duration:.5},13.65);
+tl.to('#stackw > div:first-child',{autoAlpha:0,duration:.3},13.65);
+// flights: stack tiles → calendar landing slots
+const landSlots=$$('#cal .slot .land');
+tl.set('#cal',{autoAlpha:1},13.7); tl.set('#cal .slot .v1, #cal .slot .v2, #cal .cap, #cal .vchips .chip, #cal .gfx, #cal .emp, #cal .hdr span, #calrule',{autoAlpha:0},0);
+tl.fromTo('#cal .hdr span',{autoAlpha:0,y:6},{autoAlpha:1,y:0,duration:.5,stagger:.03},13.8);
+tl.fromTo('#calrule',{scaleX:0,autoAlpha:1},{scaleX:1,duration:.9,ease:EXPO},13.85);
+tl.fromTo('#cal .emp',{autoAlpha:0,scale:0},{autoAlpha:1,scale:1,duration:.5,stagger:.04},14.0);
+stackTiles.forEach((t,i)=>{const from=rect(t); const to=rect(landSlots[i]); const at=13.85+i*.055;
+  tl.to(t,{x:to.l-from.l,y:to.t-from.t,width:44,height:78,duration:.85,ease:'power3.inOut'},at);
+  tl.to(landSlots[i],{autoAlpha:1,duration:.05},at+.85); tl.set(t,{autoAlpha:0},at+.86);
+});
+show('#s4hdr',14.1,{duration:.7});
+count('#k1',12,14.3,1.0); count('#k2',12,15.0,.8); count('#k3',4,15.6,.4,1);
+tl.fromTo('#cal .gfx',{autoAlpha:0,x:-18},{autoAlpha:1,x:0,duration:.6,stagger:.05},14.9);
+tl.fromTo('#cal .cap',{autoAlpha:1,scaleX:0},{scaleX:1,duration:.5,stagger:.02},15.3);
+tl.fromTo('#cal .slot .v1',{autoAlpha:0,x:0,y:0},{autoAlpha:.6,x:5,y:-3,duration:.5,stagger:.04},15.5);
+tl.fromTo('#cal .slot .v2',{autoAlpha:0,x:0,y:0},{autoAlpha:.35,x:10,y:-6,duration:.5,stagger:.04},15.55);
+tl.fromTo('#cal .vchips .chip',{autoAlpha:0,scale:.6},{autoAlpha:1,scale:1,duration:.4,stagger:.015,ease:'back.out(2)'},15.7);
+/* HOLD D 16.6–17.4 */
+
+/* S5 · 17.4–20.9 · Scorecard */
+hide('#s4hdr',17.4);
+tl.to('#cal .cell > *',{y:40,autoAlpha:0,duration:.6,stagger:{each:.01,from:'end'},ease:'power2.in'},17.4);
+tl.to('#cal .hdr, #calrule',{autoAlpha:0,duration:.4},17.6);
+tl.set('#cal',{autoAlpha:0},18.1);
+show('#crumb02',17.8,{duration:.6,y:0}); tl.fromTo('#rail',{autoAlpha:0},{autoAlpha:1,duration:.4},17.9);
+tl.set('#rail .s[data-i="1"], #rail .s[data-i="2"]',{color:'rgba(154,154,175,.55)'},17.9); tl.set('#rail .s[data-i="1"] b, #rail .s[data-i="2"] b',{scale:1,background:'rgba(255,255,255,.5)'},17.9);
+tl.to('#rail .s[data-i="3"]',{color:'#F5F5F7',duration:.4},18.2); tl.to('#rail .s[data-i="3"] b',{scale:1,duration:.4},18.2);
+show('#c3w',18.0,{duration:.8});
+type('#c3h','Step 04 · Scorecard · Month 01',18.3);
+tl.to('#bars .bar',{scaleY:1,duration:.8,stagger:.06,ease:'expo.out'},18.5);
+count('#n1',5,18.7,.5,1); count('#n2',2,18.9,.4,1); count('#n3',3,19.1,.4,1); count('#n4',2,19.3,.4,1);
+tl.to('#bars .grp[data-g="1"]',{opacity:.35,duration:.5},19.4);
+tl.to('#stopl',{opacity:.45,duration:.5},19.4);
+tl.fromTo('#bars .grp[data-g="3"] .bar',{filter:'brightness(.7)'},{filter:'brightness(1.15)',duration:.6},19.5);
+type('#c3b','What worked, what changed and what comes next.',19.5,34);
+tl.to('#cur3',{autoAlpha:1,duration:.01},19.5);
+/* HOLD E 20.9–21.6 */
+
+/* S6 · 21.6–24.0 · Closing line */
+tl.to('#cur3',{autoAlpha:0,duration:.01},21.6);
+hide('#crumb02',21.6); hide('#rail',21.6);
+tl.to('#c3w',{scale:L.thumb.scale,x:L.thumb.x,y:L.thumb.y,autoAlpha:L.thumb.alpha,duration:.9,ease:'expo.inOut',transformOrigin:'top right'},21.6);
+tl.set('#closing',{autoAlpha:1},22.0);
+tl.fromTo('#tokens .tok',{autoAlpha:0,y:16},{autoAlpha:1,y:0,duration:.6,stagger:.08},22.0);
+lines('#closeln',22.3,.12);
+/* HOLD F 23.3–24.0 */
+
+/* S7 · 24.0–26.6 · Pipeline + 03 heading */
+hide('#closing',24.0); tl.to('#c3w',{autoAlpha:0,duration:.4},24.0);
+tl.set('#pipe',{autoAlpha:1},24.2);
+tl.to('#pipeline',{scaleX:1,duration:1.0,ease:EXPO},24.2);
+tl.fromTo('#nodes .node',{scale:0},{scale:1,duration:.5,stagger:.12,ease:'back.out(2)'},24.5);
+type('#nl1','Create',24.6); type('#nl2','Distribute',24.75); type('#nl3','Amplify',24.9);
+tl.set('#s7',{autoAlpha:1},24.6);
+type('#ey03','03 — What we do',24.6);
+lines('#h2b',25.0,.14);
+tl.to('#nodes .node:nth-child(1) .g',{scale:1,duration:.45,ease:'back.out(2)'},25.05);
+tl.to('#nodes .node:nth-child(2) .g',{scale:1,duration:.45,ease:'back.out(2)'},25.19);
+tl.to('#nodes .node:nth-child(3) .g',{scale:1,duration:.45,ease:'back.out(2)'},25.33);
+tl.to('#nl1, #nl2, #nl3',{color:'#F5F5F7',duration:.4,stagger:.14},25.05);
+/* HOLD G 25.9–26.6 */
+
+/* S8 · 26.6–30.6 · Three cards */
+hide('#s7',26.6);
+tl.to('#pipe',{y:L.pipeUp,duration:.9,ease:'expo.inOut'},26.6);
+tl.to('#nodelabels',{autoAlpha:0,duration:.3},26.6);
+show('#crumb03',26.9,{duration:.6,y:0});
+tl.set('#cards3',{autoAlpha:1},27.1);
+tl.fromTo('#cards3 .cc',{autoAlpha:0,y:28},{autoAlpha:1,y:0,duration:.8,stagger:.1},27.1);
+// Create
+const cb=[['#cb1','Short-form reels'],['#cb2','Motion and static graphics'],['#cb3','Scripts and captions'],['#cb4','Multilingual adaptations']];
+cb.forEach(([s,t],i)=>type(s,t,27.5+i*.22,40));
+tl.fromTo('#w2',{rotateY:0},{rotateY:180,duration:.8,ease:EXPO},27.9);
+tl.fromTo('#w3a, #w3b',{scaleX:0},{scaleX:1,duration:.6,stagger:.1},28.0);
+const w4=$('#w4'); const langs=['A','अ','த','తె']; const lo={n:0};
+tl.to(lo,{n:3,duration:1.2,ease:'none',onUpdate(){w4.textContent=langs[Math.round(lo.n)];}},28.3);
+// Distribute
+const db=[['#db1','Instagram and Facebook'],['#db2','YouTube Shorts'],['#db3','TikTok where suitable'],['#db4','Google and WhatsApp assets']];
+const dchk=$$('#k2c .chk .f');
+db.forEach(([s,t],i)=>{const d=type(s,t,28.2+i*.22,40); tl.to(dchk[i],{scale:1,duration:.4,ease:'back.out(2)'},28.2+i*.22+d+.05);});
+const pch=$$('#pchips .chip'); const w1r=rect($('#w1'));
+pch.forEach((c,i)=>{const to=rect(c); const at=28.9+i*.12; flyDot(w1r,to,at,.55,'#F5F5F7'); tl.to(c.querySelector('.g'),{opacity:1,duration:.3},at+.55); tl.to(c.querySelector('span'),{color:'#fff',duration:.3},at+.55);});
+// Amplify
+const ab=[['#ab1','Paid social campaigns'],['#ab2','Landing pages and lead tracking'],['#ab3','FunAsia radio and social'],['#ab4','Events and creator partnerships']];
+ab.forEach(([s,t],i)=>type(s,t,29.0+i*.22,40));
+tl.to('#w5',{scaleX:.65,duration:.9,ease:EXPO},29.2);
+count('#w6',27,29.4,1.0);
+type('#fm','104.1 FM',29.6);
+tl.fromTo('#avs .avatar',{x:-10,autoAlpha:0},{x:0,autoAlpha:1,duration:.5,stagger:.08},29.7);
+show('#foot',30.1,{duration:.6});
+// ambient out
+tl.to('#b1, #b2',{opacity:0,duration:1.4},29.8);
+/* HOLD H 30.7–31.4 */
+tl.set({},{},31.4);
+
+const END=31.4;
+window.SCENE={duration:END,seek:p=>{tl.time(Math.min(END,Math.max(0,p*END)),false);}};
+</script>
+</body></html>

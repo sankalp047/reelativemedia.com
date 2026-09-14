@@ -1,0 +1,16 @@
+{
+  "desktop": {
+    "base": "/scroll/system/desktop",
+    "frames": 300,
+    "width": 2560,
+    "height": 1440,
+    "proxyWidth": 240
+  },
+  "mobile": {
+    "base": "/scroll/system/mobile",
+    "frames": 240,
+    "width": 1080,
+    "height": 1920,
+    "proxyWidth": 180
+  }
+}

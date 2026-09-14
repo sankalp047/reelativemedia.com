@@ -18,6 +18,10 @@ npm run lint
 ```
 src/app/            layout (fonts, metadata, JSON-LD), page, globals.css (tokens), actions.ts (audit form)
 src/components/home/  one component per homepage section, in page order
+                      (02 The System + 03 What we do are one scroll-scrubbed frame sequence: ScrollVideo.tsx)
+tools/scroll-video/  offline renderer for that sequence: scene.html (GSAP timeline in the site's design system),
+                      render.mjs (frames via headless Chrome), encode.mjs (AVIF/WebP/proxy + manifest)
+public/scroll/system/ the encoded frames the page loads (desktop 2560×1440, mobile 1080×1920) + mp4 fallback
 src/components/ui/    Button, Cursor, Eyebrow, Logo, Placeholder, Reveal (motion primitives)
 src/components/providers/SmoothScroll.tsx  Lenis wired into the GSAP ticker
 src/lib/data.ts     all copy/data: reels, packages, add-ons, stats, testimonials, brands
@@ -25,6 +29,21 @@ public/video, public/posters   PLACEHOLDER clips (generated gradients) — repla
 ```
 
 Design tokens live in `globals.css` under `@theme` (colors `base`, `elevated`, `funasia`, `primary`, `muted`, `line`; fonts `display`/`sans`/`mono`) plus utilities `t-display`, `t-h2`, `t-h3`, `t-statement`, `eyebrow`, `mono`, `btn-primary`, `btn-secondary`, `chip`, `grad-border`, `wrap`, `section-pad`.
+
+## Re-rendering the 02–03 scroll video
+
+The sections "The System" and "What we do" are a video, not code: every word and every motion lives in
+`tools/scroll-video/scene.html`. Edit copy or motion there, then:
+
+```bash
+npm run video:render -- --frames 300 --scale 1.3333333 --out /tmp/frames-desktop
+npm run video:encode -- --in /tmp/frames-desktop --out public/scroll/system/desktop --name desktop
+npm run video:render -- --layout mobile --frames 240 --scale 2 --out /tmp/frames-mobile
+npm run video:encode -- --in /tmp/frames-mobile --out public/scroll/system/mobile --name mobile --proxy 180
+```
+
+`encode.mjs` rewrites `src/lib/scroll-video-manifest.json`; the page reads frame counts and paths from it.
+The renderer needs Google Chrome installed (system Chrome, no download).
 
 ## Placeholders to replace before launch
 
