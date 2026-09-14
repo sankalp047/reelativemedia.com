@@ -32,7 +32,7 @@ Everything below is flagged in the UI with a dashed "placeholder" chip.
 
 | Asset | Where | Replace in |
 |---|---|---|
-| Hero montage (16:9 + 9:16, < 4 MB, webp posters) | `public/video/hero-*.mp4`, `public/posters/hero-*.jpg` | `Hero.tsx` |
+| ~~Hero montage~~ — done: 12s Seedance 2.5 render (Magnific), loop point cross-dissolved, 16:9 + 9:16 crop, jpg posters | `public/video/hero-*.mp4`, `public/posters/hero-*.jpg` | `Hero.tsx` |
 | 12–20 client reels (9:16 mp4 < 6 MB + posters, client name, category, views) | `public/video/reel-*.mp4` | `REELS` in `src/lib/data.ts` (set `placeholder: false`) |
 | Client logos (monochrome white SVG) | — | `CLIENT_LOGOS` + `TrustMarquee.tsx` |
 | FunAsia, Radio Sangam, Radio Caravan, Vanakkam FM logos (SVG) | — | `FunAsia.tsx`, `TrustMarquee.tsx`, `Footer.tsx` |

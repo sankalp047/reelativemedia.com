@@ -1,32 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { preload } from "react-dom";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ButtonLink } from "@/components/ui/Button";
-import { PlaceholderTag } from "@/components/ui/Placeholder";
 import { EXPO, lineMask, stagger } from "@/lib/motion";
 
 const H1_LINES = ["Content people", "remember."];
-
-function SoundIcon({ muted }: { muted: boolean }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M11 5 6 9H2v6h4l5 4V5z" />
-      {muted ? (
-        <>
-          <line x1="23" y1="9" x2="17" y2="15" />
-          <line x1="17" y1="9" x2="23" y2="15" />
-        </>
-      ) : (
-        <>
-          <path d="M15.5 8.5a5 5 0 0 1 0 7" />
-          <path d="M19 5a9 9 0 0 1 0 14" />
-        </>
-      )}
-    </svg>
-  );
-}
 
 export function Hero() {
   preload("/posters/hero-16x9.jpg", { as: "image", fetchPriority: "high" });
@@ -36,7 +16,6 @@ export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const dimRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [muted, setMuted] = useState(true);
 
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end start"] });
   // Sticky phase is progress 0 → 0.33 (wrapper is 150svh, hero 100svh). The frame
@@ -78,14 +57,6 @@ export function Hero() {
     return () => io.disconnect();
   }, [reduce]);
 
-  const toggleSound = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = !v.muted;
-    setMuted(v.muted);
-    if (!v.muted) v.play().catch(() => {});
-  };
-
   return (
     <div ref={wrapRef} id="top" className={reduce ? "relative h-svh" : "relative h-[130svh] lg:h-[150svh]"}>
       <section className="sticky top-0 h-svh overflow-hidden" aria-label="Intro">
@@ -109,6 +80,7 @@ export function Hero() {
               aria-hidden="true"
               tabIndex={-1}
             >
+              {/* Hero montage: 12s Seedance 2.5 render, loop point cross-dissolved, silent by design. */}
               <source src="/video/hero-9x16.mp4" media="(max-aspect-ratio: 3/4)" type="video/mp4" />
               <source src="/video/hero-16x9.mp4" type="video/mp4" />
             </video>
@@ -123,10 +95,6 @@ export function Hero() {
           />
           <div ref={dimRef} className="pointer-events-none absolute inset-0 bg-base" style={{ opacity: 0 }} aria-hidden="true" />
         </motion.div>
-
-        <div className="wrap pointer-events-none absolute inset-x-0 top-24">
-          <PlaceholderTag>Placeholder montage · real reel montage pending</PlaceholderTag>
-        </div>
 
         <motion.div
           ref={contentRef}
@@ -175,16 +143,9 @@ export function Hero() {
           </span>
         </div>
 
-        <button
-          type="button"
-          onClick={toggleSound}
-          className="chip absolute bottom-8 right-6 z-10 !py-2.5 lg:right-10"
-          aria-pressed={!muted}
-          aria-label={muted ? "Unmute hero video" : "Mute hero video"}
-        >
-          <SoundIcon muted={muted} />
-          <span>Sound:[{muted ? "off" : "on"}]</span>
-        </button>
+        <p className="mono pointer-events-none absolute bottom-8 right-6 hidden text-muted/60 md:block lg:right-10" aria-hidden="true">
+          Loop:[on] · Sound:[none]
+        </p>
       </section>
     </div>
   );
