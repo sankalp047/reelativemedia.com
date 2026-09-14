@@ -1,118 +1,109 @@
-# Scroll video brief — sections 02 and 03
+# Scroll video brief — sections 02 and 03 ("The Month")
 
-Scope: the two homepage sections that currently animate in code.
+## What this is
 
-- **02 — The System**: H2 "One focused shoot can power your whole month.", intro line, the four steps (Strategy call, Planned shoot, Month of assets, Clear scorecard) and the closing line "One strategist. One calendar. One approval window."
-- **03 — What we do**: H2 "Create the content. Distribute it. Amplify what works.", the three cards (Create, Distribute, Amplify with their four bullets each) and the footer line.
+One scroll-scrubbed video that replaces the code-driven animation in **02 — The System** and **03 — What we do**. It is not a film. It is the site's own interface, animating: the same black, the same three typefaces, the same mono labels, chips, 1px lines and 24px cards the rest of the page uses. When it plays, the visitor should not be able to tell where the HTML ends and the video begins.
 
-Not in scope: the hero video behind the header. That stays as it is.
+All of the copy in those two sections lives inside the video: the eyebrows, the two H2s, the four steps and their one-liners, the closing line, the three cards with their twelve bullets, the platform chips, the footer line. The HTML keeps a visually-hidden copy of the same text for search engines and screen readers. Nothing else in these sections is code.
 
-What changes: every card visual, checklist, shot-list, asset grid, bar chart and hover effect in these two sections is deleted from the code. In their place is one full-viewport video that scrubs with scroll. The copy above stays as live HTML, positioned lower-left over the video, and fades in at fixed points in the scroll. The step numbers, chips and bullets also stay HTML. The video carries the imagery only.
+Made in After Effects (or an equivalent motion tool) by a motion designer, exported as a frame sequence, scrubbed with scroll. Scroll is the playhead.
 
----
+## The idea: one month, assembled in front of you
 
-## The idea: "One frame becomes a month"
+The whole piece is built around a single persistent object: a **month grid**, 4 weeks by 7 days, drawn as 28 dots on the right side of the frame. It appears in the first second and never leaves. Every step of the system does something visible to it:
 
-The whole sequence is one object, filmed in one continuous camera move, in one dark room. No cuts. Scroll is the dolly.
+1. The strategy call places the plan on it as tagged days.
+2. The shoot fills one day and produces twelve raw clips.
+3. The clips and graphics land across the four weeks until the month is full.
+4. The full month flattens into a scorecard.
 
-The object is a **frame**: a 9:16 slab of dark glass with a client reel playing inside it, edges catching a thin orange line of light. It is the unit of everything Reelative sells. Over the scroll the visitor watches that single frame get planned, shot, multiplied into a month, scored, and then split into the three things the agency does with it: create, distribute, amplify.
+Then the scorecard's "amplify" bar stretches into a horizontal pipeline with three nodes, Create → Distribute → Amplify, and section 03 plays out along that line.
 
-The register is Apple and Linear, not an advert: a black void, one warm practical light, glass, brushed metal, paper, screens. Nothing is labelled. There is no text, no interface, no logo, no people in the render. Every idea is an object and a light.
+Nothing in the piece is decorative. Every element on screen is a piece of information from the copy, or the structure that holds it.
 
----
+## Motion language (this is what makes it look expensive)
 
-## Scene by scene, tied to the copy
+- **No cuts, only transformations.** A card does not disappear and get replaced; it collapses into the thing that follows. The checklist becomes a day on the grid. The shot list becomes twelve tiles. The tiles become bars. The bar becomes the pipeline.
+- **Everything slides 24px and fades, draws, types, or counts.** Four verbs, used consistently. Cards slide up 24px with expo-out over 700 ms. Lines draw left to right. Mono labels type in at 30 characters per second with a blinking cursor. Numbers count up.
+- **Staggers of 60 ms** between siblings, never more. Groups arrive as one gesture.
+- **1px lines, 24px radius, 12px mono at 0.18em tracking.** Exactly the site tokens. Cards are `#12121A` on `#0A0A0F`, borders `rgba(255,255,255,0.10)`.
+- **Colour only as state.** The gradient appears only on the one thing that is active right now: a check filling, the current node, the amplify bar. Everything else is white, muted grey and 10% lines.
+- **Holds that breathe.** Eight rest points where the copy is fully on screen. At a hold the piece never freezes: a cursor blinks, a waveform moves, a counter idles, a dot pulses.
+- **Reverse-safe.** Scrolling up runs the same motion backwards. Typing untypes, lines undraw. That is fine and feels responsive; it is why there are no cuts.
+- **Never a pure white frame, never a flash.** Peak brightness 70%. No lens flares, no particles, no 3D, no glass, no camera moves other than a slow 2D pan and scale of the canvas between scenes.
 
-Master: 28 s at 24 fps, 672 frames. The section is pinned for about 560vh. "Hold" = the camera decelerates to almost still for ~1 s while the copy fades in, and the scene keeps breathing (flame, dust, a reflection sliding).
+## Scene by scene
+
+Master: 30 s at 30 fps, 900 frames, 2560×1440. The section pins for about 600vh. Scroll percentages below. Copy in bold is text that is inside the video.
 
 ### 02 — The System
 
-**Scene 1 · 0–8% · "One focused shoot can power your whole month."**
-Black. A single frame lies flat on a dark surface, right of center, a reel glowing inside it. One warm light from the upper right, dust drifting through the beam, a thin orange rim along the glass edge. The camera is high and slowly lowers.
-Hold A at 8%: eyebrow `02 — THE SYSTEM`, the H2 and the intro line appear lower-left.
+**Scene 1 · 0–10% · The claim**
+Black. `02 — THE SYSTEM` types in, mono, top left. The H2 **One focused shoot can power your whole month.** slides up line by line out of masks. Under it, **We plan the stories before the camera arrives, so every minute of capture produces usable content.** fades in. On the right, 28 dim dots draw in row by row, 4×7, with mono row labels **W1 W2 W3 W4** and the header **MONTH · 4 WEEKS · 28 DAYS**.
+Hold A at 10%.
 
-**Scene 2 · 8–20% · Step 01 Strategy call**
-Four brass pins rise out of the surface around the frame. Thin magenta threads of light connect them one after another, pin to pin, into a small constellation over the frame: the plan drawn before the camera arrives. The threads throw soft magenta reflections on the glass.
-Hold B at 20%: "Step 01 · Strategy call · Offers, priorities, audience and content angles."
+**Scene 2 · 10–24% · Step 01 Strategy call**
+The H2 shrinks and slides to the top-left as a small mono breadcrumb. A left rail appears with the four steps stacked, **01 — Strategy call** lit, the rest muted, a thin progress line beside them. A card slides in, centre-left: header **STEP 01 · STRATEGY CALL · 00:32:10** with a small live waveform, then four rows type in, **Offers · Priorities · Audience · Content angles**. As each row completes, its check fills with the gradient and a tag flies out of the card and lands on a day in the grid, lighting that dot magenta. Six dots lit by the end. Body line under the card: **Offers, priorities, audience and content angles.**
+Hold B at 24%: cursor blinking on the last row, waveform moving.
 
-**Scene 3 · 20–34% · Step 02 Planned shoot**
-The threads tighten and lift the frame upright. From the right a gimbal rig slides in as a dark silhouette and the frame locks into it as the monitor. Inside the glass a flame breathes; slow sparks drift up and out past the lens. The camera orbits about twenty degrees around the rig.
-Hold C at 34%: "Step 02 · Planned shoot · People, products, demonstrations and customer moments."
+**Scene 3 · 24–38% · Step 02 Planned shoot**
+The card collapses to one dot on the grid, and that dot enlarges into a new card: **STEP 02 · SHOOT DAY · THU 14**. A shot list of twelve rows types in, mono numbers **01–12**, each labelled from the four categories **PEOPLE · PRODUCTS · DEMONSTRATIONS · CUSTOMER MOMENTS** with a timecode. A progress chip counts **01 / 12 → 12 / 12** and a gradient bar fills. Every completed row produces a small 9:16 tile that stacks on the right of the card. Body line: **People, products, demonstrations and customer moments.**
+Hold C at 38%: twelve tiles stacked, bar full.
 
-**Scene 4 · 34–50% · Step 03 Month of assets (the wow beat)**
-The monitor splits. Twelve frames peel off it like cards dealt from a deck and fan out across the surface into a 4×3 grid: four columns for four weeks. Each frame settles with a slight overshoot and glows a different warm tint. Twelve smaller square slabs slide in underneath them, the graphics. The camera pulls back and rises to 45° so the whole month is in view.
-Hold D at 50%: "Step 03 · Month of assets · Reels, graphics, captions and platform variants."
+**Scene 4 · 38–52% · Step 03 Month of assets (the payoff)**
+The canvas scales out. The twelve tiles fly from the stack onto the grid, three per week, landing with a small overshoot. Twelve square tiles (the graphics) slide in beside them. A one-line caption bar draws under each reel. Behind each reel, two more tiles fan out slightly and mono chips **IG · FB · YT** appear: the platform variants. Header counters tick: **12 REELS · 12 GRAPHICS · 4 WEEKS**. Body line: **Reels, graphics, captions and platform variants.**
+Hold D at 52%: the full month, every day accounted for.
 
-**Scene 5 · 50–62% · Step 04 Clear scorecard**
-The camera rises toward top-down. Four of the frames lift to different heights and become a bar chart in glass. One dims and sinks back into the surface (stop). One pulses orange and lifts highest (amplify). The rest of the month sits beneath, quiet.
-Hold E at 62%: "Step 04 · Clear scorecard · What worked, what changed and what comes next." Then, four seconds of scroll later, the closing line "One strategist. One calendar. One approval window." while the bars slowly rotate as one.
+**Scene 5 · 52–64% · Step 04 Clear scorecard**
+The grid's rows flatten: every tile drops onto a baseline and becomes a bar. The bars sort themselves into four groups with mono labels and counts: **KEEP 5 · STOP 2 · TEST 3 · AMPLIFY 2**. Stop dims to 30%. Amplify lights with the gradient and grows a little taller. Body line types: **What worked, what changed and what comes next.**
+Hold E at 64%.
+
+**Scene 6 · 64–70% · The closing line**
+The scorecard shrinks to a thumbnail. Three tokens slide in on a single line: a person dot, a calendar icon (the grid shrunk to 28 pixels), a **48 HR** chip. Under them: **One strategist. One calendar. One approval window.**
+Hold F at 70%.
 
 ### 03 — What we do
 
-**Scene 6 · 62–74% · "Create the content. Distribute it. Amplify what works."**
-The camera cranes back and up. The surface ends; the twelve frames are now floating in a black void with a faint floor reflection. They gather into one tight stack, right of center, edges glinting.
-Hold F at 74%: eyebrow `03 — WHAT WE DO` and the H2.
+**Scene 7 · 70–76% · The pipeline**
+The amplify bar stretches horizontally across the whole frame into a 1px line with three nodes: **CREATE · DISTRIBUTE · AMPLIFY** in mono, the first lit. `03 — WHAT WE DO` types in. The H2 **Create the content. Distribute it. Amplify what works.** slides up in three lines, each line landing as its node lights.
+Hold G at 76%.
 
-**Scene 7 · 74–83% · Create**
-A blade of white light passes through the stack and trims it: rough edges fall away as glass shards and dissolve. Thin light bars slide in beneath each frame (captions) and a second, smaller stack forms beside it (graphics). Precise, satisfying, like a machine finishing a part.
-Card 1 fades in: Create · Short-form reels · Motion and static graphics · Scripts and captions · Multilingual adaptations.
+**Scene 8 · 76–84% · Create**
+The Create node opens into a card. Four bullets type in with checks: **Short-form reels · Motion and static graphics · Scripts and captions · Multilingual adaptations**. Each bullet has a 40px micro-widget beside it: a 9:16 frame with a play mark; a square that flips from motion to static; a caption bar that types; the caption bar switching script (Latin, then Devanagari, then Tamil).
 
-**Scene 8 · 83–92% · Distribute**
-The stack fans open and each frame flies to its own destination: a row of six floating phone-shaped glass shells that light up one by one as a frame lands in each. Six shells, six platforms, no logos.
-Card 2 fades in: Distribute · Instagram and Facebook · YouTube Shorts · TikTok where suitable · Google and WhatsApp assets. The six platform chips in the HTML light up in the same order as the shells.
+**Scene 9 · 84–92% · Distribute**
+The reel from Create duplicates into six and each copy travels along the line into one of six chips: **IG · FB · YT · TT · G · WA**. Chips light as they receive. Bullets type in: **Instagram and Facebook · YouTube Shorts · TikTok where suitable · Google and WhatsApp assets**.
 
-**Scene 9 · 92–100% · Amplify**
-From the brightest shell, concentric rings of light ripple outward through the void, magenta at the center to orange at the edge, the same ring motif as the FunAsia section further down the page. Each ring brightens the shells it crosses. The camera pulls to its widest.
-Card 3 fades in: Amplify · Paid social campaigns · Landing pages and lead tracking · FunAsia radio and social · Events and creator partnerships.
+**Scene 10 · 92–100% · Amplify and close**
+From the chips a second line rises. Four bullets with widgets: **Paid social campaigns** (a spend meter ticking), **Landing pages and lead tracking** (a small form card, a lead counter), **FunAsia radio and social** (a waveform with **104.1 FM** in mono), **Events and creator partnerships** (four avatar dots joining the line). The three nodes settle in a row. Under them: **Start with consistent content. Add media only where it improves the business result.**
+Hold H at 100%. The section unpins.
 
-**Hold G at 100%**: the rings fade to a slow pulse, the shells hang in a wide, calm composition with the lower-left dark. Footer line: "Start with consistent content. Add media only where it improves the business result." The section unpins and the page scrolls on to 04 — Results.
+## Holds and copy timing
 
----
-
-## Why this will read as expensive
-
-1. **One take.** No cuts anywhere in 28 seconds. The visitor is driving the camera; a cut would take the wheel away.
-2. **Holds that breathe.** Eight rest points, each with 12–24 frames of idle motion so a stopped scroll is never a frozen image.
-3. **Weight.** Every camera segment eases expo-out into its hold. Cards overshoot and settle. Glass has thickness, refraction and a little chromatic fringe.
-4. **One light.** A single warm practical from the upper right for the whole piece. Magenta and orange exist only as light sources and their reflections, never as a fill colour.
-5. **Discipline.** Lower-left third dark in every frame. Subjects right of center. Peak brightness 70%, no pure white. Film grain added in post.
-6. **Rendered for scrubbing.** Little or no motion blur baked in (60–90° shutter), because scroll speed is set by the visitor and 180° blur smears when they go slow. Depth of field carries the cinematic feel instead.
-
----
+| Hold | Scroll | On screen |
+|---|---|---|
+| A | 10% | 02 eyebrow, H2, intro, empty month grid |
+| B | 24% | Step 01 card complete, six days tagged |
+| C | 38% | Step 02 shot list 12/12, tile stack |
+| D | 52% | Full month: 12 reels, 12 graphics, captions, variants |
+| E | 64% | Scorecard: keep / stop / test / amplify |
+| F | 70% | One strategist. One calendar. One approval window. |
+| G | 76% | 03 eyebrow, H2, pipeline with three nodes |
+| H | 100% | Three cards complete, footer line |
 
 ## Delivery
 
-**Masters**
-- 16:9 at 1600×900, 672 frames, EXR or ProRes, ACES, graded with the hero clip's LUT so the page reads as one production.
-- A separate 4:5 mobile master at 1080×1350 with its own camera (subjects centered, copy sits below the video on phones). Not a crop.
-- 24 fps mp4 of each for the reduced-motion fallback.
-
-**What the page loads**
-- Desktop: every 2nd frame, 336 AVIF frames at 1600×900, ≈35 KB each, ≈12 MB, plus a 320×180 proxy sequence under 1 MB that loads first so scrubbing is instant; full frames swap in nearest-to-current first. WebP fallback.
-- Mobile: every 3rd frame, 224 frames at 1080×1350, ≈5 MB, loaded after the hero is interactive.
-- Mapping: about 15 px of scroll per frame, section pinned ~560vh, holds on fixed frame numbers so the HTML copy triggers exactly.
-- Reduced motion: no pinning, the mp4 plays per scene on entry, copy in a plain vertical stack.
-
----
-
-## How to produce it
-
-**Recommended: 3D render** (Blender Cycles or C4D Redshift). Roughly ten working days for a motion designer: two for a greyscale animatic of the camera path and holds, approved on the live site; five for materials, lighting and the two simulations (the card deal, the ring ripple); three for render, grade and export. Only this path gives exact holds and perfectly consistent objects.
-
-**Fast animatic through the Magnific connector** (1–2 days, pacing only): the eight hold frames as stills, then Seedance 2.5 image-to-video from hold to hold with start and end keyframes, 5 s each, "very slow dolly, no cuts, objects unchanged", concatenated and extracted to frames. Object detail will drift and holds cannot be guaranteed; it proves pacing, not the final look.
+- Master 2560×1440 at 30 fps, 900 frames, ProRes 4444 with the exact background `#0A0A0F` so edges vanish against the page. Fonts: Syne 700/800, Inter 400/500/600, JetBrains Mono 500, the same Google Fonts files the site loads.
+- Layout inside the video uses the site's 1320px container centred in a 1440-wide safe area, so text lines up with the page grid on the common desktop widths. Minimum text size 14px at 1x; mono labels 12px.
+- Page loads every 3rd frame: 300 AVIF frames at 2560×1440, ≈40 KB each, ≈12 MB, preceded by a 320-wide proxy sequence that scrubs instantly. WebP fallback.
+- Mobile: a separate 1080×1920 master with a single-column layout, same scenes, 200 frames, ≈5 MB. The grid becomes 7 columns by 4 rows at smaller scale; cards stack.
+- Reduced motion: the mp4 plays once per scene on entry; no pinning.
+- Visually-hidden HTML holds all the copy. Section pinned ~600vh, holds bound to exact frame numbers.
 
 ## Storyboard
 
-Generated Sep 14, 2026 with Seedream 5 Pro through the Magnific connector (900 credits for nine frames). They are look references for the render, not final frames.
+`docs/storyboard/` holds eight frames rendered in the site's real design system (tokens, fonts, components), one per hold. They are the layout targets for the motion designer: every element on screen at that hold, at its final position.
 
-| File | Hold | Scene |
-|---|---|---|
-| `storyboard/01-hold-A-one-frame.jpg` | A · 8% | One frame on the surface, the claim |
-| `storyboard/02-hold-B-strategy-call.jpg` | B · 20% | Brass pins and magenta threads, Step 01 |
-| `storyboard/03-hold-C-planned-shoot.jpg` | C · 34% | The frame as the rig's monitor, Step 02 |
-| `storyboard/04-hold-D-month-of-assets.jpg` | D · 50% | Twelve frames fanned into the month, Step 03 |
-| `storyboard/05-hold-E-scorecard.jpg` | E · 62% | Glass bar chart, one sunk, one lit, Step 04 |
-| `storyboard/06-hold-F-stack.jpg` | F · 74% | The stack in the void, 03 intro |
-| `storyboard/07-create.jpg` | 74–83% | Blade of light trimming the stack, Create |
-| `storyboard/08-distribute.jpg` | 83–92% | Frames flying out to the shells, Distribute |
-| `storyboard/09-hold-G-amplify.jpg` | G · 100% | Rings rippling through the shells, Amplify |
+## Fast path
+
+The whole piece can also be produced without After Effects: build the animation as a deterministic timeline in HTML/CSS with the site's own components, and render it offline frame by frame in headless Chrome into the same frame sequence. No animation code ships to the page; the output is identical to what a motion designer would deliver, and it guarantees the fonts, colours and pixel grid match the site exactly. Roughly two to three days.
