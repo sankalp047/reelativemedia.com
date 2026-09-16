@@ -22,7 +22,7 @@ export function FinalCTA() {
           <MaskedLines
             as="h2"
             lines={["Let's turn your", "business into", "content people", "remember."]}
-            className="t-display !text-[clamp(40px,6.2vw,92px)]"
+            className="t-display !text-[clamp(36px,6.2vw,92px)]"
           />
           <span id="audit-heading" className="sr-only">Book a content audit</span>
           <Reveal delay={0.2}>

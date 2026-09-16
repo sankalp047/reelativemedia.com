@@ -65,8 +65,9 @@ export function Nav() {
           aria-hidden="true"
         />
         <nav className="wrap relative flex h-full items-center justify-between" aria-label="Primary">
-          <a href="#top" className="relative z-10 flex items-center" aria-label="Reelative Media — home">
-            <Logo markSize={32} />
+          <a href="#top" className="relative z-10 flex shrink-0 items-center" aria-label="Reelative Media — home">
+            <span className="md:hidden"><Logo markSize={24} /></span>
+            <span className="hidden md:inline-flex"><Logo markSize={32} /></span>
           </a>
 
           <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 xl:flex">
@@ -79,7 +80,7 @@ export function Nav() {
             ))}
           </ul>
 
-          <div className="relative z-10 flex items-center gap-2">
+          <div className="relative z-10 flex shrink-0 items-center gap-2">
             <ButtonLink href="#audit" className="hidden md:inline-flex !py-3.5 !px-6 text-[15px]">
               Book a content audit
             </ButtonLink>
