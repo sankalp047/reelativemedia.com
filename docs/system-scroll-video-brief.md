@@ -106,9 +106,9 @@ Hold H at 100%. The section unpins.
 
 ## Status
 
-Built Sep 14, 2026 via the fast path below. Source of truth for copy and motion: `tools/scroll-video/scene.html`.
-Frames: 300 desktop (2560×1440) and 240 mobile (1080×1920) in `public/scroll/system/`, loaded by
-`src/components/home/ScrollVideo.tsx`. Re-render instructions are in the README.
+Generated Sep 16, 2026 with Seedance 2.5 Pro through the Magnific connector, as two videos: 16:9 for desktop and 9:16 for mobile. Each is seven 4-second clips, one per transition between holds, generated from exact start and end keyframes rendered out of `tools/scroll-video/scene.html`, so the typography at every hold is pixel-true and the motion between holds is real video. Clips are concatenated locally (28 s), sampled to 300 desktop and 240 mobile frames, and encoded to `public/scroll/system/`. Cost: 14 × 3,160 = 44,240 credits.
+
+`ScrollVideo.tsx` scrubs those frames. The scene file remains the source of the keyframes: change copy there, re-render the hold stills, and regenerate the affected clips.
 
 ## Fast path
 

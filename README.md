@@ -32,8 +32,11 @@ Design tokens live in `globals.css` under `@theme` (colors `base`, `elevated`, `
 
 ## Re-rendering the 02–03 scroll video
 
-The sections "The System" and "What we do" are a video, not code: every word and every motion lives in
-`tools/scroll-video/scene.html`. Edit copy or motion there, then:
+The sections "The System" and "What we do" are a video, not code. The final sequences were generated with
+Seedance 2.5 (Magnific) from keyframes rendered out of `tools/scroll-video/scene.html`: one 4 s clip per
+transition between the eight holds, concatenated and sampled to frames (see docs/system-scroll-video-brief.md).
+To change copy, edit the scene, re-render the hold stills (`--sample` with the hold times) and regenerate the
+affected clips. The scene can also be rendered directly as a fallback:
 
 ```bash
 npm run video:render -- --frames 300 --scale 1.3333333 --out /tmp/frames-desktop
