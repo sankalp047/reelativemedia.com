@@ -4,7 +4,7 @@ import { FilmStrip } from "@/components/home/FilmStrip";
 import { Statement } from "@/components/home/Statement";
 import { System } from "@/components/home/System";
 import { WhatWeDo } from "@/components/home/WhatWeDo";
-// import { Proof } from "@/components/home/Proof";
+import { Proof } from "@/components/home/Proof";
 import { Packages } from "@/components/home/Packages";
 import { FunAsia } from "@/components/home/FunAsia";
 import { FinalCTA } from "@/components/home/FinalCTA";
@@ -18,11 +18,11 @@ export default function Home() {
       <System />
       <WhatWeDo />
       <FilmStrip />
-      {/* Results is parked until there are real testimonials to show — all three
-          cards are still "to be filmed" placeholders. To restore: uncomment the
-          import and the line below, then set Packages back to "05 — Packages"
-          and FunAsia back to "06 — The FunAsia advantage". */}
-      {/* <Proof /> */}
+      {/* Three client reels, video only. The quote/name/business captions that
+          used to sit under each card were placeholder text and have been
+          removed rather than invented — see the note on TESTIMONIALS in
+          src/lib/data.ts for how to add real attribution back. */}
+      <Proof />
       <Packages />
       <FunAsia />
       <FinalCTA />

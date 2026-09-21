@@ -43,6 +43,11 @@ export function Footer() {
             <li><a href={SITE.phoneTel} className={FOOTER_LINK}>{SITE.phone}</a></li>
             <li><a href={`mailto:${SITE.email}`} className={FOOTER_LINK}>{SITE.email}</a></li>
             <li className="t-body !text-[15px] text-ash">{SITE.address}</li>
+            {/* Social icons — parked. All four were href="#", so they looked
+                like working links and went nowhere, which is worse than not
+                showing them: a visitor who clicks Instagram and stays on the
+                footer assumes the site is broken. Restore by uncommenting and
+                replacing each "#" with the real profile URL.
             <li className="flex gap-2 pt-3" aria-label="Social">
               {["IG", "FB", "YT", "LI"].map((s) => (
                 <a
@@ -55,6 +60,7 @@ export function Footer() {
                 </a>
               ))}
             </li>
+            */}
           </ul>
         </div>
       </div>

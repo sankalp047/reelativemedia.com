@@ -9,8 +9,10 @@ export type LightboxItem = {
   id: string;
   src: string;
   poster: string;
-  title: string;
-  meta: string;
+  /** Optional. Omitted while there is no real attribution to show — an empty
+   *  caption bar is better than one filled with invented names. */
+  title?: string;
+  meta?: string;
 };
 
 type Props = {
@@ -32,7 +34,17 @@ const DARK_CHIP =
   "chip !border-edge-dark !bg-well !text-bone hover:!border-bone hover:!bg-bone hover:!text-ink";
 
 /**
- * Full-height 9:16 player. Sound on. Arrow keys / vertical swipe move between
+ * Full-height 9:16 player. Sound on.
+ *
+ * Sources are Cloudflare Stream HLS manifests. Safari and iOS play .m3u8 in a
+ * plain <video>; Chrome and Firefox do not, so hls.js attaches Media Source
+ * Extensions for them. That is the whole reason the dependency is here — the
+ * alternative was Cloudflare's own iframe player, which would have replaced
+ * this component entirely and taken the swipe navigation, the mat, the caption
+ * overlay and the tap-for-sound handling with it.
+ *
+ * hls.js is imported dynamically inside the effect, so its ~35KB only loads for
+ * someone who actually opens a reel, not on first paint. Arrow keys / vertical swipe move between
  * items (TikTok-style); Esc, backdrop click, or swipe-down on the first item closes.
  * Loaded lazily via next/dynamic.
  */
@@ -71,15 +83,50 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
   useEffect(() => {
     const v = videoRef.current;
     if (!v || !item) return;
-    v.muted = false;
-    v.currentTime = 0;
-    v.play()
-      .then(() => setNeedsTapForSound(false))
-      .catch(() => {
-        v.muted = true;
-        setNeedsTapForSound(true);
-        v.play().catch(() => {});
+    let disposed = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let hls: any = null;
+
+    const start = () => {
+      if (disposed) return;
+      v.muted = false;
+      v.currentTime = 0;
+      v.play()
+        .then(() => setNeedsTapForSound(false))
+        .catch(() => {
+          // Autoplay with sound is blocked until the user has interacted with
+          // the page. Fall back to muted and offer the unmute chip.
+          v.muted = true;
+          setNeedsTapForSound(true);
+          v.play().catch(() => {});
+        });
+    };
+
+    if (v.canPlayType("application/vnd.apple.mpegurl")) {
+      // Safari and iOS: native HLS, no library needed.
+      v.src = item.src;
+      start();
+    } else {
+      void import("hls.js").then(({ default: Hls }) => {
+        if (disposed) return;
+        if (!Hls.isSupported()) {
+          // No MSE either — nothing will play this. Better to set the source and
+          // let the browser show its own error than to fail silently.
+          v.src = item.src;
+          start();
+          return;
+        }
+        hls = new Hls({ capLevelToPlayerSize: true });
+        hls.loadSource(item.src);
+        hls.attachMedia(v);
+        hls.on(Hls.Events.MANIFEST_PARSED, start);
       });
+    }
+
+    return () => {
+      disposed = true;
+      hls?.destroy();
+    };
   }, [item]);
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
@@ -105,7 +152,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
           onClick={onClose}
           role="dialog"
           aria-modal="true"
-          aria-label={`Reel: ${item.title}`}
+          aria-label={item.title ? `Reel: ${item.title}` : "Reel"}
           data-ground="dark"
           data-lenis-prevent
         >
@@ -147,16 +194,16 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
                 loop
                 controls={false}
                 preload="auto"
-              >
-                <source src={item.src} type="video/mp4" />
-              </video>
-              <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 p-6"
-                style={{ background: "linear-gradient(to top, rgba(10,9,7,0.88), rgba(10,9,7,0))" }}
-              >
-                <p className="t-h3 text-bone">{item.title}</p>
-                <p className="num mt-1.5 text-[12.5px] tracking-[0.04em] text-ash">{item.meta}</p>
-              </div>
+              />
+              {item.title || item.meta ? (
+                <div
+                  className="pointer-events-none absolute inset-x-0 bottom-0 p-6"
+                  style={{ background: "linear-gradient(to top, rgba(10,9,7,0.88), rgba(10,9,7,0))" }}
+                >
+                  {item.title ? <p className="t-h3 text-bone">{item.title}</p> : null}
+                  {item.meta ? <p className="num mt-1.5 text-[12.5px] tracking-[0.04em] text-ash">{item.meta}</p> : null}
+                </div>
+              ) : null}
             </div>
             {needsTapForSound ? (
               <button

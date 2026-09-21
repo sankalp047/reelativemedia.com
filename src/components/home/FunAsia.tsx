@@ -84,7 +84,7 @@ export function FunAsia() {
       <div data-parallax="-30" className="wrap relative z-10">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-end xl:gap-16">
           <div>
-            <Marker className="mb-5">05 — The FunAsia advantage</Marker>
+            <Marker className="mb-5">06 — The FunAsia advantage</Marker>
             <Kinetic
               as="h2"
               text={"More than a content agency.\nA media ecosystem."}

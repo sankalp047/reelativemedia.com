@@ -4,9 +4,8 @@ import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { SectionHead } from "@/components/site/SectionHead";
 import { Item, Stagger } from "@/components/ui/Reveal";
-import { PlaceholderTag } from "@/components/ui/Placeholder";
 import type { LightboxItem } from "@/components/home/Lightbox";
-import { TESTIMONIALS } from "@/lib/data";
+import { TESTIMONIALS, streamHls, streamPoster } from "@/lib/data";
 
 const Lightbox = dynamic(() => import("@/components/home/Lightbox"), { ssr: false });
 
@@ -25,12 +24,12 @@ export function Proof() {
   const [open, setOpen] = useState<number | null>(null);
   const items: LightboxItem[] = useMemo(
     () =>
+      /* No title/meta: the attribution was placeholder text, so the lightbox
+         renders the video alone rather than captioning it with invented names. */
       TESTIMONIALS.map((t) => ({
         id: t.id,
-        src: t.src,
-        poster: t.poster,
-        title: `${t.name} · ${t.business}`,
-        meta: `${t.city} · ${t.language}`,
+        src: streamHls(t.streamId),
+        poster: streamPoster(t.streamId),
       })),
     [],
   );
@@ -45,31 +44,22 @@ export function Proof() {
         <Stagger className="mt-14 grid gap-8 border-t border-rule pt-12 md:grid-cols-3 lg:mt-20" amount={0.15}>
           {TESTIMONIALS.map((t, i) => (
             <Item key={t.id}>
-              <figure className="flex flex-col">
+              <div className="flex flex-col">
                 <button
                   type="button"
                   onClick={() => setOpen(i)}
                   className="group relative w-full overflow-hidden rounded-[2px] border border-edge bg-linen"
                   style={{ aspectRatio: "9 / 16", rotate: i % 2 === 0 ? "-1.4deg" : "1.2deg" }}
                   data-cursor="PLAY"
-                  aria-label={`Play testimonial from ${t.name}, ${t.business}`}
+                  aria-label={`Play reel ${i + 1} of ${TESTIMONIALS.length}`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={t.poster} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-                  <PlaceholderTag className="absolute left-3 top-3">To be filmed</PlaceholderTag>
+                  <img src={streamPoster(t.streamId)} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                   <span className="absolute inset-0 flex items-center justify-center">
                     <PlayButton />
                   </span>
-                  <span className="mono absolute bottom-3 left-3 rounded-[2px] bg-bone px-2.5 py-1 text-ink">
-                    {t.language}
-                  </span>
                 </button>
-                <figcaption className="mt-5">
-                  <blockquote className="t-body text-ink">“{t.quote}”</blockquote>
-                  <p className="t-h3 mt-4 text-ink">{t.name}</p>
-                  <p className="mono mt-1 text-slate">{t.business} · {t.city}</p>
-                </figcaption>
-              </figure>
+              </div>
             </Item>
           ))}
         </Stagger>

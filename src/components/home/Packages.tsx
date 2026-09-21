@@ -11,7 +11,7 @@ export function Packages() {
       aria-labelledby="packages-heading"
     >
       <div data-parallax="-30" className="wrap">
-        <SectionHead eyebrow="04 — Packages" lines={["Choose the package that", "matches your growth stage."]} />
+        <SectionHead eyebrow="05 — Packages" lines={["Choose the package that", "matches your growth stage."]} />
         <span id="packages-heading" className="sr-only">Packages</span>
 
         <div className="mt-14 lg:mt-20">

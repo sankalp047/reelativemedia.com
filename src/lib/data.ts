@@ -288,37 +288,38 @@ export const SCORECARD = [
 export const SCORECARD_CALLOUT = "No dashboard overload. Your strategist explains what to keep, stop, test and amplify next month.";
 
 /** PLACEHOLDER testimonials. Three filmed client testimonials are required before launch. */
+/**
+ * Cloudflare Stream. The videos are NOT in /public on purpose: Render serves
+ * that folder with max-age=0 and Cloudflare marks it DYNAMIC, so every visitor
+ * would pull ~7MB of testimonial straight from a single 0.5-CPU instance, and
+ * every scrub of the timeline is another range request to the same box. Stream
+ * transcodes to an adaptive ladder (1080x1920 down to 240x426) and serves it
+ * from the edge, so the origin carries none of it.
+ *
+ * Only the id is stored. Manifest and thumbnail URLs are derived below, so the
+ * account subdomain lives in exactly one place.
+ */
+const STREAM_HOST = "customer-fmhmyy4djjklusvj.cloudflarestream.com";
+export const streamHls = (id: string) => `https://${STREAM_HOST}/${id}/manifest/video.m3u8`;
+/** Poster frame. Change WHICH frame in the Stream dashboard, not here. */
+export const streamPoster = (id: string) => `https://${STREAM_HOST}/${id}/thumbnails/thumbnail.jpg`;
+
+/**
+ * Three client reels, by Stream id only.
+ *
+ * The quote / name / business / city / language fields are deliberately gone.
+ * They held placeholder text ("Owner name", "Placeholder quote") that would have
+ * shipped as fake attribution on a live business site, and the cards now show
+ * the video alone instead.
+ *
+ * To reintroduce attribution: add the fields back here with REAL values, pass
+ * title and meta in Proof.tsx, and the lightbox caption renders itself — it is
+ * already conditional on those two being present.
+ */
 export const TESTIMONIALS = [
-  {
-    id: "t1",
-    quote: "Placeholder quote. Real testimonial to be filmed with a restaurant owner.",
-    name: "Owner name",
-    business: "Restaurant",
-    city: "Frisco, TX",
-    language: "English",
-    src: "/video/testimonial-01.mp4",
-    poster: "/posters/testimonial-01.jpg",
-  },
-  {
-    id: "t2",
-    quote: "Placeholder quote. Real testimonial to be filmed with a clinic director.",
-    name: "Owner name",
-    business: "Dental clinic",
-    city: "Plano, TX",
-    language: "Hindi · English subtitles",
-    src: "/video/testimonial-02.mp4",
-    poster: "/posters/testimonial-02.jpg",
-  },
-  {
-    id: "t3",
-    quote: "Placeholder quote. Real testimonial to be filmed with a retail owner.",
-    name: "Owner name",
-    business: "Jewelry boutique",
-    city: "Irving, TX",
-    language: "English",
-    src: "/video/testimonial-03.mp4",
-    poster: "/posters/testimonial-03.jpg",
-  },
+  { id: "t1", streamId: "a00017ba33ff639bf2b5864f1bab212b" },
+  { id: "t2", streamId: "fa5b5bedc694492611b3bd5c9c873a23" },
+  { id: "t3", streamId: "02fc0c4c2158dd913a80992a3c907923" },
 ] as const;
 
 /* ------------------------------------------------------------------ */
