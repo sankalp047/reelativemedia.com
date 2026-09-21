@@ -1,7 +1,7 @@
 // Encodes rendered PNG frames into the sequences the page loads.
 // usage: node tools/scroll-video/encode.mjs --in <pngDir> --out public/scroll/system/desktop --name desktop [--quality 58] [--proxy 240]
 import sharp from "sharp";
-import { readdirSync, mkdirSync, writeFileSync, existsSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 
 const args = Object.fromEntries(process.argv.slice(2).map((a, i, arr) => a.startsWith("--") ? [a.slice(2), arr[i + 1] ?? "true"] : []).filter(Boolean));

@@ -9,10 +9,15 @@ type Props = {
   onOpen: () => void;
   className?: string;
   style?: React.CSSProperties;
+  index?: number;
 };
 
-/** 9:16 reel card. Plays muted on hover (desktop) or when centred (touch). */
-export function ReelCard({ reel, onOpen, className = "", style }: Props) {
+/**
+ * 9:16 reel, mounted like a print: a linen mat, a 1px decorative rule around the
+ * image, and an `edge` boundary on the outside because the whole card is a button.
+ * Plays muted on hover (desktop) or when centred (touch).
+ */
+export function ReelCard({ reel, onOpen, className = "", style, index }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const play = () => {
@@ -36,57 +41,52 @@ export function ReelCard({ reel, onOpen, className = "", style }: Props) {
   }, []);
 
   return (
-    <article
-      className={`group relative shrink-0 overflow-hidden rounded-[24px] bg-elevated ${className}`}
-      style={{ aspectRatio: "9 / 16", ...style }}
-      data-cursor="PLAY"
-      onPointerEnter={(e) => e.pointerType === "mouse" && play()}
-      onPointerLeave={(e) => e.pointerType === "mouse" && pause()}
-    >
-      <button
-        type="button"
-        onClick={onOpen}
-        className="absolute inset-0 h-full w-full text-left"
-        aria-label={`Play reel: ${reel.client}, ${reel.category}`}
+    <figure className={`group relative shrink-0 ${className}`} style={style}>
+      <div
+        className="@container relative overflow-hidden rounded-[2px] border border-edge bg-linen p-[5px] shadow-[0_3px_12px_-8px_rgba(25,21,16,0.30)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5 group-hover:shadow-[0_26px_52px_-30px_rgba(25,21,16,0.45)]"
+        style={{ aspectRatio: "9 / 16" }}
+        data-cursor="PLAY"
+        onPointerEnter={(e) => e.pointerType === "mouse" && play()}
+        onPointerLeave={(e) => e.pointerType === "mouse" && pause()}
       >
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-          poster={reel.poster}
-          muted
-          loop
-          playsInline
-          preload="none"
-          aria-hidden="true"
-          tabIndex={-1}
+        <button
+          type="button"
+          onClick={onOpen}
+          className="absolute inset-[5px] overflow-hidden rounded-[1px] text-left ring-1 ring-rule"
+          aria-label={`Play reel: ${reel.client}, ${reel.category}`}
         >
-          <source src={reel.src} type="video/mp4" />
-        </video>
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "linear-gradient(to top, rgba(10,10,15,0.85) 0%, rgba(10,10,15,0.1) 45%, rgba(10,10,15,0) 100%)" }}
-          aria-hidden="true"
-        />
+          <video
+            ref={videoRef}
+            className="absolute inset-0 h-full w-full object-cover"
+            poster={reel.poster}
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-hidden="true"
+            tabIndex={-1}
+          >
+            <source src={reel.src} type="video/mp4" />
+          </video>
 
-        {reel.placeholder ? (
-          <PlaceholderTag className="absolute left-4 top-4">Placeholder reel</PlaceholderTag>
-        ) : null}
-        {reel.views ? (
-          <span className="chip absolute right-4 top-4 !border-white/15 !bg-black/35 !px-3 !py-1.5 !text-[10px] !text-white/85 backdrop-blur-sm">
-            {reel.views}
-          </span>
-        ) : null}
-
-        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-5">
-          <span className="text-[16px] font-semibold leading-tight text-primary">{reel.client}</span>
-          <span className="flex items-center gap-2">
-            <span className="chip !px-2.5 !py-1 !text-[10px]">{reel.category}</span>
-            <span className="mono text-[10px] text-white/55">
-              {reel.city} · [{reel.duration}]
+          {reel.placeholder ? <PlaceholderTag className="absolute left-3 top-3">Placeholder</PlaceholderTag> : null}
+          {reel.views ? (
+            <span className="eyebrow absolute right-3 top-3 rounded-[2px] bg-chalk px-2.5 py-1.5 text-ink">
+              {reel.views}
             </span>
+          ) : null}
+        </button>
+      </div>
+
+      <figcaption className="mt-3.5 flex items-baseline gap-2.5">
+        {index !== undefined ? <span className="mono shrink-0 text-slate">[{String(index + 1).padStart(2, "0")}]</span> : null}
+        <span className="min-w-0">
+          <span className="t-h3 block !text-[16px] text-ink">{reel.client}</span>
+          <span className="mono mt-1.5 block text-slate">
+            {reel.city} · {reel.category} · [{reel.duration}]
           </span>
-        </div>
-      </button>
-    </article>
+        </span>
+      </figcaption>
+    </figure>
   );
 }

@@ -21,6 +21,17 @@ type Props = {
 };
 
 /**
+ * `chip` is tuned for the paper grounds (graphite on alabaster, hover to an ink
+ * fill). Inside the lightbox every chip sits on a near-obsidian scrim, so the
+ * whole set is re-pointed at the dark half of the palette: a `well` fill that is
+ * effectively invisible against the scrim, carried by an `edge-dark` boundary at
+ * 3.23:1 — the interactive-boundary token, not the decorative one — with bone
+ * type at 15.11:1, inverting to a bone fill with ink type on hover.
+ */
+const DARK_CHIP =
+  "chip !border-edge-dark !bg-well !text-bone hover:!border-bone hover:!bg-bone hover:!text-ink";
+
+/**
  * Full-height 9:16 player. Sound on. Arrow keys / vertical swipe move between
  * items (TikTok-style); Esc, backdrop click, or swipe-down on the first item closes.
  * Loaded lazily via next/dynamic.
@@ -85,7 +96,8 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
     <AnimatePresence>
       {open && item ? (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm"
+          style={{ backgroundColor: "rgba(10, 9, 7, 0.92)" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -94,26 +106,27 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
           role="dialog"
           aria-modal="true"
           aria-label={`Reel: ${item.title}`}
+          data-ground="dark"
           data-lenis-prevent
         >
           <button
             type="button"
             onClick={onClose}
-            className="chip absolute right-5 top-5 z-10 !bg-black/40"
+            className={`${DARK_CHIP} absolute right-5 top-5 z-10`}
             aria-label="Close"
           >
             Close [esc]
           </button>
 
           <div className="absolute left-5 top-5 z-10 flex items-center gap-3">
-            <span className="mono text-white/80">
+            <span className="mono text-ash">
               Reel [{String(index + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}]
             </span>
           </div>
 
           <motion.div
             key={item.id}
-            className="relative aspect-[9/16] h-[min(88svh,900px)] max-w-[94vw] overflow-hidden rounded-[24px] bg-elevated shadow-[0_40px_120px_rgba(0,0,0,0.6)]"
+            className="relative aspect-[9/16] h-[min(88svh,900px)] max-w-[94vw] rounded-[2px] bg-linen p-[8px] shadow-[0_44px_120px_-24px_rgba(4,3,2,0.70)]"
             initial={{ opacity: 0, scale: 0.96, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -16 }}
@@ -124,21 +137,31 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
             onDragEnd={onDragEnd}
             onClick={(e) => e.stopPropagation()}
           >
-            <video
-              ref={videoRef}
-              className="h-full w-full object-cover"
-              poster={item.poster}
-              playsInline
-              loop
-              controls={false}
-              preload="auto"
-            >
-              <source src={item.src} type="video/mp4" />
-            </video>
+            {/* The mat's inner hairline. Decorative, so it takes `rule`, not `edge`. */}
+            <div className="relative h-full w-full overflow-hidden rounded-[1px] ring-1 ring-rule">
+              <video
+                ref={videoRef}
+                className="h-full w-full object-cover"
+                poster={item.poster}
+                playsInline
+                loop
+                controls={false}
+                preload="auto"
+              >
+                <source src={item.src} type="video/mp4" />
+              </video>
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 p-6"
+                style={{ background: "linear-gradient(to top, rgba(10,9,7,0.88), rgba(10,9,7,0))" }}
+              >
+                <p className="t-h3 text-bone">{item.title}</p>
+                <p className="num mt-1.5 text-[12.5px] tracking-[0.04em] text-ash">{item.meta}</p>
+              </div>
+            </div>
             {needsTapForSound ? (
               <button
                 type="button"
-                className="chip absolute left-1/2 top-5 -translate-x-1/2 !bg-black/50"
+                className={`${DARK_CHIP} absolute left-1/2 top-6 -translate-x-1/2`}
                 onClick={() => {
                   const v = videoRef.current;
                   if (!v) return;
@@ -149,20 +172,13 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
                 Tap for sound
               </button>
             ) : null}
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 p-6"
-              style={{ background: "linear-gradient(to top, rgba(10,10,15,0.85), rgba(10,10,15,0))" }}
-            >
-              <p className="text-[17px] font-semibold">{item.title}</p>
-              <p className="mono mt-1 text-white/60">{item.meta}</p>
-            </div>
           </motion.div>
 
           <div className="absolute inset-x-0 bottom-5 hidden items-center justify-center gap-6 md:flex" onClick={(e) => e.stopPropagation()}>
-            <button type="button" className="chip" onClick={prev} aria-label="Previous reel">
+            <button type="button" className={DARK_CHIP} onClick={prev} aria-label="Previous reel">
               ← Prev
             </button>
-            <button type="button" className="chip" onClick={next} aria-label="Next reel">
+            <button type="button" className={DARK_CHIP} onClick={next} aria-label="Next reel">
               Next →
             </button>
           </div>

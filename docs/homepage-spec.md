@@ -1,3 +1,8 @@
+> **SUPERSEDED (17 Sep 2026).** This spec describes the original dark, cinematic
+> direction. The site was redesigned to the light "poster" system — see
+> [design-system.md](design-system.md). The content, section order and asset
+> list below are still accurate; the colours, fonts and motion notes are not.
+
 # Reelative Media — Homepage Design Spec
 
 Reelative Media is a short-form content and social media agency in Dallas–Fort Worth, owned by FunAsia Network (South Asian and multicultural radio group). The homepage must *prove* the pitch "content people remember" rather than describe it. The site is the portfolio.

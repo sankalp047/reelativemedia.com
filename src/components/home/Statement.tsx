@@ -1,49 +1,61 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { Kinetic } from "@/components/ui/Kinetic";
+import { Reveal } from "@/components/ui/Reveal";
 
-const COPY =
-  "The problem is consistency, not creativity. Posting gets pushed behind customers, staff and operations. Ideas, footage, approvals and publishing live in different places. Reelative gives you the team, calendar and rhythm to stay visible every month.";
-
-/** Words fill from 18% to 100% opacity as the reader scrolls (scrubbed). */
+/**
+ * The full-bleed claim: one oversized kinetic line in the italic Didone,
+ * then the three supporting lines set as real sentences.
+ *
+ * Sections separate by VALUE rather than hue, and this is the deepest step —
+ * flat noir carrying the one generated photographic ground on the site at
+ * half strength. The ground is asserted at build time to stay under the
+ * --scrim-floor luminance ceiling, so every colour below is quoted against
+ * that floor rather than against a photographic average.
+ *
+ * background-attachment is SCROLL, never fixed: fixed thrashes on iOS and
+ * fights Lenis.
+ */
 export function Statement() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      const words = gsap.utils.toArray<HTMLElement>(".statement-word", el);
-      gsap.fromTo(
-        words,
-        { opacity: 0.18 },
-        {
-          opacity: 1,
-          stagger: 0.06,
-          ease: "none",
-          scrollTrigger: { trigger: el, start: "top top", end: "bottom bottom", scrub: 0.4 },
-        },
-      );
-    });
-    return () => mm.revert();
-  }, []);
-
-  const words = COPY.split(" ");
-
   return (
-    <section ref={ref} className="relative z-10 bg-base motion-safe:h-[170vh]" aria-label="Why consistency matters">
-      <div className="sticky top-0 flex h-svh items-center">
-        <div className="wrap">
-          <p className="t-statement mx-auto max-w-[1100px] text-center">
-            {words.map((w, i) => (
-              <span key={i} className="statement-word inline-block whitespace-pre">
-                {w}
-                {i < words.length - 1 ? " " : ""}
-              </span>
-            ))}
-          </p>
+    <section
+      className="relative z-10 overflow-hidden bg-noir text-bone section-pad"
+      data-ground="dark"
+      aria-label="What we bring"
+    >
+      {/* The salon ground. Normal blending at 0.5 can only interpolate between
+          noir and the file's asserted maximum, so the composite stays below
+          the scrim floor. Phones get the 1200px cut.
+          A CSS background rather than an <img>: it is purely decorative, and
+          bg-cover/bg-center is the same declaration FinalCTA uses. */}
+      <div
+        aria-hidden="true"
+        data-parallax="110"
+        className="pointer-events-none absolute inset-x-0 -inset-y-[14%] z-0 bg-[url('/images/ground/salon-1200.webp')] bg-cover bg-center bg-no-repeat opacity-50 md:bg-[url('/images/ground/salon-2400.webp')]"
+      />
+
+      <div data-parallax="-40" className="wrap relative z-10">
+        <p className="eyebrow mb-8 text-ash">What we bring</p>
+        <Kinetic
+          as="p"
+          text={"Consistency\nand creativity."}
+          className="t-statement max-w-[15ch]"
+          stagger={0.024}
+        />
+        <div className="mt-12 grid gap-8 border-t border-rule-dark pt-8 md:grid-cols-3 lg:mt-20">
+          {[
+            "Posting gets pushed behind customers, staff and operations.",
+            "Ideas, footage, approvals and publishing live in different places.",
+            "Reelative gives you the team, calendar and rhythm to stay visible every month.",
+          ].map((line, i) => (
+            <Reveal key={line} delay={i * 0.08}>
+              <p className="t-body flex gap-3 text-bone-dim">
+                {/* A counting sequence is the one place the accent repeats. */}
+                <span className="mono shrink-0 text-cognac-hi">[{String(i + 1).padStart(2, "0")}]</span>
+                <span>{line}</span>
+              </p>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>

@@ -1,31 +1,31 @@
-import { Nav } from "@/components/home/Nav";
 import { Hero } from "@/components/home/Hero";
 import { TrustMarquee } from "@/components/home/TrustMarquee";
-import { Work } from "@/components/home/Work";
+import { FilmStrip } from "@/components/home/FilmStrip";
 import { Statement } from "@/components/home/Statement";
-import { ScrollVideo } from "@/components/home/ScrollVideo";
-import { Proof } from "@/components/home/Proof";
+import { System } from "@/components/home/System";
+import { WhatWeDo } from "@/components/home/WhatWeDo";
+// import { Proof } from "@/components/home/Proof";
 import { Packages } from "@/components/home/Packages";
 import { FunAsia } from "@/components/home/FunAsia";
 import { FinalCTA } from "@/components/home/FinalCTA";
-import { Footer } from "@/components/home/Footer";
 
 export default function Home() {
   return (
-    <>
-      <Nav />
-      <main className="relative">
-        <Hero />
-        <TrustMarquee />
-        <Work />
-        <Statement />
-        <ScrollVideo />
-        <Proof />
-        <Packages />
-        <FunAsia />
-        <FinalCTA />
-      </main>
-      <Footer />
-    </>
+    <main className="relative">
+      <Hero />
+      <TrustMarquee />
+      <Statement />
+      <System />
+      <WhatWeDo />
+      <FilmStrip />
+      {/* Results is parked until there are real testimonials to show — all three
+          cards are still "to be filmed" placeholders. To restore: uncomment the
+          import and the line below, then set Packages back to "05 — Packages"
+          and FunAsia back to "06 — The FunAsia advantage". */}
+      {/* <Proof /> */}
+      <Packages />
+      <FunAsia />
+      <FinalCTA />
+    </main>
   );
 }

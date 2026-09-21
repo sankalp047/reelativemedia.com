@@ -16,6 +16,14 @@ const getServerSnapshot = () => false;
 /**
  * Desktop-only custom cursor: a 12px dot that grows to a 72px labelled circle
  * over any element carrying `data-cursor="PLAY" | "DRAG" | ...`.
+ *
+ * Two-part construction, because the cursor crosses both halves of the palette
+ * in one drag: an INK disc, which carries it on alabaster/chalk/linen (16.10:1
+ * on the page ground), inside a 1px ALABASTER ring, which carries it on the
+ * 35mm stock in section 3 (17.74:1) where the disc itself is 1.10:1 and would
+ * otherwise vanish under the `data-cursor="DRAG"` hand-off in DesktopStrip.
+ * The label is alabaster either way. `mix-blend-difference` is deliberately
+ * gone: differenced against warm paper it returned a near-white disc.
  */
 export function Cursor() {
   const reduce = useReducedMotion();
@@ -67,11 +75,11 @@ export function Cursor() {
   return (
     <motion.div
       aria-hidden="true"
-      className="pointer-events-none fixed left-0 top-0 z-[9999] flex items-center justify-center rounded-full mix-blend-difference"
+      className="pointer-events-none fixed left-0 top-0 z-[9999] flex items-center justify-center rounded-full"
       style={{ x: sx, y: sy, translateX: "-50%", translateY: "-50%" }}
     >
       <motion.div
-        className="flex items-center justify-center rounded-full bg-white text-black"
+        className="flex items-center justify-center rounded-full bg-ink text-alabaster ring-1 ring-alabaster"
         animate={{ width: size, height: size, scale: down ? 0.85 : 1 }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
       >

@@ -1,5 +1,7 @@
 /**
  * Clearly-labelled placeholder block for assets that do not exist yet.
+ * Reads as an empty frame on paper, never as a dark hole — see the
+ * `placeholder-block` utility in globals.css.
  * Never ships to production with content behind it.
  */
 export function Placeholder({
@@ -7,7 +9,7 @@ export function Placeholder({
   sub,
   className = "",
   ratio = "9 / 16",
-  rounded = "rounded-[24px]",
+  rounded = "rounded-[2px]",
 }: {
   label: string;
   sub?: string;
@@ -22,8 +24,8 @@ export function Placeholder({
       role="img"
       aria-label={`Placeholder: ${label}`}
     >
-      <span className="mono text-muted">{label}</span>
-      {sub ? <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted/60">{sub}</span> : null}
+      <span className="mono text-graphite">{label}</span>
+      {sub ? <span className="mono text-slate">{sub}</span> : null}
     </div>
   );
 }
@@ -31,7 +33,7 @@ export function Placeholder({
 export function PlaceholderTag({ children = "Placeholder", className = "" }: { children?: string; className?: string }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full border border-dashed border-white/25 bg-black/40 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-white/70 backdrop-blur-sm ${className}`}
+      className={`mono inline-flex items-center rounded-[2px] border border-dashed border-edge bg-chalk px-2 py-1 text-graphite ${className}`}
     >
       {children}
     </span>

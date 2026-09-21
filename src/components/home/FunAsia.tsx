@@ -2,19 +2,56 @@
 
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { Eyebrow } from "@/components/ui/Eyebrow";
-import { Item, MaskedLines, Reveal, Stagger } from "@/components/ui/Reveal";
-import { Placeholder } from "@/components/ui/Placeholder";
+import { Marker } from "@/components/ui/Marker";
+import { Kinetic } from "@/components/ui/Kinetic";
+import { Icon, type IconName } from "@/components/ui/Icon";
+import { Item, Stagger } from "@/components/ui/Reveal";
 import { FUNASIA_BRANDS } from "@/lib/data";
+
+/**
+ * Sized to one screen on desktop, because the sections from the system down
+ * stack as cards and anything past the fold gets clipped by the next one.
+ *
+ * This section used to be a dark well. It is paper now: the network
+ * credentials are the most concrete claim on the page and they should read as
+ * a document, not as a mood. The five stations carry the section — they are
+ * the one claim here that needs no hedging, so they are set in the display
+ * face, in title case, as the proper nouns they are. The placeholder event
+ * photos and creator portrait circles that used to fill two of the tiles are
+ * gone — fake pictures were weakening the one part of the page that is real.
+ */
+
+const PILLARS: { icon: IconName; title: string; body: string }[] = [
+  {
+    icon: "radio",
+    title: "Radio brands",
+    body: "Five stations reaching established South Asian and multicultural audiences across DFW.",
+  },
+  {
+    icon: "chat",
+    title: "Social channels",
+    body: "Amplify your content through FunAsia's own platforms and engaged community following.",
+  },
+  {
+    icon: "calendar",
+    title: "Events & activations",
+    body: "Connect your brand to live events, cultural moments and community gatherings.",
+  },
+  {
+    icon: "people",
+    title: "Creator partnerships",
+    body: "Tap into FunAsia talent and creator relationships to extend your message with authentic voices.",
+  },
+];
 
 function Rings() {
   const rings = [140, 300, 460, 620, 780, 940, 1100, 1260];
   return (
     <svg viewBox="0 0 2600 2600" className="h-full w-full" aria-hidden="true">
       {rings.map((r) => (
-        <circle key={r} cx="1300" cy="1300" r={r} fill="none" stroke="#fff" strokeWidth="1.5" />
+        <circle key={r} cx="1300" cy="1300" r={r} fill="none" stroke="rgba(25,21,16,0.07)" strokeWidth="3" />
       ))}
-      <circle cx="1300" cy="1300" r="40" fill="#fff" opacity="0.6" />
+      <circle cx="1300" cy="1300" r="40" fill="rgba(25,21,16,0.07)" />
     </svg>
   );
 }
@@ -27,9 +64,15 @@ export function FunAsia() {
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1.05, 0.95]);
 
   return (
-    <section ref={ref} id="funasia" className="relative z-10 overflow-hidden bg-funasia section-pad" aria-labelledby="funasia-heading">
+    <section
+      ref={ref}
+      id="funasia"
+      className="relative z-10 overflow-hidden bg-alabaster py-16 text-ink lg:flex lg:h-svh lg:flex-col lg:justify-center lg:py-0"
+      aria-labelledby="funasia-heading"
+    >
+      {/* A dark line on paper at 0.07 needs the help, hence 0.5 rather than 0.16. */}
       <motion.div
-        className="pointer-events-none absolute -right-[30vw] top-1/2 aspect-square w-[110vw] -translate-y-1/2 opacity-[0.06] md:-right-[25vw] md:w-[80vw]"
+        className="pointer-events-none absolute -right-[26vw] top-1/2 aspect-square w-[80vw] -translate-y-1/2 opacity-[0.5]"
         style={reduce ? undefined : { rotate, scale }}
         aria-hidden="true"
       >
@@ -38,77 +81,50 @@ export function FunAsia() {
         </div>
       </motion.div>
 
-      <div className="wrap relative">
-        <Eyebrow className="mb-5">06 — The FunAsia advantage</Eyebrow>
-        <MaskedLines as="h2" lines={["More than a content agency.", "A media ecosystem."]} className="t-h2" />
-        <span id="funasia-heading" className="sr-only">The FunAsia advantage</span>
-        <Reveal delay={0.15}>
-          <p className="mt-7 max-w-[640px] text-muted">
-            Reelative Media is a FunAsia company, giving clients access to one of the most established multicultural media networks in DFW.
-          </p>
-        </Reveal>
+      <div data-parallax="-30" className="wrap relative z-10">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-end xl:gap-16">
+          <div>
+            <Marker className="mb-5">05 — The FunAsia advantage</Marker>
+            <Kinetic
+              as="h2"
+              text={"More than a content agency.\nA media ecosystem."}
+              className="t-h2 !text-[clamp(26px,2.9vw,46px)]"
+            />
+            <span id="funasia-heading" className="sr-only">The FunAsia advantage</span>
+            <p className="t-lead mt-6 text-graphite">
+              Reelative Media is a FunAsia company, giving clients access to one of the most established multicultural
+              media networks in DFW.
+            </p>
+          </div>
 
-        <Stagger className="mt-14 grid gap-5 md:grid-cols-2 lg:mt-20" amount={0.15}>
-          <Item className="h-full">
-            <article className="flex h-full flex-col rounded-[24px] bg-white/[0.04] p-8 lg:p-10">
-              <div className="flex flex-wrap gap-2">
-                {FUNASIA_BRANDS.map((b) => (
-                  <span key={b.id} className="flex flex-col rounded-[12px] border border-dashed border-white/20 px-4 py-3">
-                    <span className="font-display text-[15px] font-extrabold">{b.name}</span>
-                    <span className="mono text-[9px] text-muted/70">{b.meta} · logo pending</span>
-                  </span>
-                ))}
-              </div>
-              <h3 className="t-h3 mt-8">Radio brands</h3>
-              <p className="mt-3 text-muted">FunAsia radio reaches established South Asian and multicultural audiences across DFW.</p>
-            </article>
-          </Item>
+          {/* The stations, listed plainly. This is the concrete part. */}
+          <ul className="flex flex-col border-t border-rule">
+            {FUNASIA_BRANDS.map((b, i) => (
+              <li key={b.id} className="flex items-baseline justify-between gap-4 border-b border-rule py-2.5">
+                <span className="flex items-baseline gap-3">
+                  <span className="mono text-slate">{String(i + 1).padStart(2, "0")}</span>
+                  {/* Title case, not caps: these are proper nouns, and a tracked
+                      Didone caps line is how this pairing goes wrong. */}
+                  <span className="t-h2 !text-[clamp(20px,2vw,28px)] leading-none text-ink">{b.name}</span>
+                </span>
+                <span className="mono shrink-0 text-slate">{b.meta}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          <Item className="h-full">
-            <article className="flex h-full flex-col rounded-[24px] bg-white/[0.04] p-8 lg:p-10">
-              <div className="flex flex-wrap gap-2">
-                {["IG", "FB", "YT", "WA"].map((p) => (
-                  <span key={p} className="mono flex h-11 w-11 items-center justify-center rounded-full border border-line text-[11px] text-muted">
-                    {p}
-                  </span>
-                ))}
-                <span className="chip !py-0">Community following</span>
-              </div>
-              <h3 className="t-h3 mt-8">Social channels</h3>
-              <p className="mt-3 text-muted">Amplify your content through FunAsia&apos;s own social platforms and engaged community following.</p>
-            </article>
-          </Item>
-
-          <Item className="h-full">
-            <article className="flex h-full flex-col rounded-[24px] bg-white/[0.04] p-8 lg:p-10">
-              <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3].map((n) => (
-                  <Placeholder key={n} label={`Event ${n}`} sub="photo" ratio="4 / 3" rounded="rounded-[12px]" />
-                ))}
-              </div>
-              <h3 className="t-h3 mt-8">Events &amp; activations</h3>
-              <p className="mt-3 text-muted">Connect your brand to live events, cultural moments and community gatherings.</p>
-            </article>
-          </Item>
-
-          <Item className="h-full">
-            <article className="flex h-full flex-col rounded-[24px] bg-white/[0.04] p-8 lg:p-10">
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4].map((n) => (
-                  <div
-                    key={n}
-                    className="placeholder-block flex h-16 w-16 items-center justify-center rounded-full !border-solid !border-funasia bg-elevated"
-                    role="img"
-                    aria-label={`Placeholder: creator portrait ${n}`}
-                  >
-                    <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">C{n}</span>
-                  </div>
-                ))}
-              </div>
-              <h3 className="t-h3 mt-8">Creator partnerships</h3>
-              <p className="mt-3 text-muted">Tap into FunAsia talent and creator relationships to extend your message with authentic voices.</p>
-            </article>
-          </Item>
+        <Stagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-12 lg:grid-cols-4" amount={0.15}>
+          {PILLARS.map((p) => (
+            <Item key={p.title} className="h-full">
+              <article className="card-ink flex h-full flex-col p-6">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-edge text-cognac">
+                  <Icon name={p.icon} size={18} />
+                </span>
+                <h3 className="t-h3 mt-5">{p.title}</h3>
+                <p className="t-body mt-2 !text-[15px] text-graphite">{p.body}</p>
+              </article>
+            </Item>
+          ))}
         </Stagger>
       </div>
     </section>
