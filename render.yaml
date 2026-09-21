@@ -14,18 +14,24 @@ services:
     plan: starter
     region: oregon
     branch: main
-    # npm ci, not npm install: it installs exactly what package-lock.json says,
-    # so a deploy cannot quietly pick up a different dependency tree than the
-    # one that was tested.
-    buildCommand: npm ci && npm run build
+    # --include=dev is REQUIRED, not belt-and-braces. The entire build
+    # toolchain — @tailwindcss/postcss, tailwindcss, typescript, the @types —
+    # lives in devDependencies, and npm treats NODE_ENV=production as
+    # --omit=dev. Without this the install is 28 packages instead of ~190 and
+    # the build dies on "Cannot find module '@tailwindcss/postcss'".
+    # npm ci rather than npm install so the tree matches package-lock.json
+    # exactly and a deploy cannot quietly resolve different versions.
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
         value: 20.20.2
-      - key: NODE_ENV
-        value: production
+      # NODE_ENV is deliberately NOT set. next build and next start each set it
+      # to production themselves, so declaring it buys nothing — and setting it
+      # at BUILD time makes npm skip devDependencies, which is what broke the
+      # first deploy here.
 
       # Secrets. sync:false means Render prompts for the value in the dashboard
       # and never stores it in this file — which is the whole point, since this
