@@ -1,0 +1,48 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# Deploys the site as a Node web service rather than a static site. It has to be
+# a server: the callback form is a Next.js server action that talks to Mailgun,
+# and MAILGUN_API_KEY must never reach the browser. A static export would drop
+# the form entirely.
+services:
+  - type: web
+    name: reelativemedia
+    runtime: node
+    # Free spins the instance down after ~15 minutes idle, and the next visitor
+    # waits through a cold start. That is the wrong first impression for a site
+    # whose job is winning enquiries — starter keeps it warm.
+    plan: starter
+    region: oregon
+    branch: main
+    # npm ci, not npm install: it installs exactly what package-lock.json says,
+    # so a deploy cannot quietly pick up a different dependency tree than the
+    # one that was tested.
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.20.2
+      - key: NODE_ENV
+        value: production
+
+      # Secrets. sync:false means Render prompts for the value in the dashboard
+      # and never stores it in this file — which is the whole point, since this
+      # file is committed to a public repository.
+      - key: MAILGUN_API_KEY
+        sync: false
+
+      - key: MAILGUN_DOMAIN
+        value: reelativemedia.com
+      - key: MAILGUN_HOST
+        value: api.mailgun.net
+      - key: LEAD_INBOX
+        value: sales@funasia.net
+
+      # Public by design: a measurement id is visible in the page source of
+      # every site that uses one.
+      - key: NEXT_PUBLIC_GA_ID
+        value: G-1X5BJWH1PC
+      - key: NEXT_PUBLIC_CLARITY_ID
+        value: ylx5awqzne
