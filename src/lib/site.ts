@@ -7,9 +7,12 @@ export const SITE = {
   phone: "469-424-3188",
   phoneTel: "tel:+14694243188",
   phoneE164: "+1-469-424-3188",
-  email: "hello@reelativemedia.com",
-  /** Where enquiries actually land. Shown on the page as the direct-email option
-   *  and used as the fallback recipient if LEAD_INBOX is unset. */
+  /** The ONE address on the site. There used to be a second
+   *  (hello@reelativemedia.com) shown only in the footer, which meant a visitor
+   *  reading the footer wrote somewhere different from a visitor reading the
+   *  contact section. Deleted rather than pointed at the same value, so the two
+   *  cannot drift apart again. Also the fallback recipient if LEAD_INBOX is
+   *  unset. */
   salesEmail: "sales@funasia.net",
   address: "Dallas–Fort Worth, Texas",
 } as const;

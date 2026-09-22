@@ -126,7 +126,7 @@ export const FUNASIA_BRANDS = [
   { id: "funasia", name: "FunAsia", meta: "Radio · Social · Events", href: "https://www.funasia.net/" },
   { id: "sangam", name: "Radio Sangam", meta: "104.1 FM · 104.9 FM HD4", href: "https://telugusangam.net/" },
   { id: "vanakkam", name: "Vanakkam FM", meta: "104.9 FM HD2", href: "https://vanakkamfm.net/" },
-  { id: "caravan", name: "Radio Caravan", meta: "DFW", href: "https://www.funasia.net/" },
+  { id: "caravan", name: "Radio Caravan", meta: "104.1 FM HD3", href: "https://www.funasia.net/" },
   { id: "apna-punjab", name: "Apna Punjab", meta: "104.9 FM HD3", href: "https://apnapunjab.net/" },
 ] as const;
 
@@ -305,20 +305,30 @@ export const streamHls = (id: string) => `https://${STREAM_HOST}/${id}/manifest/
 export const streamPoster = (id: string) => `https://${STREAM_HOST}/${id}/thumbnails/thumbnail.jpg`;
 
 /**
- * Three client reels, by Stream id only.
+ * Three client reels, by Stream id.
  *
- * The quote / name / business / city / language fields are deliberately gone.
- * They held placeholder text ("Owner name", "Placeholder quote") that would have
- * shipped as fake attribution on a live business site, and the cards now show
- * the video alone instead.
+ * `poster` and `aspect` are per-item overrides, both optional:
+ *  - poster   — use a supplied still instead of Stream's auto thumbnail. The
+ *               Marc Samuels card uses a brand end-frame rather than a grab
+ *               from the video, which is a 16:9 cut and would letterbox badly
+ *               inside a 9:16 card.
+ *  - aspect   — the shape the LIGHTBOX opens at. The card stays 9:16 either
+ *               way; this is only about how the video is framed once playing,
+ *               so a landscape film is not pillarboxed into a portrait window.
  *
- * To reintroduce attribution: add the fields back here with REAL values, pass
- * title and meta in Proof.tsx, and the lightbox caption renders itself — it is
- * already conditional on those two being present.
+ * The quote / name / business fields are deliberately absent. They held
+ * placeholder text that would have shipped as fake attribution. To reintroduce
+ * it, add the fields here with REAL values and pass title/meta in Proof.tsx —
+ * the lightbox caption is already conditional on those being present.
  */
 export const TESTIMONIALS = [
   { id: "t1", streamId: "a00017ba33ff639bf2b5864f1bab212b" },
-  { id: "t2", streamId: "fa5b5bedc694492611b3bd5c9c873a23" },
+  {
+    id: "t2",
+    streamId: "bc53986a0f0dfc220b43674961711a03",
+    poster: "/images/marc-samuels-poster.webp",
+    aspect: "16/9" as const,
+  },
   { id: "t3", streamId: "02fc0c4c2158dd913a80992a3c907923" },
 ] as const;
 

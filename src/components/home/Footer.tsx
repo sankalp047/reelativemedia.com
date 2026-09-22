@@ -41,7 +41,7 @@ export function Footer() {
           <p className="eyebrow mb-6 text-ash">Contact</p>
           <ul className="flex flex-col gap-3">
             <li><a href={SITE.phoneTel} className={FOOTER_LINK}>{SITE.phone}</a></li>
-            <li><a href={`mailto:${SITE.email}`} className={FOOTER_LINK}>{SITE.email}</a></li>
+            <li><a href={`mailto:${SITE.salesEmail}`} className={FOOTER_LINK}>{SITE.salesEmail}</a></li>
             <li className="t-body !text-[15px] text-ash">{SITE.address}</li>
             {/* Social icons — parked. All four were href="#", so they looked
                 like working links and went nowhere, which is worse than not

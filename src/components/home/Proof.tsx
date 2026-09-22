@@ -29,7 +29,8 @@ export function Proof() {
       TESTIMONIALS.map((t) => ({
         id: t.id,
         src: streamHls(t.streamId),
-        poster: streamPoster(t.streamId),
+        poster: "poster" in t ? t.poster : streamPoster(t.streamId),
+        aspect: "aspect" in t ? t.aspect : undefined,
       })),
     [],
   );
@@ -54,7 +55,7 @@ export function Proof() {
                   aria-label={`Play reel ${i + 1} of ${TESTIMONIALS.length}`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={streamPoster(t.streamId)} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                  <img src={"poster" in t ? t.poster : streamPoster(t.streamId)} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                   <span className="absolute inset-0 flex items-center justify-center">
                     <PlayButton />
                   </span>

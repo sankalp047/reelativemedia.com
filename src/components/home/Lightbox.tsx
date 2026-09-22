@@ -13,6 +13,10 @@ export type LightboxItem = {
    *  caption bar is better than one filled with invented names. */
   title?: string;
   meta?: string;
+  /** The shape the player opens at. Defaults to the 9:16 reel. A landscape
+   *  film gets "16/9" so it fills its window instead of being pillarboxed into
+   *  a portrait one — the CARD stays 9:16 regardless. */
+  aspect?: "9/16" | "16/9";
 };
 
 type Props = {
@@ -54,6 +58,23 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [needsTapForSound, setNeedsTapForSound] = useState(false);
 
+  /**
+   * Stop the video, THEN close.
+   *
+   * Closing used to rely on the element unmounting to end playback, which meant
+   * audio kept going for the whole 0.3s exit animation — and if that animation
+   * is ever interrupted or slowed, longer. Pausing first makes "stop playing"
+   * immediate and independent of the animation finishing.
+   */
+  const stopAndClose = useCallback(() => {
+    const v = videoRef.current;
+    if (v) {
+      v.pause();
+      v.currentTime = 0;
+    }
+    onClose();
+  }, [onClose]);
+
   const next = useCallback(() => {
     if (index === null) return;
     onIndex((index + 1) % items.length);
@@ -68,7 +89,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
     getLenis()?.stop();
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") stopAndClose();
       if (e.key === "ArrowRight" || e.key === "ArrowDown") next();
       if (e.key === "ArrowLeft" || e.key === "ArrowUp") prev();
     };
@@ -78,7 +99,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
       getLenis()?.start();
       document.body.style.overflow = "";
     };
-  }, [open, onClose, next, prev]);
+  }, [open, stopAndClose, next, prev]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -134,7 +155,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
     const vy = info.velocity.y;
     if (dy < -80 || vy < -500) next();
     else if (dy > 80 || vy > 500) {
-      if (index === 0) onClose();
+      if (index === 0) stopAndClose();
       else prev();
     }
   };
@@ -149,23 +170,30 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          onClick={onClose}
+          onClick={stopAndClose}
           role="dialog"
           aria-modal="true"
           aria-label={item.title ? `Reel: ${item.title}` : "Reel"}
           data-ground="dark"
           data-lenis-prevent
         >
+          {/* Close sits top-LEFT as a cross. It keeps the dark-chip border and
+              fill rather than being a bare glyph, because at narrower widths the
+              plate grows to 94vw and slides under it — a borderless × would land
+              on the video itself and become unreadable. Square, so it reads as a
+              control rather than a word. Esc still closes. */}
           <button
             type="button"
-            onClick={onClose}
-            className={`${DARK_CHIP} absolute right-5 top-5 z-10`}
-            aria-label="Close"
+            onClick={stopAndClose}
+            className={`${DARK_CHIP} absolute left-5 top-5 z-20 !h-11 !w-11 !px-0 !py-0 flex items-center justify-center`}
+            aria-label="Close reel"
           >
-            Close [esc]
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <path d="M3 3l10 10M13 3L3 13" />
+            </svg>
           </button>
 
-          <div className="absolute left-5 top-5 z-10 flex items-center gap-3">
+          <div className="absolute right-5 top-5 z-20 flex items-center gap-3">
             <span className="mono text-ash">
               Reel [{String(index + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}]
             </span>
@@ -173,7 +201,14 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
 
           <motion.div
             key={item.id}
-            className="relative aspect-[9/16] h-[min(88svh,900px)] max-w-[94vw] rounded-[2px] bg-linen p-[8px] shadow-[0_44px_120px_-24px_rgba(4,3,2,0.70)]"
+            /* Portrait is height-led (fill the viewport, let width follow);
+               landscape is width-led. Sizing a 16:9 film by height would make
+               it wider than the screen on any normal window. */
+            className={`relative rounded-[2px] bg-linen p-[8px] shadow-[0_44px_120px_-24px_rgba(4,3,2,0.70)] ${
+              item.aspect === "16/9"
+                ? "aspect-video w-[min(94vw,1280px)] max-h-[88svh]"
+                : "aspect-[9/16] h-[min(88svh,900px)] max-w-[94vw]"
+            }`}
             initial={{ opacity: 0, scale: 0.96, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -16 }}
@@ -188,7 +223,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
             <div className="relative h-full w-full overflow-hidden rounded-[1px] ring-1 ring-rule">
               <video
                 ref={videoRef}
-                className="h-full w-full object-cover"
+                className={`h-full w-full ${item.aspect === "16/9" ? "object-contain" : "object-cover"}`}
                 poster={item.poster}
                 playsInline
                 loop
