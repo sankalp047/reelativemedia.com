@@ -276,7 +276,7 @@ function MobileStrip({
 }) {
   return (
     <div
-      className="relative z-10 mt-8 lg:hidden"
+      className="relative z-10 mt-5 lg:hidden"
       style={
         {
           "--can-len": CAN_LEN_M,
@@ -522,7 +522,7 @@ export function FilmStrip() {
     <section
       ref={sectionRef}
       id="work"
-      className="relative z-10 flex min-h-svh flex-col overflow-hidden bg-cloud py-16 lg:h-svh lg:justify-center lg:py-0"
+      className="relative z-10 flex min-h-svh flex-col overflow-hidden bg-cloud pb-16 pt-10 lg:h-svh lg:justify-center lg:py-0"
       aria-labelledby="strip-heading"
     >
       <GridRules className="z-0 opacity-50" />
@@ -530,17 +530,25 @@ export function FilmStrip() {
       <div className="wrap relative z-10 flex shrink-0 flex-col lg:pt-[calc(var(--nav-h)+40px)]">
         <Marker className="self-start">03 — What we make</Marker>
 
-        {/* The headline indents to column 4 and the note sits hard right on its
-            first baseline. The width between and below them stays empty: on a
-            light ground that emptiness is the whole effect. Resist filling it. */}
-        <div className="mt-7 grid grid-cols-1 gap-x-8 gap-y-4 lg:mt-8 lg:grid-cols-12">
+        {/* DESKTOP: the headline indents to column 4 and the note sits hard
+            right on its first baseline. The width between and below them stays
+            empty — on a light ground that emptiness is the whole effect, so
+            resist filling it.
+
+            PHONES: the opposite. Both measures are uncapped, because there is
+            only one column and a 16ch headline on a 430px screen left 29% of
+            the width unused and pushed the text onto a third line, which in
+            turn pushed the canister and the film that much further down the
+            screen. The caps are therefore scoped to lg and up, where the
+            twelve-column grid is what controls the measure anyway. */}
+        <div className="mt-5 grid grid-cols-1 gap-x-8 gap-y-3 lg:mt-8 lg:grid-cols-12 lg:gap-y-4">
           <Kinetic
             as="h2"
             text={"Built for businesses people can see, visit and trust."}
-            className="t-h2 max-w-[16ch] text-ink !text-[clamp(30px,4.2vw,64px)] lg:col-span-5 lg:col-start-4"
+            className="t-h2 text-ink !text-[clamp(30px,4.2vw,64px)] lg:col-span-5 lg:col-start-4 lg:max-w-[16ch]"
             stagger={0.014}
           />
-          <p className="t-body !max-w-[32ch] !text-[13px] text-pewter lg:col-span-3 lg:col-start-10 lg:mt-[clamp(10px,calc(3.36vw_-_14px),37px)] lg:justify-self-end lg:text-right">
+          <p className="t-body !max-w-none !text-[13px] text-pewter lg:col-span-3 lg:col-start-10 lg:mt-[clamp(10px,calc(3.36vw_-_14px),37px)] lg:!max-w-[32ch] lg:justify-self-end lg:text-right">
             {SEGMENTS_NOTE}
           </p>
         </div>
