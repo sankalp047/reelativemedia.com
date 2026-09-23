@@ -7,25 +7,40 @@ import { Kinetic } from "@/components/ui/Kinetic";
 import { SYSTEM_CLOSING, SYSTEM_STEPS } from "@/lib/data";
 
 /**
- * Information on the left, the footage on the right, sized to one screen on
- * desktop. The same runway drives both: the four steps light up as you scroll,
- * and the rig sequence scrubs frame by frame alongside them — the camera glides
- * in from the right, crosses to the left, and the television, tablet and phone
- * arrive in the space it vacates.
+ * The footage is the SECTION, not a panel inside it: the 121-frame sequence is
+ * painted edge to edge behind everything and the copy sits on top of it. One
+ * runway drives both — the four steps light up as you scroll while the rig
+ * glides in from the right, crosses to the left, and the television, tablet and
+ * phone arrive in the space it vacates.
  *
- * The section's ground is --color-studio rather than the page's alabaster. That
- * is the backdrop the footage was lit on, measured and flattened at build time,
- * so the sequence has no visible frame against the page and reads as objects on
- * the page rather than a video in a box. The two grounds are the same
- * luminance, so this is a hue shift, not a band.
+ * WHY THIS CAN BE A FULL-BLEED BACKGROUND AT ALL
+ * The take was shot on a white sweep and is flat-fielded at build time to
+ * --color-cloud, the exact value of the section ground (see RigScrub). So the
+ * frame may letterbox in either axis at any viewport shape and no edge is ever
+ * visible: what reads is one continuous studio, not a video in a box.
  *
- * THE FOOTAGE IS DESKTOP ONLY. It was tried on phones as a sticky background
- * behind the copy and it did not work: the frame is 1:1, so on a 375x812 screen
- * it can only ever fill the width — a third of the height — and the copy is
- * taller than the viewport, so it covered the footage as soon as it scrolled up.
- * Phones get the copy on its own, which is the part that carries the meaning.
- * Do not reintroduce it here without portrait source; cropping the square to fit
- * takes 218px off each side and loses the rig and the screens.
+ * HOW THE COPY STAYS READABLE, AND WHY IT IS NOT JUST A SCRIM
+ * Measured on the graded frames, subject ink reaches 25.9% from the left of
+ * frame at its furthest (frame 59), and ink type over the black camera body is
+ * 1.00:1 — so something has to keep the rig off the text. The first attempt was
+ * a long scrim across the copy column, and it worked for contrast but looked
+ * wrong: it washed the camera down to a watermark for a third of the scroll.
+ *
+ * So the geometry does the work instead. The footage layer is inset from the
+ * left to where the copy ends, and its own plate — the same cloud as the
+ * section — fills everything left of it, so there is still no visible boundary
+ * anywhere and the section still reads as one continuous studio. The rig now
+ * enters to the RIGHT of the copy at full strength: 26% of a box that starts at
+ * 26% of the screen puts its leftmost ink at about 45%, while the copy column
+ * ends at 39% (1440px) or 44% (1920px).
+ *
+ * The scrim that remains is a short one and is insurance, not the mechanism: it
+ * covers the narrower breakpoints, where the copy column takes a larger share
+ * of the width and the rig's soft shadow can still reach it.
+ *
+ * THE FOOTAGE IS DESKTOP ONLY, and that is a product decision rather than an
+ * oversight — it was tried on phones and taken out. Phones get the copy on its
+ * own, which is the part that carries the meaning.
  *
  * One DOM tree serves both layouts and the copy is never duplicated — a second
  * mobile copy would repeat the heading and its id.
@@ -34,10 +49,7 @@ import { SYSTEM_CLOSING, SYSTEM_STEPS } from "@/lib/data";
  * is no pinned pane to drive a step-by-step reveal.
  *
  * No overflow-hidden anywhere up this tree — it would become the scroll
- * container for the sticky pane and break it.
- *
- * Deliberately no asset counters. The retired video showed "12 reels", a number
- * from the superseded deck that overstates every package in the current one.
+ * container for the sticky layer and break it.
  */
 const DESKTOP = "(min-width: 1024px)";
 const subscribeDesktop = (cb: () => void) => {
@@ -47,14 +59,17 @@ const subscribeDesktop = (cb: () => void) => {
 };
 const getDesktop = () => window.matchMedia(DESKTOP).matches;
 
+/** Short and gentle: the footage inset does the real work. See the note above. */
+const SCRIM =
+  "linear-gradient(to right, #f7f9fc 0%, #f7f9fc 28%, rgba(247,249,252,0.64) 40%, rgba(247,249,252,0) 52%)";
+
 export function System() {
   const runwayRef = useRef<HTMLDivElement>(null);
   const [scrubbed, setScrubbed] = useState(0);
   const isDesktop = useSyncExternalStore(subscribeDesktop, getDesktop, () => false);
 
-  // Phones have no pane to scrub, so they show the finished schedule and every
-  // step open. Derived rather than written to state, which keeps the effect free
-  // of a synchronous setState.
+  // Phones have no pane to scrub, so they show every step open. Derived rather
+  // than written to state, which keeps the effect free of a synchronous setState.
   const step = isDesktop ? scrubbed : SYSTEM_STEPS.length - 1;
 
   useEffect(() => {
@@ -81,19 +96,39 @@ export function System() {
   }, [isDesktop]);
 
   return (
-    <section id="system" className="relative z-10 bg-studio" aria-labelledby="system-heading">
+    <section id="system" className="relative z-10 bg-cloud" aria-labelledby="system-heading">
       <div ref={runwayRef} className="relative lg:h-[340vh]">
         <div className="section-pad relative z-10 lg:sticky lg:top-0 lg:flex lg:h-svh lg:items-center lg:py-0">
-          {/* h-full on desktop so the pane has the whole viewport height to fill
-              rather than only the copy column's height. items-center still
-              centres the copy; the pane opts out with self-stretch. */}
-          <div className="wrap grid w-full items-center gap-10 lg:h-full lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] xl:gap-16">
-            <div className="flex flex-col">
+          {/* The footage. Inset from the left to clear the copy column — the
+              plate that fills the rest is the section's own ground, so the inset
+              is invisible and the section still reads as one full-bleed studio.
+              Behind the copy in paint order and pointer-events-none. */}
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 z-0 hidden lg:left-[26%] lg:block xl:left-[22%]"
+            aria-hidden="true"
+          >
+            <RigScrub runwayRef={runwayRef} scrub={isDesktop} />
+          </div>
+          {/* The copy's ground. Invisible over the plate, which is the same
+              colour — it only resolves the frames where the rig arrives under
+              the text. */}
+          <div
+            className="pointer-events-none absolute inset-0 z-[1] hidden lg:block"
+            style={{ background: SCRIM }}
+            aria-hidden="true"
+          />
+
+          <div className="wrap relative z-10 w-full">
+            {/* Half the old grid is gone: the copy is a single left column and
+                the footage runs underneath the whole section. This max-width is
+                what the scrim's contrast maths assumes — see the note above. */}
+            <div className="flex flex-col lg:max-w-[520px] xl:max-w-[560px]">
               <Marker className="mb-5">01 — The system</Marker>
               <Kinetic
                 as="h2"
                 text={"One focused shoot can\npower your whole month."}
                 className="t-h2 !text-[clamp(26px,2.7vw,42px)] text-ink"
+                accent={[1]}
               />
               <span id="system-heading" className="sr-only">The system</span>
               <p className="t-lead mt-6 text-graphite">
@@ -107,7 +142,7 @@ export function System() {
                     <li key={s.n} className="border-b border-rule">
                       <div
                         className={`flex gap-4 border-l-2 py-3 pl-4 transition-colors duration-500 lg:py-2.5 ${
-                          on ? "border-cognac text-ink" : "border-transparent lg:text-slate"
+                          on ? "border-violet text-ink" : "border-transparent lg:text-pewter"
                         }`}
                         aria-current={on ? "step" : undefined}
                       >
@@ -127,15 +162,6 @@ export function System() {
               </ol>
 
               <p className="t-h2 mt-10 !text-[clamp(24px,2.4vw,34px)] text-ink">{SYSTEM_CLOSING}</p>
-            </div>
-
-            {/* self-stretch so the pane takes the row's full height, and
-                bleed-right so it runs past the wrap's gutter to the edge of the
-                window. The footage is anchored to that edge, so its shadow
-                leaves the screen instead of stopping at a column boundary.
-                hidden below lg: phones get no footage at all. */}
-            <div className="hidden lg:block lg:self-stretch lg:bleed-right">
-              <RigScrub runwayRef={runwayRef} scrub={isDesktop} />
             </div>
           </div>
         </div>

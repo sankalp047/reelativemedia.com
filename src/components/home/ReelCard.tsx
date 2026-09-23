@@ -13,7 +13,7 @@ type Props = {
 };
 
 /**
- * 9:16 reel, mounted like a print: a linen mat, a 1px decorative rule around the
+ * 9:16 reel, mounted like a print: a haze mat, a 1px decorative rule around the
  * image, and an `edge` boundary on the outside because the whole card is a button.
  * Plays muted on hover (desktop) or when centred (touch).
  */
@@ -43,7 +43,7 @@ export function ReelCard({ reel, onOpen, className = "", style, index }: Props) 
   return (
     <figure className={`group relative shrink-0 ${className}`} style={style}>
       <div
-        className="@container relative overflow-hidden rounded-[2px] border border-edge bg-linen p-[5px] shadow-[0_3px_12px_-8px_rgba(25,21,16,0.30)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5 group-hover:shadow-[0_26px_52px_-30px_rgba(25,21,16,0.45)]"
+        className="@container relative overflow-hidden rounded-[2px] border border-edge bg-haze p-[5px] shadow-[0_3px_12px_-8px_rgba(25,21,16,0.30)] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5 group-hover:shadow-[0_26px_52px_-30px_rgba(25,21,16,0.45)]"
         style={{ aspectRatio: "9 / 16" }}
         data-cursor="PLAY"
         onPointerEnter={(e) => e.pointerType === "mouse" && play()}
@@ -71,7 +71,7 @@ export function ReelCard({ reel, onOpen, className = "", style, index }: Props) 
 
           {reel.placeholder ? <PlaceholderTag className="absolute left-3 top-3">Placeholder</PlaceholderTag> : null}
           {reel.views ? (
-            <span className="eyebrow absolute right-3 top-3 rounded-[2px] bg-chalk px-2.5 py-1.5 text-ink">
+            <span className="eyebrow absolute right-3 top-3 rounded-[2px] bg-well px-2.5 py-1.5 text-ink">
               {reel.views}
             </span>
           ) : null}
@@ -79,10 +79,10 @@ export function ReelCard({ reel, onOpen, className = "", style, index }: Props) 
       </div>
 
       <figcaption className="mt-3.5 flex items-baseline gap-2.5">
-        {index !== undefined ? <span className="mono shrink-0 text-slate">[{String(index + 1).padStart(2, "0")}]</span> : null}
+        {index !== undefined ? <span className="mono shrink-0 text-pewter">[{String(index + 1).padStart(2, "0")}]</span> : null}
         <span className="min-w-0">
           <span className="t-h3 block !text-[16px] text-ink">{reel.client}</span>
-          <span className="mono mt-1.5 block text-slate">
+          <span className="mono mt-1.5 block text-pewter">
             {reel.city} · {reel.category} · [{reel.duration}]
           </span>
         </span>

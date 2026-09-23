@@ -19,19 +19,24 @@ function PhoneIcon() {
 }
 
 /**
- * The nav sits on alabaster in both of its states — transparent over the top of
- * the Hero (which is itself paper) and over the 92% alabaster scrim once
- * scrolled — so the LIGHT logo lockup is correct throughout and <Logo /> takes
- * its default. Never pass tone="dark" here: the dark lockup is knocked out to
- * bone and is invisible on #F4F1EA.
+ * THE BAR IS CLOUD, ALWAYS — the same #F7F9FC as the System band — in both of
+ * its states, over the dark hero and once scrolled. It used to be transparent
+ * over the hero and a midnight scrim after, and that hid the wordmark: the
+ * type in reelative-wordmark.webp is navy (#041230) and simply vanished on a
+ * midnight bar, along with the ink-on-ink menu button. A light bar is the
+ * ground the logo was drawn for, so the gradient mark, the navy type and the
+ * ink links all read without a knockout version of anything.
  *
- * Inactive links are text-slate (6.02:1 on alabaster); the current page is
- * text-ink (16.10:1) plus a 1px cognac rule beneath it. The state is carried by
- * aria-current as well, so colour is never the only indicator.
+ * Inactive links are text-graphite (7.18:1 on cloud); the current page is
+ * text-ink (18.62:1) plus a 1px spectrum rule beneath it. The state is carried
+ * by aria-current as well, so colour is never the only indicator.
+ *
+ * `text-ink` is set on the header itself: it sits outside every bg-* ground,
+ * so without it the bar would inherit the body's cloud type.
  */
 const linkCls =
-  "eyebrow relative inline-block transition-colors duration-300 after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:origin-left after:bg-cognac after:transition-transform after:duration-500 after:content-['']";
-const linkIdle = "text-slate hover:text-ink after:scale-x-0";
+  "eyebrow relative inline-block transition-colors duration-300 after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:origin-left after:bg-brand after:transition-transform after:duration-500 after:content-['']";
+const linkIdle = "text-graphite hover:text-ink after:scale-x-0";
 const linkActive = "text-ink after:scale-x-100";
 
 /**
@@ -118,13 +123,16 @@ export function Nav() {
   return (
     <>
       <motion.header
-        className="fixed inset-x-0 top-0 z-50 h-[var(--nav-h)]"
+        className="fixed inset-x-0 top-0 z-50 h-[var(--nav-h)] text-ink"
         animate={{ y: hidden && !open ? -96 : 0 }}
         transition={{ duration: reduce ? 0 : 0.6, ease: EXPO }}
       >
+        {/* Opaque from the first pixel of scroll and before it. The only thing
+            that changes once scrolled is a soft cast shadow, so the bar reads
+            as lifting off the page rather than appearing. */}
         <div
-          className={`absolute inset-0 border-b border-rule bg-alabaster/92 backdrop-blur-[14px] transition-opacity duration-500 ${
-            scrolled && !open ? "opacity-100" : "opacity-0"
+          className={`absolute inset-0 border-b border-rule bg-cloud/94 backdrop-blur-[14px] transition-shadow duration-500 ${
+            scrolled && !open ? "shadow-[0_12px_32px_-22px_rgba(7,11,23,0.5)]" : ""
           }`}
           aria-hidden="true"
         />
@@ -230,7 +238,7 @@ export function Nav() {
         {open ? (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-0 z-40 flex flex-col overflow-hidden bg-alabaster px-5 pb-8 pt-28"
+            className="fixed inset-0 z-40 flex flex-col overflow-hidden bg-cloud px-5 pb-8 pt-28 text-ink"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -257,7 +265,7 @@ export function Nav() {
                     aria-current={isActive(l.href) ? "page" : undefined}
                     className="flex items-baseline gap-4 py-3.5"
                   >
-                    <span className="mono text-slate">[{String(i + 1).padStart(2, "0")}]</span>
+                    <span className="mono text-pewter">[{String(i + 1).padStart(2, "0")}]</span>
                     <span className="t-display !text-[clamp(38px,13vw,72px)] text-ink">{l.label}</span>
                   </NavItem>
                 </motion.li>
@@ -268,7 +276,7 @@ export function Nav() {
               <ButtonLink href="#audit" onClick={() => setOpen(false)} className="w-full">
                 Book a content audit
               </ButtonLink>
-              <a href={SITE.phoneTel} className="mono text-center text-slate">
+              <a href={SITE.phoneTel} className="mono text-center text-pewter">
                 Or call {SITE.phone}
               </a>
             </div>

@@ -17,18 +17,19 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
  *
  * Frames are 3:2, the real 35mm ratio.
  *
- * The section stands on alabaster. That is the whole argument for this page:
- * the film is the darkest thing the site owns, and on a dark ground it had no
- * edge. On paper the strip becomes an object, the sprockets become holes with
- * the table showing through them, and the footage is the only colour on screen.
- * The canister, the frames and both scroll rigs are untouched by that change.
+ * The section stands on CLOUD, the light band, and this is the whole argument
+ * for keeping light bands at all: the film is the darkest thing the site owns
+ * (#08080A), and on the midnight page it measures 1.02:1 — no edge, a hole cut
+ * in the screen. On the cloud band the strip becomes an object, the sprockets
+ * become holes with the table showing through them, and the footage is the only
+ * colour on screen. Do not move this section onto a dark ground.
  */
 
 /* The film stock itself. The VALUE IS UNCHANGED — only the name moved, because
    `INK` now collides with --color-ink, which is dark type on a light ground, and
-   `background: INK` on an alabaster page reads as a mistake. Against the old
-   near-black ground this stock sat at 1.04:1 and the strip was a hole cut in the
-   screen; on #F4F1EA it is 17.74:1 and reads as 35mm lying on a light table. */
+   `background: INK` on a midnight page reads as a mistake. Against the midnight
+   page ground this stock sits at 1.02:1 and the strip is a hole cut in the
+   screen; on the cloud band it is 18.97:1 and reads as 35mm on a light table. */
 const STOCK = "#08080A";
 
 /* ---------------- desktop geometry ---------------- */
@@ -73,7 +74,7 @@ const FRAME_PAD_M = 6;
 const sprocketTile = (w: number, h: number) =>
   "data:image/svg+xml;utf8," +
   encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect x="${(w - Math.min(18, w - 6)) / 2}" y="${(h - Math.min(14, h - 8)) / 2}" width="${Math.min(18, w - 6)}" height="${Math.min(14, h - 8)}" rx="3" fill="%23F4F1EA"/></svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect x="${(w - Math.min(18, w - 6)) / 2}" y="${(h - Math.min(14, h - 8)) / 2}" width="${Math.min(18, w - 6)}" height="${Math.min(14, h - 8)}" rx="3" fill="%23F7F9FC"/></svg>`,
   ).replace(/%2523/g, "%23");
 
 const SPROCKETS_H = sprocketTile(34, RAIL_H);
@@ -195,12 +196,12 @@ function DesktopStrip({
               {SEGMENTS.map((s, i) => (
                 <figure key={s.id} className="relative shrink-0 border-r-[3px] px-3 pb-2 pt-1.5 after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.9)]" style={{ background: STOCK, borderColor: STOCK }}>
                   {/* The name is the most useful line in the section, so it is the
-                      brightest thing on the stock: bone on #08080A is 17.74:1. The
+                      brightest thing on the stock: cloud on #08080A is 18.97:1. The
                       index is the one sanctioned repeat of the accent — a counting
                       sequence reads as one instance, not ten. */}
-                  <figcaption className="mono mb-1.5 flex items-center justify-between gap-4 text-[10px] text-bone">
+                  <figcaption className="mono mb-1.5 flex items-center justify-between gap-4 text-[10px] text-cloud">
                     <span>{s.name}</span>
-                    <span className="text-cognac-hi">[{String(i + 1).padStart(2, "0")}]</span>
+                    <span className="text-pink">[{String(i + 1).padStart(2, "0")}]</span>
                   </figcaption>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -212,17 +213,17 @@ function DesktopStrip({
                     className="block object-cover"
                     style={{ height: FRAME_H, width: FRAME_H * 1.5 }}
                   />
-                  <p className="mono mt-1.5 text-[10px] text-ash">{s.reel}</p>
+                  <p className="mono mt-1.5 text-[10px] text-steel">{s.reel}</p>
                 </figure>
               ))}
 
               {/* The closing line is the last panel of the film, so the sprocket
                   rails run straight across it instead of it sitting on paper. */}
               <div ref={closerRef} className="flex shrink-0 flex-col justify-center px-10" style={{ width: CLOSER_W, background: STOCK }}>
-                <p className="t-statement max-w-[13ch] !text-[clamp(24px,2.2vw,34px)] text-bone">
+                <p className="t-statement max-w-[13ch] !text-[clamp(24px,2.2vw,34px)] text-cloud">
                   One shoot covers every one of these.
                 </p>
-                <a href="#system" className="link-underline mt-6 inline-block self-start eyebrow text-cognac-hi">
+                <a href="#system" className="link-underline mt-6 inline-block self-start eyebrow text-pink">
                   See how the system works →
                 </a>
               </div>
@@ -240,8 +241,8 @@ function DesktopStrip({
                 <div key={s.id} className="shrink-0 px-3 pt-2.5" style={{ width: FRAME_H * 1.5 + 27 }}>
                   <div className="h-px w-full bg-rule" aria-hidden="true" />
                   <div className="mt-2.5 flex items-baseline gap-2.5">
-                    <span className="t-plate text-slate">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="mono text-[10px] text-slate">{s.name}</span>
+                    <span className="t-plate text-pewter">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="mono text-[10px] text-pewter">{s.name}</span>
                   </div>
                   {/* t-body's own 62ch measure is 391px at 13px, which is inside
                       this block's 396px content box: every one of the ten
@@ -339,9 +340,9 @@ function MobileStrip({
           >
             {SEGMENTS.map((s, i) => (
               <figure key={s.id} className="relative pb-4 after:pointer-events-none after:absolute after:inset-0 after:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.9)]">
-                <figcaption className="mono mb-1 flex items-center justify-between gap-2 text-[9px] text-bone">
+                <figcaption className="mono mb-1 flex items-center justify-between gap-2 text-[9px] text-cloud">
                   <span>{s.name}</span>
-                  <span className="text-cognac-hi">[{String(i + 1).padStart(2, "0")}]</span>
+                  <span className="text-pink">[{String(i + 1).padStart(2, "0")}]</span>
                 </figcaption>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -353,16 +354,16 @@ function MobileStrip({
                   className="block w-full object-cover"
                   style={{ aspectRatio: "3 / 2" }}
                 />
-                <p className="mono mt-1 text-[9px] text-bone-dim">{s.reel}</p>
-                <p className="t-body mt-1 !text-[12px] text-ash">
+                <p className="mono mt-1 text-[9px] text-slate">{s.reel}</p>
+                <p className="t-body mt-1 !text-[12px] text-steel">
                   {s.graphic} · {s.action}
                 </p>
               </figure>
             ))}
 
             <div className="border-t border-rule-dark pb-9 pt-7">
-              <p className="t-statement max-w-[14ch] !text-[26px] text-bone">One shoot covers every one of these.</p>
-              <a href="#system" className="link-underline mt-5 inline-block eyebrow text-cognac-hi">
+              <p className="t-statement max-w-[14ch] !text-[26px] text-cloud">One shoot covers every one of these.</p>
+              <a href="#system" className="link-underline mt-5 inline-block eyebrow text-pink">
                 See how the system works →
               </a>
             </div>
@@ -521,7 +522,7 @@ export function FilmStrip() {
     <section
       ref={sectionRef}
       id="work"
-      className="relative z-10 flex min-h-svh flex-col overflow-hidden bg-alabaster py-16 lg:h-svh lg:justify-center lg:py-0"
+      className="relative z-10 flex min-h-svh flex-col overflow-hidden bg-cloud py-16 lg:h-svh lg:justify-center lg:py-0"
       aria-labelledby="strip-heading"
     >
       <GridRules className="z-0 opacity-50" />
@@ -539,7 +540,7 @@ export function FilmStrip() {
             className="t-h2 max-w-[16ch] text-ink !text-[clamp(30px,4.2vw,64px)] lg:col-span-5 lg:col-start-4"
             stagger={0.014}
           />
-          <p className="t-body !max-w-[32ch] !text-[13px] text-slate lg:col-span-3 lg:col-start-10 lg:mt-[clamp(10px,calc(3.36vw_-_14px),37px)] lg:justify-self-end lg:text-right">
+          <p className="t-body !max-w-[32ch] !text-[13px] text-pewter lg:col-span-3 lg:col-start-10 lg:mt-[clamp(10px,calc(3.36vw_-_14px),37px)] lg:justify-self-end lg:text-right">
             {SEGMENTS_NOTE}
           </p>
         </div>
@@ -563,9 +564,9 @@ export function FilmStrip() {
               className={`w-px shrink-0 ${i % 6 === 0 ? "h-3.5 bg-edge" : "h-1.5 bg-rule"}`}
             />
           ))}
-          <div ref={fillRef} className="absolute bottom-0 left-0 h-px w-full origin-left bg-cognac" style={{ transform: "scaleX(0)" }} />
+          <div ref={fillRef} className="absolute bottom-0 left-0 h-px w-full origin-left bg-brand" style={{ transform: "scaleX(0)" }} />
         </div>
-        <span className="mono shrink-0 text-slate">Drag or scroll</span>
+        <span className="mono shrink-0 text-pewter">Drag or scroll</span>
       </div>
     </section>
   );

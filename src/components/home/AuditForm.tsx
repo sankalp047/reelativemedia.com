@@ -13,8 +13,8 @@ const initial: AuditState = { status: "idle" };
  * The form plate sits INSIDE the FinalCTA dark well, so every token here is the
  * dark-ground form. The --color-muted / --color-brass migration aliases are
  * deliberately NOT used: muted resolves to graphite (dark type) and would land
- * at 1.56:1 on this well. Measured on --color-well #1F1B15:
- *   bone 15.19 · bone-dim 8.49 · ash 6.46 · cognac-hi 5.72 · edge-dark 3.25
+ * at 1.56:1 on this well. Measured on --color-well #0E1524:
+ *   cloud 17.29 · slate 7.11 · steel 5.39 · pink 5.28 · edge-dark 3.06
  * The plate itself carries `edge-dark` rather than `rule-dark`: the well card
  * is only 1.02:1 against the section ground, so a decorative hairline would
  * leave the plate with no edge at all.
@@ -22,14 +22,14 @@ const initial: AuditState = { status: "idle" };
 const plateCls = "rounded-[2px] border border-edge-dark bg-well";
 
 const inputCls =
-  "w-full rounded-[2px] border border-edge-dark bg-well px-4 py-3 text-[16px] text-bone placeholder:text-ash transition-colors duration-200 focus:outline-none focus:border-cognac-hi";
+  "w-full rounded-[2px] border border-edge-dark bg-well px-4 py-3 text-[16px] text-cloud placeholder:text-steel transition-colors duration-200 focus:outline-none focus:border-pink";
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="mono text-ash">{label}</span>
+      <span className="mono text-steel">{label}</span>
       {children}
-      {error ? <span className="mono text-[11px] text-cognac-hi">{error}</span> : null}
+      {error ? <span className="mono text-[11px] text-pink">{error}</span> : null}
     </label>
   );
 }
@@ -64,9 +64,9 @@ export function AuditForm() {
   if (state.status === "success") {
     return (
       <div className={`${plateCls} flex flex-col items-center gap-5 p-10 text-center`} role="status" aria-live="polite">
-        {/* A cognac-hi fill takes INK (6.07:1). The stroke is --color-ink. */}
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-cognac-hi">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#191510" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {/* A spectrum fill takes WHITE: 4.64 at the gradient's deepest stop. */}
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <motion.path
               d="M4.5 12.5 9.5 17.5 19.5 7"
               initial={reduce ? false : { pathLength: 0 }}
@@ -75,8 +75,8 @@ export function AuditForm() {
             />
           </svg>
         </span>
-        <p className="t-h2 !text-[clamp(28px,4vw,44px)] text-bone">Got it.</p>
-        <p className="t-body text-bone-dim">A strategist will call you within one business day.</p>
+        <p className="t-h2 !text-[clamp(28px,4vw,44px)] text-cloud">Got it.</p>
+        <p className="t-body text-slate">A strategist will call you within one business day.</p>
       </div>
     );
   }
@@ -111,19 +111,19 @@ export function AuditForm() {
       </Field>
 
       {state.status === "error" ? (
-        <p className="t-body !text-[13px] text-cognac-hi" role="alert">{state.message}</p>
+        <p className="t-body !text-[13px] text-pink" role="alert">{state.message}</p>
       ) : null}
 
       <Button type="submit" className="mt-2 w-full" disabled={pending} aria-busy={pending}>
         {pending ? "Sending…" : "Request a callback"}
       </Button>
-      <p className="t-body text-center !text-[13px] text-ash">No sales presentation. A strategist calls you back within one business day.</p>
+      <p className="t-body text-center !text-[13px] text-steel">No sales presentation. A strategist calls you back within one business day.</p>
 
       {/* The second route. Some people will not hand a phone number to a form,
           and losing them to a missing mailto is a silly way to lose a lead. */}
-      <p className="t-body mt-1 border-t border-edge-dark pt-4 text-center !text-[13px] text-ash">
+      <p className="t-body mt-1 border-t border-edge-dark pt-4 text-center !text-[13px] text-steel">
         Prefer email?{" "}
-        <a href={`mailto:${SITE.salesEmail}?subject=${encodeURIComponent("Content enquiry — Reelative Media")}`} className="link-underline text-cognac-hi">
+        <a href={`mailto:${SITE.salesEmail}?subject=${encodeURIComponent("Content enquiry — Reelative Media")}`} className="link-underline text-pink">
           {SITE.salesEmail}
         </a>
       </p>

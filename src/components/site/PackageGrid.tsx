@@ -11,7 +11,7 @@ const PRICE_W = "min-w-[5ch]";
 /**
  * There is deliberately NO alternating row fill here.
  *
- * The rows used to carry `odd:bg-linen` bled to each card's edge with a
+ * The rows used to carry `odd:bg-haze` bled to each card's edge with a
  * negative margin. Because the columns are separate cards with a gutter between
  * them, those bands crossed the gutters while the cards ran vertically — two
  * grids fighting, which read as plaid. Worse, the label column's bands floated
@@ -24,7 +24,7 @@ const PRICE_W = "min-w-[5ch]";
 
 function MostPopular() {
   return (
-    <span className="eyebrow absolute -top-[11px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[2px] bg-cognac px-3 py-[5px] !text-[10px] text-bone shadow-[0_2px_6px_-2px_rgba(25,21,16,0.35)]">
+    <span className="eyebrow absolute -top-[11px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-[2px] bg-brand px-3 py-[5px] !text-[10px] shadow-[0_2px_6px_-2px_rgba(25,21,16,0.35)]">
       Most popular
     </span>
   );
@@ -41,10 +41,11 @@ function PackageCard({ p, ctaHref }: { p: Package; ctaHref: string }) {
       aria-label={`${p.name} package`}
     >
       {p.highlighted ? <MostPopular /> : null}
-      <span className="eyebrow text-cognac">{p.name}</span>
+      {/* violet, the light-ground accent: 6.51 on the cloud plate at 11px. */}
+      <span className="eyebrow text-violet">{p.name}</span>
       <p className={`t-price ${PRICE_W} mt-4 text-[50px] leading-none text-ink`}>
         {p.price}
-        <span className="mono ml-2 align-baseline text-slate">/mo</span>
+        <span className="mono ml-2 align-baseline text-pewter">/mo</span>
       </p>
       <dl className="mt-7 flex flex-col border-t border-rule">
         {PACKAGE_ROWS.map((r) => (
@@ -52,7 +53,7 @@ function PackageCard({ p, ctaHref }: { p: Package; ctaHref: string }) {
             key={r.key}
             className="-mx-6 flex items-baseline justify-between gap-4 border-b border-rule px-6 py-3.5 last:border-b-0"
           >
-            <dt className="mono text-slate">{r.label}</dt>
+            <dt className="mono text-pewter">{r.label}</dt>
             <dd className="t-body !text-[15px] text-right text-ink">{p.rows[r.key]}</dd>
           </div>
         ))}
@@ -79,9 +80,9 @@ function PackageColumn({ p, ctaHref }: { p: Package; ctaHref: string }) {
     >
       {p.highlighted ? <MostPopular /> : null}
       <div className={`${HEAD_H} flex flex-col`}>
-        <span className="eyebrow text-cognac">{p.name}</span>
+        <span className="eyebrow text-violet">{p.name}</span>
         <p className={`t-price ${PRICE_W} mt-5 whitespace-nowrap text-[42px] leading-none text-ink`}>{p.price}</p>
-        <span className="mono mt-2.5 text-slate">per month</span>
+        <span className="mono mt-2.5 text-pewter">per month</span>
       </div>
       <ul className="flex flex-col">
         {PACKAGE_ROWS.map((r) => (
@@ -128,13 +129,13 @@ export function PackageGrid({ ctaHref = "#audit" }: { ctaHref?: string }) {
             the labels on the same baselines as the cells. */}
         <Item className="pt-6">
           <div className={`${HEAD_H} flex flex-col justify-end pb-5`}>
-            <span className="mono text-slate">Monthly</span>
+            <span className="mono text-pewter">Monthly</span>
           </div>
           <ul className="flex flex-col">
             {PACKAGE_ROWS.map((r) => (
               <li
                 key={r.key}
-                className={`${ROW_H} mono flex items-center justify-end pr-4 text-right text-slate`}
+                className={`${ROW_H} mono flex items-center justify-end pr-4 text-right text-pewter`}
               >
                 {r.label}
               </li>
@@ -156,7 +157,7 @@ export function PackageFinePrint({ className = "" }: { className?: string }) {
     <Reveal className={className}>
       {/* Terms, not a label: a fourteen-word sentence cannot be uppercase
           condensed `mono` (see the uppercase rationing rule). */}
-      <p className="t-body !text-[14px] text-slate">{PACKAGE_FINE_PRINT.join(" · ")}.</p>
+      <p className="t-body !text-[14px] text-pewter">{PACKAGE_FINE_PRINT.join(" · ")}.</p>
     </Reveal>
   );
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
 /**
- * primary   — the ONE cognac fill per screen. Bone label, never ink.
+ * primary   — the ONE spectrum-gradient fill per screen. White label, never ink.
  * secondary — outlined, on any light ground.
  * invert    — outlined, INSIDE a dark well. (This is a change of meaning: it
  *             used to be the light-surface special case.)

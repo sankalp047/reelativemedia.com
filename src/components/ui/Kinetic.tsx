@@ -16,6 +16,12 @@ type Props = {
   stagger?: number;
   /** Draw the trailing echo copy behind each character. */
   ghost?: boolean;
+  /**
+   * Zero-based indices of the lines set in the voice gradient — the ONE accent
+   * line of a headline. The gradient resolves per ground (see --g-voice in
+   * globals.css), so a caller only says which line, never which colours.
+   */
+  accent?: number[];
   style?: CSSProperties;
 };
 
@@ -40,9 +46,56 @@ export function Kinetic({
   delay = 0,
   stagger = 0.02,
   ghost = true,
+  accent,
   style,
 }: Props) {
   const ref = useRef<HTMLElement>(null);
+  const accentKey = accent?.join(",") ?? "";
+
+  /* The accent line's gradient. Every character is its own box, so the
+     gradient is painted per character and POSITIONED as one run: this measures
+     the line's text run and writes its width and each character's offset into
+     it as --k-bs / --k-bp, which the k-accent rules in globals.css read.
+     Measured in layout px — the client rects are divided by the line's own
+     scale factor — because the hero scales its headline with a transform and a
+     scaled offset would tear the gradient. Re-measured whenever the element
+     resizes (font load, viewport change). */
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !accentKey) return;
+    const lines = Array.from(el.querySelectorAll<HTMLElement>(".k-accent"));
+    if (!lines.length) return;
+
+    const measure = () => {
+      for (const line of lines) {
+        const chars = Array.from(line.querySelectorAll<HTMLElement>(".k-char"));
+        if (!chars.length) continue;
+        const lr = line.getBoundingClientRect();
+        const scale = line.offsetWidth > 0 && lr.width > 0 ? lr.width / line.offsetWidth : 1;
+        /* The .k-solid rects, NOT the .k-char rects. The solid carries 0.2em of
+           horizontal padding so that overhanging italic ink still has a
+           background to be clipped out of (see the .k-accent rules in
+           globals.css), and a background is positioned from the PADDING box —
+           so the padded box is the one whose geometry the gradient has to be
+           built from, or every character is offset by that padding. */
+        const solids = chars.map((c) => c.querySelector<HTMLElement>(".k-solid") ?? c);
+        const rects = solids.map((s) => s.getBoundingClientRect());
+        const first = Math.min(...rects.map((r) => r.left));
+        const last = Math.max(...rects.map((r) => r.right));
+        const run = Math.max(1, (last - first) / scale);
+        chars.forEach((c, i) => {
+          c.style.setProperty("--k-bs", `${run}px 100%`);
+          c.style.setProperty("--k-bp", `${-((rects[i].left - first) / scale)}px 0`);
+        });
+      }
+    };
+
+    measure();
+    document.fonts?.ready.then(() => measure()).catch(() => {});
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [accentKey, text]);
 
   useEffect(() => {
     const el = ref.current;
@@ -125,7 +178,7 @@ export function Kinetic({
            at a time. That is a certain regression for real users traded against
            a speculative gain with parsers that honour aria-hidden; Google is
            documented not to. The doubling fix above is what actually mattered. */
-        <span key={li} className="block" aria-hidden="true">
+        <span key={li} className={`block${accent?.includes(li) ? " k-accent" : ""}`} aria-hidden="true">
           {line.split(" ").map((word, wi, arr) => (
             <span key={wi} className="k-word">
               {/* data-ch feeds the ::after echo. It must NOT be a second span

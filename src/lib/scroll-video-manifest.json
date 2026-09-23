@@ -1,9 +1,9 @@
 {
-  "rig": {
-    "base": "/scroll/rig",
+  "stage": {
+    "base": "/scroll/stage",
     "frames": 121,
-    "width": 1440,
-    "height": 1440,
-    "proxyWidth": 200
+    "width": 1920,
+    "height": 1082,
+    "proxyWidth": 240
   }
 }

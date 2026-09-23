@@ -9,11 +9,14 @@ import { TESTIMONIALS, streamHls, streamPoster } from "@/lib/data";
 
 const Lightbox = dynamic(() => import("@/components/home/Lightbox"), { ssr: false });
 
+/* No glow. This section is meant to look exactly as it did apart from the token
+   colours, and a 24px pink cast over the client's own poster art is a new
+   effect, not a token swap. The gradient fill is the whole change here. */
 function PlayButton() {
   return (
-    <span className="flex h-14 w-14 items-center justify-center rounded-full border border-cognac bg-cognac transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110">
-      {/* A cognac fill takes BONE. The old ink glyph on brass was 2.44:1. */}
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="#f4f1ea" aria-hidden="true">
+    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110">
+      {/* A spectrum fill takes WHITE: 4.64 at the deepest stop. */}
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
         <path d="M8 5.5v13l11-6.5z" />
       </svg>
     </span>
@@ -36,20 +39,25 @@ export function Proof() {
   );
 
   return (
-    <section className="relative z-10 overflow-hidden bg-parchment section-pad" aria-labelledby="results-heading">
+    <section className="relative z-10 overflow-hidden bg-midnight section-pad" aria-labelledby="results-heading">
 
       <div className="wrap relative z-10">
-        <SectionHead eyebrow="04 — Results" lines={["You see what happened,", "and what to do next."]} />
+        <SectionHead invert eyebrow="04 — Results" lines={["You see what happened,", "and what to do next."]} />
         <span id="results-heading" className="sr-only">Results</span>
 
-        <Stagger className="mt-14 grid gap-8 border-t border-rule pt-12 md:grid-cols-3 lg:mt-20" amount={0.15}>
+        {/* rule-dark, not rule: --color-rule is the LIGHT band's hairline and
+            measures 14.22:1 on midnight — it was the brightest line in the
+            section. border-edge on the cards below is correct and stays: it is
+            an interactive boundary at 3.61 on midnight, where edge-dark would
+            be 2.63. */}
+        <Stagger className="mt-14 grid gap-8 border-t border-rule-dark pt-12 md:grid-cols-3 lg:mt-20" amount={0.15}>
           {TESTIMONIALS.map((t, i) => (
             <Item key={t.id}>
               <div className="flex flex-col">
                 <button
                   type="button"
                   onClick={() => setOpen(i)}
-                  className="group relative w-full overflow-hidden rounded-[2px] border border-edge bg-linen"
+                  className="group relative w-full overflow-hidden rounded-[2px] border border-edge bg-haze"
                   style={{ aspectRatio: "9 / 16", rotate: i % 2 === 0 ? "-1.4deg" : "1.2deg" }}
                   data-cursor="PLAY"
                   aria-label={`Play reel ${i + 1} of ${TESTIMONIALS.length}`}

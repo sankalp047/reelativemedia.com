@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Newsreader, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
-import { Cursor } from "@/components/ui/Cursor";
 import { Parallax } from "@/components/ui/Parallax";
 import { Nav } from "@/components/home/Nav";
 import { Footer } from "@/components/home/Footer";
@@ -99,8 +98,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F4F1EA",
-  colorScheme: "light",
+  // The nav bar is cloud, so the browser chrome above it matches the bar rather
+  // than the page ground behind it.
+  themeColor: "#F7F9FC",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
 };
@@ -108,13 +109,23 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${newsreader.variable} ${sans.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-alabaster text-ink">
+      {/* NO bg-midnight / text-cloud utility here: globals.css already paints
+          html and body midnight and sets the body type to cloud. As a class it
+          made `.bg-midnight :focus-visible` match every focusable element on the
+          site, so the focus ring was pink even on the light bands (2.94 on
+          mist) and the violet-on-light rule never fired once. */}
+      <body className="flex min-h-full flex-col">
         <SmoothScroll>
           <Nav />
           {children}
           <Footer />
         </SmoothScroll>
-        <Cursor />
+        {/* The custom cursor (a dot that grew into a labelled circle over
+            anything carrying data-cursor) is gone, along with the `cursor: none`
+            that hid the real pointer. It replaced a control every visitor
+            already knows how to read with one only this site uses, and it
+            lagged behind the real pointer position by design. The `data-cursor`
+            attributes left on a few elements are inert. */}
         <Parallax />
         <div className="grain" aria-hidden="true" />
         <Analytics />

@@ -27,15 +27,15 @@ type Props = {
 };
 
 /**
- * `chip` is tuned for the paper grounds (graphite on alabaster, hover to an ink
- * fill). Inside the lightbox every chip sits on a near-obsidian scrim, so the
+ * `chip` is tuned for the paper grounds (graphite on midnight, hover to an ink
+ * fill). Inside the lightbox every chip sits on a near-abyss scrim, so the
  * whole set is re-pointed at the dark half of the palette: a `well` fill that is
  * effectively invisible against the scrim, carried by an `edge-dark` boundary at
- * 3.23:1 — the interactive-boundary token, not the decorative one — with bone
- * type at 15.11:1, inverting to a bone fill with ink type on hover.
+ * 3.23:1 — the interactive-boundary token, not the decorative one — with cloud
+ * type at 15.11:1, inverting to a cloud fill with ink type on hover.
  */
 const DARK_CHIP =
-  "chip !border-edge-dark !bg-well !text-bone hover:!border-bone hover:!bg-bone hover:!text-ink";
+  "chip !border-edge-dark !bg-well !text-cloud hover:!border-cloud hover:!bg-cloud hover:!text-ink";
 
 /**
  * Full-height 9:16 player. Sound on.
@@ -194,7 +194,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
           </button>
 
           <div className="absolute right-5 top-5 z-20 flex items-center gap-3">
-            <span className="mono text-ash">
+            <span className="mono text-steel">
               Reel [{String(index + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}]
             </span>
           </div>
@@ -204,7 +204,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
             /* Portrait is height-led (fill the viewport, let width follow);
                landscape is width-led. Sizing a 16:9 film by height would make
                it wider than the screen on any normal window. */
-            className={`relative rounded-[2px] bg-linen p-[8px] shadow-[0_44px_120px_-24px_rgba(4,3,2,0.70)] ${
+            className={`relative rounded-[2px] bg-haze p-[8px] shadow-[0_44px_120px_-24px_rgba(4,3,2,0.70)] ${
               item.aspect === "16/9"
                 ? "aspect-video w-[min(94vw,1280px)] max-h-[88svh]"
                 : "aspect-[9/16] h-[min(88svh,900px)] max-w-[94vw]"
@@ -235,8 +235,8 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
                   className="pointer-events-none absolute inset-x-0 bottom-0 p-6"
                   style={{ background: "linear-gradient(to top, rgba(10,9,7,0.88), rgba(10,9,7,0))" }}
                 >
-                  {item.title ? <p className="t-h3 text-bone">{item.title}</p> : null}
-                  {item.meta ? <p className="num mt-1.5 text-[12.5px] tracking-[0.04em] text-ash">{item.meta}</p> : null}
+                  {item.title ? <p className="t-h3 text-cloud">{item.title}</p> : null}
+                  {item.meta ? <p className="num mt-1.5 text-[12.5px] tracking-[0.04em] text-steel">{item.meta}</p> : null}
                 </div>
               ) : null}
             </div>

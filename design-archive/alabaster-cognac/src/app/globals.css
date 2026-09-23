@@ -1,0 +1,705 @@
+@import "tailwindcss";
+
+/* =========================================================
+   Reelative Media — "Alabaster & Cognac"
+   Warm alabaster paper, one Didone voice, one cognac accent.
+
+   The argument for a light ground is not taste. Every asset this
+   site owns is already dark: the ten business stills average under
+   80 luminance, the canister is a black cylinder, and the 35mm film
+   stock in section 3 is #08080A. On the previous near-black ground
+   the film stock sat at 1.04:1 against the page — the strip had no
+   edge and read as a hole cut in the screen. On alabaster the same
+   untouched film reads 17.74:1 and becomes an object lying on a
+   light table. The footage stops competing with the page and starts
+   being the only colour on it.
+
+   THE RULES THAT MATTER (full list in docs/design-system.md):
+   - Body copy is NEVER uppercase, never condensed, never above 400.
+   - Uppercase is rationed to labels <=12px at 0.16-0.22em tracking.
+   - The display face is for the voice; anything a customer must
+     READ to buy is the text face.
+   - A COGNAC fill takes BONE. A COGNAC-HI fill takes INK.
+     (This inverts the old Ink & Brass rule and is the single most
+     likely silent accessibility regression in the migration.)
+   - Never stack opacity on a tuned colour. Use a named token.
+   - Hairlines are 1px. Corners are 2px. One accent, twice a screen.
+   ========================================================= */
+
+@theme {
+  /* ---------- Light grounds ---------- */
+  --color-chalk: #fbf9f4;       /* lifted surface: cards, the call sheet */
+  --color-alabaster: #f4f1ea;   /* THE page ground */
+  /* The System section's ground. This is not a chosen colour — it is the
+     backdrop the rig footage was actually lit on, measured off the frames and
+     flattened to one value so the sequence has no visible edge against the
+     page. Same luminance as alabaster (contrast 1.01), so it reads as a warm
+     shift rather than a band, and every text token keeps its ratio to within
+     0.10. Changing it means regrading /public/scroll/rig. */
+  --color-studio: #fdefd7;
+  --color-parchment: #eae4d8;   /* alternate band: WhatWeDo, Packages */
+  --color-linen: #ded6c6;       /* recessed: input wells, row stripes, mats */
+  --color-sheet-shade: #f3efe6; /* the weekend column band inside a chalk sheet.
+                                   linen is too heavy a step against chalk here,
+                                   and an alpha on a tuned colour is banned. */
+  /* ---------- Dark wells ---------- */
+  --color-noir: #14120e;        /* Statement, FinalCTA, the TrustMarquee ticker.
+                                   Warm-black with a brown bias, never neutral. */
+  --color-obsidian: #0a0907;    /* Footer base, the two Hero letterbox bars */
+  --color-well: #1f1b15;        /* card/input surface INSIDE a dark well */
+  --color-stock: #08080a;       /* the 35mm film stock in FilmStrip.
+                                   Carried over byte-for-byte from the old INK
+                                   constant so no geometry or animation moves. */
+  --scrim-floor: #1c1913;       /* NOT A PAINT. The luminance ceiling (L 0.00989)
+                                   every generated photographic ground is asserted
+                                   against at build time. Contrast over a photo is
+                                   quoted against this, never against an average. */
+
+  /* ---------- Type on light ---------- */
+  --color-ink: #191510;         /* primary. Warm near-black — neutral black on warm
+                                   paper reads as a print error. AAA on all four grounds. */
+  --color-graphite: #52493c;    /* secondary: body, ledes, captions, cells */
+  --color-slate: #635a4b;       /* meta: counters, unit labels, plate numbers */
+
+  /* ---------- Type on dark ---------- */
+  --color-bone: #f4f1ea;        /* primary. Identical to alabaster BY DESIGN — the
+                                   wells are the page inverted, not a second palette. */
+  --color-bone-dim: #bdb6a6;    /* secondary inside a well */
+  --color-ash: #a69e90;         /* meta inside a well and on the film stock */
+
+  /* ---------- The one accent ---------- */
+  --color-cognac: #7a4a1e;      /* light-ground form. A COGNAC FILL TAKES BONE (6.59).
+                                   Ink on cognac is 2.44 and is BANNED. */
+  --color-cognac-hi: #c18a4e;   /* dark-ground form. A COGNAC-HI FILL TAKES INK (6.07).
+                                   Bone on cognac-hi is 2.65 and is BANNED. */
+
+  /* ---------- Borders, split by function and NOT interchangeable ----------
+     rule/rule-dark are DECORATIVE: no contrast requirement, never a text
+     colour, never the only indicator of an affordance.
+     edge/edge-dark are INTERACTIVE BOUNDARIES: tuned to clear 3:1 on every
+     ground they can appear on. Putting `rule` on an input border is a bug. */
+  --color-rule: #d9d2c2;        /* decorative hairline on light (1.33 by design) */
+  --color-edge: #7a6f5c;        /* interactive boundary on light (4.37 on alabaster) */
+  --color-rule-dark: #2a2720;   /* decorative hairline in a well */
+  --color-edge-dark: #736b5c;   /* interactive boundary in a flat well (3.25 on well) */
+  --color-edge-media: #a7a5a0;  /* interactive boundary over UNPREDICTABLE footage.
+                                   edge-dark was tuned against the flat #1F1B15 well and
+                                   measures only 1.74:1 over a scrimmed video highlight —
+                                   below the 3:1 non-text minimum. This clears it on every
+                                   dark ground the site has: 3.72 over the worst-case hero
+                                   rail, 6.96 on well, 7.60 on noir. */
+  --color-line: rgba(25, 21, 16, 0.11); /* GridRules pencil texture */
+
+  /* The migration aliases (bg-paper / bg-base / bg-band / bg-elevated /
+     bg-raised / bg-deep / bg-night / text-primary / text-muted / text-faint /
+     brass*) have been deleted: every call site was re-pointed to a real token.
+     Do not reintroduce them. */
+
+  /* ---------- Type families ----------
+     Newsreader is the VOICE: hero, H1s, section headlines, the
+     statement, prices, the footer wordmark. Instrument Sans is
+     everything a customer has to read in order to buy something.
+     The division is absolute: a price in Newsreader, its terms in
+     Instrument Sans.
+
+     Newsreader replaced Bodoni Moda. A Didone is beautiful at 100px
+     and tiring everywhere else — its hairlines go spindly as soon as
+     the size drops, which is why the old scale needed a hard 24px
+     floor and a low-DPI weight bump. Newsreader is a variable TEXT
+     face with real optical sizes (6-72), so it holds its colour from
+     a 12px label to a 188px hero with neither crutch. Readable
+     first, elegant second. */
+  --font-display: var(--font-serif), "Iowan Old Style", "Palatino", Georgia, serif;
+  --font-sans: var(--font-sans-v), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-sans-v), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --radius-card: 2px;           /* was 6px. A 2px corner is a printed edge; */
+  --radius-sm: 2px;             /* soft radii are the vocabulary of a template. */
+
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 38s linear infinite;
+  --animate-blob: blob 20s ease-in-out infinite;
+  --animate-scroll-cue: scroll-cue 2.2s var(--ease-expo) infinite;
+  --animate-rings: rings 30s linear infinite;
+  --animate-float: float 9s ease-in-out infinite;
+  --animate-float-slow: float 14s ease-in-out infinite;
+  --animate-spin-slow: spin 26s linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes marquee-reverse {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes blob {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    33% { transform: translate(-42%, -56%) scale(1.12); }
+    66% { transform: translate(-58%, -44%) scale(0.94); }
+  }
+  @keyframes scroll-cue {
+    0% { transform: scaleY(0); transform-origin: top; }
+    45% { transform: scaleY(1); transform-origin: top; }
+    55% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+  @keyframes rings {
+    from { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.04); }
+    to { transform: rotate(360deg) scale(1); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    50% { transform: translate3d(0, -14px, 0) rotate(4deg); }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
+
+:root {
+  --nav-h: 76px;
+  color-scheme: light;
+}
+
+/* ---------- Base ---------- */
+html {
+  background: var(--color-alabaster);
+  scroll-behavior: auto;
+}
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  background: var(--color-alabaster);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.62;
+  font-variation-settings: "wdth" 100, "wght" 400;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  /* NO -webkit-font-smoothing here. Greyscale smoothing on 16px body text
+     costs perceived weight on macOS, and the whole anti-heavy thesis depends
+     on the text face holding its designed colour. Smoothing is scoped to the
+     display utilities below, where the thins actually need it. */
+  font-synthesis: none; /* nobody can fake a weight Bodoni does not have */
+}
+
+::selection {
+  background: var(--color-cognac);
+  color: var(--color-alabaster);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-cognac);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+[data-ground="dark"] :focus-visible { outline-color: var(--color-cognac-hi); }
+
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: none; }
+}
+
+/* ---------- Type scale ----------
+   Two families, one job each. Every Bodoni utility binds `opsz` explicitly:
+   an unbound optical size is the number one way a variable Didone ships
+   broken. Every Bodoni utility also floors at 24px. */
+
+@utility t-mega {
+  font-family: var(--font-display);
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 72, "wght" 400;
+  font-size: clamp(50px, 11vw, 188px);
+  line-height: 0.92;
+  letter-spacing: -0.022em;
+  text-transform: none;
+}
+@utility t-display {
+  font-family: var(--font-display);
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 72, "wght" 400;
+  font-size: clamp(40px, 7.2vw, 118px);
+  line-height: 0.96;
+  letter-spacing: -0.018em;
+  text-transform: none;
+}
+@utility t-h2 {
+  font-family: var(--font-display);
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 48, "wght" 400;
+  font-size: clamp(30px, 4.4vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  text-transform: none;
+}
+@utility t-statement {
+  font-family: var(--font-display);
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 72, "wght" 400;
+  font-style: italic;
+  font-size: clamp(32px, 5.6vw, 96px);
+  line-height: 1;
+  letter-spacing: -0.014em;
+  text-transform: none;
+}
+/* Card titles are the TEXT face — a card title is a label you scan, not a
+   voice. This also fixes the old defect where t-h3 rendered smaller than its
+   own lede. Hierarchy comes from the 600 weight, not from a size step. */
+@utility t-h3 {
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.24;
+  letter-spacing: -0.006em;
+  text-transform: none;
+}
+@utility t-lead {
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100, "wght" 400;
+  font-size: clamp(19px, 1.6vw, 24px);
+  line-height: 1.45;
+  letter-spacing: -0.004em;
+  max-width: 46ch;
+  text-transform: none;
+}
+/* EVERY PARAGRAPH ON THE SITE. This is the fix for "not premium".
+   Uppercase destroys word-shape so the eye spells rather than reads;
+   condensed width signals "fit more in"; heavy weight signals "shout".
+   All three are the vocabulary of a sale poster. The weight is hard-coded
+   and no weight prop is exposed. */
+@utility t-body {
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100, "wght" 400;
+  font-size: clamp(16px, 1.05vw, 17.5px);
+  line-height: 1.62;
+  letter-spacing: 0;
+  max-width: 62ch;
+  text-transform: none;
+}
+/* Note: no `color` declaration. The old utility hard-coded --color-primary,
+   which fought whatever ground it landed on. The eyebrow now inherits. */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* The text face run condensed. No monospace is loaded. Never carries a
+   sentence: past about six words it is not allowed to be mono. */
+@utility mono {
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 82, "wght" 500;
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+/* ANYTHING THAT TICKS OR ALIGNS IN A COLUMN. Moved off the display face:
+   tabular coverage in a Didone is not guaranteed and a jittering live
+   counter is the most visible possible bug. */
+@utility num {
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100, "wght" 500;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: 0;
+}
+/* The five package prices only. These sit in separate columns and do not
+   tick, so the serif is safe here — which lets the display face keep the
+   commercial payload while `num` keeps everything that actually moves. */
+@utility t-price {
+  font-family: var(--font-display);
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 36, "wght" 500;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+/* The italic plate number in the section 3 catalogue caption. Newsreader's
+   optical size is bound to 18 here so the small setting keeps its colour. */
+@utility t-plate {
+  font-family: var(--font-display);
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 18, "wght" 500;
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Smoothing is scoped to the display face and never applied to body text,
+   where greyscale smoothing costs perceived weight on macOS. Unlayered so it
+   beats @layer utilities.
+   The old low-DPI weight bump that lived here is GONE with the Didone: it
+   existed because a high-contrast Roman loses its thins to sub-pixel rendering
+   below ~1.5dppx. Newsreader's optical sizes handle that themselves. */
+.t-mega, .t-display, .t-h2, .t-statement, .t-price, .t-plate {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Layout ---------- */
+@utility wrap {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 20px;
+  @media (min-width: 1024px) { padding-inline: 40px; }
+}
+/* A light ground needs more air than a dark one. This is the cheapest single
+   move toward "expensive" and the first thing a stakeholder will ask to halve. */
+/* Escapes .wrap to the right edge of the window: cancels both the 40px gutter
+   and half of whatever centring margin the 1440px max-width is adding. Used by
+   the System pane so the footage runs off the screen instead of stopping in a
+   column. 100vw includes the scrollbar, so this can overhang by a few pixels on
+   platforms with a classic scrollbar — body already carries overflow-x: clip,
+   and the overhanging pixels are flat backdrop, so the clip is invisible. */
+@utility bleed-right {
+  margin-right: calc(-1 * ((100vw - min(100vw, 1440px)) / 2 + 40px));
+}
+
+@utility section-pad {
+  padding-block: 104px;
+  @media (min-width: 1024px) { padding-block: 168px; }
+}
+
+/* ---------- Buttons ----------
+   The pill is gone, the 1.5px border is gone, and the :active nudge is gone —
+   a button that moves when you press it is a sticker tell. */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-edge);
+  padding: 15px 28px;
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100, "wght" 600;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color 0.35s var(--ease-expo),
+    color 0.35s var(--ease-expo),
+    border-color 0.35s var(--ease-expo);
+}
+/* The ONE filled button per screen. A cognac fill takes BONE (6.59:1).
+   Ink on cognac is 2.44:1 — this inverts the old Ink & Brass rule. */
+@utility btn-primary {
+  background: var(--color-cognac);
+  color: var(--color-bone);
+  border-color: var(--color-cognac);
+  &:hover { background: #6b4019; border-color: #6b4019; }
+}
+@utility btn-secondary {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-edge);
+  &:hover { background: var(--color-ink); color: var(--color-alabaster); border-color: var(--color-ink); }
+}
+/* No longer "for the rare light surface": this is the outlined button
+   INSIDE a dark well. */
+@utility btn-invert {
+  background: transparent;
+  color: var(--color-bone);
+  border-color: var(--color-edge-media);
+  &:hover { background: var(--color-bone); color: var(--color-ink); border-color: var(--color-bone); }
+}
+@utility link-underline {
+  position: relative;
+  display: inline-block;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background: var(--color-cognac);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.55s var(--ease-expo);
+  }
+  &:hover::after { transform: scaleX(1); transform-origin: left; }
+}
+[data-ground="dark"] .link-underline::after { background: var(--color-cognac-hi); }
+
+/* ---------- Kinetic split text ---------- */
+@utility kinetic {
+  display: block;
+  /* 0.26em, up from 0.2em: Bodoni's descenders are deeper than Roboto Flex's
+     and at line-height 0.92-1.02 they clip against whatever follows. */
+  padding-bottom: 0.26em;
+}
+.kinetic .k-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+.kinetic .k-char {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+.kinetic .k-solid {
+  display: inline-block;
+  will-change: transform;
+}
+/* The trailing duplicate that lags behind the solid letter. 0.16, down from
+   0.28: that value was tuned for a light ghost on dark, and a dark ghost on
+   paper at the same alpha is much heavier.
+
+   THIS IS A PSEUDO-ELEMENT, NOT A SPAN, AND IT MUST STAY ONE. It used to be a
+   second <span> holding the same character, which made every headline a real
+   doubled text node in the HTML: the hero H1 extracted as
+   "CCoonntteennttppeeoopplleerreemmeemmbbeerr.." to anything reading the markup
+   without running the page — which is most AI crawlers, and Google's text
+   extraction too. content: attr(data-ch) draws the echo without putting the
+   character in the document twice.
+
+   GSAP cannot touch a pseudo-element, so the animation drives two custom
+   properties on .k-char and the pseudo-element reads them. */
+.kinetic .k-char::after {
+  content: attr(data-ch);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: currentColor;
+  opacity: var(--k-ghost-o, 0.16);
+  transform: translate3d(0, var(--k-ghost-y, 0%), 0);
+  pointer-events: none;
+  will-change: transform;
+}
+.kinetic[data-ready="false"] .k-solid {
+  transform: translate3d(0, 108%, 0);
+  opacity: 0;
+}
+.kinetic[data-ready="false"] .k-char::after {
+  transform: translate3d(0, 168%, 0);
+  opacity: 0.16;
+}
+
+/* ---------- Structural decoration ---------- */
+/* Six vertical hairlines. Hero and FilmStrip only. Must read as drafting,
+   not as pattern. The alpha lives inside --color-line, which is a named value. */
+@utility grid-rules {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-line) 0 1px,
+    transparent 1px calc(100% / 6)
+  );
+  opacity: 1;
+}
+
+/* THE HERO ONLY. ONE BAR, at the bottom, at --bar: 34px.
+   There is deliberately no top bar. A letterbox only means something once the
+   video is full bleed; at rest the hero card is inset 25% on each side, so a
+   full-width bar above it framed the page rather than the picture and read as a
+   glitch. Worse, the hero is `sticky top-0` and the nav is transparent until you
+   scroll, so a bar at y=0 painted black behind the nav and knocked out the dark
+   logo and links entirely.
+   The bottom bar stays because it does real work: it grounds the copy rail and
+   hands straight off to the noir TrustMarquee with no rule between them, so the
+   FunAsia radio brands read as the crawl at the bottom of the frame. Do not put
+   a rule or a margin there.
+   Pseudo-elements do not participate in layout or transforms, so this is safe on
+   a pinned section. */
+@utility letterbox {
+  /* NO `position` declaration. Tailwind v4 sorts custom utilities AFTER core
+     ones, so a `position: relative` here would beat the `sticky` class on the
+     Hero section and un-pin the whole un-crop animation. The host element must
+     already establish a positioning context — the Hero is sticky. */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--bar, 34px);
+    background: var(--color-obsidian);
+    z-index: 30;
+    pointer-events: none;
+    box-shadow: 0 -1px 0 rgba(244, 241, 234, 0.1);
+  }
+}
+
+@utility laid {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='l'><feTurbulence type='fractalNoise' baseFrequency='0.75 0.035' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.06 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23l)'/></svg>");
+    background-size: 180px 180px;
+  }
+}
+
+/* The replacement for the highlighter swipe. A 40px 1px cognac rule, a 12px
+   gap, then the label. The swipe-with-forced-ink-text device was the loudest
+   surviving piece of the poster vocabulary. */
+@utility marker-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  &::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--color-cognac);
+    flex: none;
+  }
+}
+
+/* ---------- Cards ---------- */
+@utility card-ink {
+  border: 1px solid var(--color-rule);
+  background: var(--color-chalk);
+  border-radius: var(--radius-card);
+}
+/* Emphasis comes from a cognac top edge and a soft shadow — from MATERIAL —
+   rather than from a fourth near-identical ground value. */
+@utility card-pop {
+  border: 1px solid var(--color-rule);
+  border-top: 2px solid var(--color-cognac);
+  background: var(--color-chalk);
+  border-radius: var(--radius-card);
+  box-shadow: 0 18px 44px -28px rgba(25, 21, 16, 0.22);
+}
+/* ---------- Plates ----------
+   The package tiers. A `plate` is a piece of card stock lying on the sheet, not
+   a div with a border: the inset top highlight is the lit top edge, the tight
+   1px shadow is contact, and the wide -28px spread is the cast shadow. That
+   three-layer stack is what reads as thickness.
+
+   IMPORTANT: in the xl comparison table the featured plate must NOT be
+   translated or scaled — its rows have to stay on the same baselines as the
+   other four columns or the table stops being comparable. It earns its emphasis
+   from a cognac top edge and a deeper cast shadow only. Lifting is allowed in
+   the stacked card view below xl, where the cards are independent. */
+@utility plate {
+  position: relative;
+  background: var(--color-chalk);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 1px 1px rgba(25, 21, 16, 0.05),
+    0 4px 8px -6px rgba(25, 21, 16, 0.14),
+    0 16px 32px -18px rgba(25, 21, 16, 0.26);
+  transition: box-shadow 0.5s var(--ease-expo), transform 0.5s var(--ease-expo);
+}
+@utility plate-raised {
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 2px 3px rgba(25, 21, 16, 0.06),
+      0 8px 14px -8px rgba(25, 21, 16, 0.18),
+      0 30px 54px -28px rgba(25, 21, 16, 0.32);
+  }
+}
+@utility plate-featured {
+  background: var(--color-chalk);
+  border: 1px solid var(--color-rule);
+  border-top: 2px solid var(--color-cognac);
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 2px 4px rgba(25, 21, 16, 0.07),
+    0 10px 18px -10px rgba(25, 21, 16, 0.2),
+    0 40px 64px -32px rgba(25, 21, 16, 0.36);
+}
+
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-edge);
+  padding: 9px 15px;
+  font-family: var(--font-sans);
+  font-variation-settings: "wdth" 100, "wght" 500;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-graphite);
+  white-space: nowrap;
+  transition: color 0.3s var(--ease-expo), background-color 0.3s var(--ease-expo), border-color 0.3s var(--ease-expo);
+  &:hover, &[data-active="true"] {
+    background: var(--color-ink);
+    color: var(--color-alabaster);
+    border-color: var(--color-ink);
+  }
+}
+
+/* A missing asset should read as an empty frame on paper, not a dark hole. */
+@utility placeholder-block {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-linen);
+  background-image:
+    repeating-linear-gradient(135deg, rgba(25, 21, 16, 0.06) 0 2px, transparent 2px 13px);
+  border: 1px dashed var(--color-edge);
+  color: var(--color-graphite);
+}
+
+/* ---------- Warm paper grain ----------
+   Load-bearing, not decorative: a flat 8-bit light fill at 1440px is exactly
+   where a screen announces that it is a screen. Same inline SVG as before,
+   three values changed — a warm dark instead of mid-grey, multiply instead of
+   screen (screen FOGS a light page), and 0.055 instead of 0.1. At 0.055
+   multiply it is effectively invisible over noir and obsidian, so one fixed
+   overlay serves both halves of the palette. */
+.grain {
+  position: fixed;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  pointer-events: none;
+  z-index: 9990;
+  opacity: 0.055;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.10 0 0 0 0 0.085 0 0 0 0 0.06 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 260px 260px;
+}
+
+/* ---------- Scrollbar hide for horizontal rows ---------- */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .kinetic[data-ready="false"] .k-solid { transform: none; }
+  .kinetic[data-ready="false"] .k-char::after { transform: none; }
+  /* reduced motion: no echo at all */
+  .kinetic .k-char::after { display: none; }
+}

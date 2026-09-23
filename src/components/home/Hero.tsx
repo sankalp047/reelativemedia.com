@@ -21,7 +21,6 @@ export function Hero() {
   const clipRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
-  const metaRef = useRef<HTMLParagraphElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
   const [narrow, setNarrow] = useState(false);
   /** Phone bottom inset, as a % of viewport height. Measured, not guessed —
@@ -102,10 +101,6 @@ export function Hero() {
   useMotionValueEvent(copyOpacity, "change", (v) => {
     if (reduce) return;   // the rail does not fade for reduced-motion users
     if (copyRef.current) copyRef.current.style.opacity = String(v);
-    // The top-right label starts on alabaster but the card un-crops under it,
-    // so it would end up as light-ground slate over footage. It fades on the
-    // same curve as the rail rather than washing out.
-    if (metaRef.current) metaRef.current.style.opacity = String(v);
   });
   useMotionValueEvent(t, "change", (v) => {
     // Without this guard the un-crop still scrubbed while the card was meant to
@@ -180,7 +175,11 @@ export function Hero() {
   return (
     <div ref={wrapRef} id="top" className={reduce ? "relative h-svh" : "relative h-[190svh]"}>
       <section
-        className="letterbox sticky top-0 h-svh overflow-hidden bg-alabaster"
+        className="letterbox sticky top-0 h-svh overflow-hidden bg-midnight"
+        // data-ground: the copy rail sits on midnight, and the outlined "What we
+        // make" button takes its type from the ground — without this it was ink
+        // on midnight, an empty box.
+        data-ground="dark"
         // `letterbox` deliberately declares no `position` (see globals.css) so it
         // cannot beat the `sticky` class and un-pin the un-crop. The bars are
         // pseudo-elements and do not participate in layout.
@@ -188,6 +187,24 @@ export function Hero() {
         aria-label="Intro"
       >
         <GridRules className="opacity-60" />
+
+        {/* Two soft spectrum glows in the margins beside the card — violet at
+            the top left, pink at the right. They sit UNDER the clip layer, so
+            the footage covers them where it is and the un-crop swallows them
+            as the card goes full bleed. Plain radial gradients, no filter(): a
+            blur on a 70vh element is a compositing cost for nothing. Both are
+            placed clear of the copy rail and the top-right meta label, so no
+            text ever sits on a tinted ground. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-[12vw] -top-[18vh] h-[70vh] w-[70vh] rounded-full"
+          style={{ background: "radial-gradient(circle at center, rgba(111,36,229,0.5) 0%, rgba(111,36,229,0) 64%)" }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-[14vw] top-[10vh] h-[76vh] w-[76vh] rounded-full"
+          style={{ background: "radial-gradient(circle at center, rgba(244,67,148,0.42) 0%, rgba(244,67,148,0) 64%)" }}
+        />
 
         {/* The video, cropped to a card then un-cropped */}
         <div ref={clipRef} className="absolute inset-0 will-change-[clip-path]">
@@ -242,16 +259,20 @@ export function Hero() {
           <Kinetic
             as="h1"
             text={"Content\npeople\nremember."}
-            className="t-mega max-w-[min(88vw,1080px)] text-center text-bone !text-[clamp(38px,7vw,132px)]"
+            className="t-mega max-w-[min(88vw,1080px)] text-center text-cloud !text-[clamp(38px,7vw,132px)]"
             stagger={0.026}
             delay={0.15}
+            // "remember." in the dark voice gradient. Its darkest stop is 5.59
+            // on flat midnight and 3.3 over the measured worst-case scrim.
+            accent={[2]}
           />
         </motion.div>
 
-        {/* Copy rail at the bottom. NOTE: this sits on ALABASTER, not on the
+        {/* Copy rail at the bottom. NOTE: this sits on MIDNIGHT, not on the
             video — it is below and left of the cropped card, and copyOpacity
             fades it to 0 over the first 28% of scroll, so it is gone before the
-            card un-crops to full bleed. Dark type, light-ground buttons. */}
+            card un-crops to full bleed. Slate type; the section carries
+            data-ground="dark", so the outlined button takes cloud. */}
         <motion.div
           ref={copyRef}
           className="wrap pointer-events-none absolute inset-x-0 bottom-0 pb-[58px]"
@@ -259,8 +280,8 @@ export function Hero() {
         >
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div className="pointer-events-auto max-w-[420px]">
-              <Marker tone={onVideo ? "dark" : "light"} className="mb-4">A FunAsia company · DFW</Marker>
-              <p className={`t-body ${onVideo ? "text-bone" : "text-graphite"}`}>
+              <Marker tone="dark" className="mb-4">A FunAsia company · DFW</Marker>
+              <p className={`t-body ${onVideo ? "text-cloud" : "text-slate"}`}>
                 Short-form reels, smarter distribution and measurable growth for DFW businesses.
               </p>
             </div>
@@ -273,9 +294,9 @@ export function Hero() {
           </div>
         </motion.div>
 
-        <p ref={metaRef} className={`mono pointer-events-none absolute right-5 top-[calc(var(--nav-h)+14px)] hidden md:block lg:right-10 ${onVideo ? "text-bone-dim" : "text-slate"}`} aria-hidden="true">
-          Loop:[on] · Sound:[none]
-        </p>
+        {/* A "Loop:[on] · Sound:[none]" label used to sit at the top right. It
+            described the video player rather than the business, so it spent the
+            most valuable corner of the page on a caption nobody needed. */}
       </section>
     </div>
   );

@@ -1,114 +1,118 @@
 @import "tailwindcss";
 
 /* =========================================================
-   Reelative Media — "Alabaster & Cognac"
-   Warm alabaster paper, one Didone voice, one cognac accent.
+   Reelative Media — "Spectrum"
+   Midnight ground, light bands, and ONE accent family: the
+   colours already inside the logo mark — indigo, violet,
+   magenta and pink — run as a gradient on anything FILLED and
+   used as a single solid on anything that has to be READ.
 
-   The argument for a light ground is not taste. Every asset this
-   site owns is already dark: the ten business stills average under
-   80 luminance, the canister is a black cylinder, and the 35mm film
-   stock in section 3 is #08080A. On the previous near-black ground
-   the film stock sat at 1.04:1 against the page — the strip had no
-   edge and read as a hole cut in the screen. On alabaster the same
-   untouched film reads 17.74:1 and becomes an object lying on a
-   light table. The footage stops competing with the page and starts
-   being the only colour on it.
+   Roughly 60% midnight, 25% light bands, 15% spectrum. The
+   spectrum is rationed to fills (buttons, badges, discs), the
+   one accent line of each headline, hairline rules and the
+   counters. Body copy never takes it.
 
-   THE RULES THAT MATTER (full list in docs/design-system.md):
+   THE TRADE-OFF THIS PALETTE INHERITS. Every asset the site owns
+   is dark — the business stills average under 80 luminance, the
+   canister is a black cylinder, and the 35mm film stock is
+   #08080A. On midnight that stock measures 1.02:1 against the
+   page: the strip would have no edge and read as a hole cut in
+   the screen. FilmStrip and System are therefore deliberately
+   LIGHT bands. That is not an inconsistency, it is the reason
+   the light bands exist at all. (System is also the band whose
+   footage is graded to its own cream; see RigScrub.)
+
+   THE RULES THAT MATTER (every ratio measured; docs/design-system.md):
+   - The SOLID accent FLIPS with the ground and is not symmetrical:
+       on DARK  it is PINK   #F44394 — 5.68 on midnight, 5.28 on well.
+       on LIGHT it is VIOLET #6F24E5 — 6.51 on cloud,    5.84 on mist.
+     Both are body-safe on their own ground. Pink on cloud is 3.28 and
+     violet on midnight is 2.86: never swap them.
+   - A FILL takes WHITE, never midnight. The fill gradient ends in
+     BERRY (#D62D7D), one step deeper than the logo pink, because white
+     on the logo pink is 3.46 and fails for button text; on berry it
+     clears at 4.64.
+   - Headline gradients have their own stops per ground, every stop
+     at >=3.0 for large text: periwinkle→lilac→pink on dark and
+     indigo→magenta→berry on light. --g-voice resolves to the right
+     one from the ground, so a component never has to choose.
    - Body copy is NEVER uppercase, never condensed, never above 400.
    - Uppercase is rationed to labels <=12px at 0.16-0.22em tracking.
    - The display face is for the voice; anything a customer must
      READ to buy is the text face.
-   - A COGNAC fill takes BONE. A COGNAC-HI fill takes INK.
-     (This inverts the old Ink & Brass rule and is the single most
-     likely silent accessibility regression in the migration.)
    - Never stack opacity on a tuned colour. Use a named token.
-   - Hairlines are 1px. Corners are 2px. One accent, twice a screen.
+   - Hairlines are 1px. Corners are 2px.
    ========================================================= */
 
 @theme {
-  /* ---------- Light grounds ---------- */
-  --color-chalk: #fbf9f4;       /* lifted surface: cards, the call sheet */
-  --color-alabaster: #f4f1ea;   /* THE page ground */
-  /* The System section's ground. This is not a chosen colour — it is the
-     backdrop the rig footage was actually lit on, measured off the frames and
-     flattened to one value so the sequence has no visible edge against the
-     page. Same luminance as alabaster (contrast 1.01), so it reads as a warm
-     shift rather than a band, and every text token keeps its ratio to within
-     0.10. Changing it means regrading /public/scroll/rig. */
-  --color-studio: #fdefd7;
-  --color-parchment: #eae4d8;   /* alternate band: WhatWeDo, Packages */
-  --color-linen: #ded6c6;       /* recessed: input wells, row stripes, mats */
-  --color-sheet-shade: #f3efe6; /* the weekend column band inside a chalk sheet.
-                                   linen is too heavy a step against chalk here,
-                                   and an alpha on a tuned colour is banned. */
-  /* ---------- Dark wells ---------- */
-  --color-noir: #14120e;        /* Statement, FinalCTA, the TrustMarquee ticker.
-                                   Warm-black with a brown bias, never neutral. */
-  --color-obsidian: #0a0907;    /* Footer base, the two Hero letterbox bars */
-  --color-well: #1f1b15;        /* card/input surface INSIDE a dark well */
+  /* ---------- Dark grounds: 60% of the page ---------- */
+  --color-midnight: #070b17;    /* THE page ground */
+  --color-abyss: #04070f;       /* footer, the deepest step */
+  --color-well: #0e1524;        /* card/input surface INSIDE a dark ground */
   --color-stock: #08080a;       /* the 35mm film stock in FilmStrip.
-                                   Carried over byte-for-byte from the old INK
-                                   constant so no geometry or animation moves. */
-  --scrim-floor: #1c1913;       /* NOT A PAINT. The luminance ceiling (L 0.00989)
-                                   every generated photographic ground is asserted
-                                   against at build time. Contrast over a photo is
-                                   quoted against this, never against an average. */
+                                   WARNING: 1.02:1 against midnight. The strip
+                                   is deliberately NOT on a dark ground for
+                                   exactly this reason — see FilmStrip. */
+  --scrim-floor: #0b1120;       /* NOT A PAINT. The luminance ceiling every
+                                   generated photographic ground is asserted
+                                   against at build time. */
 
-  /* ---------- Type on light ---------- */
-  --color-ink: #191510;         /* primary. Warm near-black — neutral black on warm
-                                   paper reads as a print error. AAA on all four grounds. */
-  --color-graphite: #52493c;    /* secondary: body, ledes, captions, cells */
-  --color-slate: #635a4b;       /* meta: counters, unit labels, plate numbers */
+  /* ---------- Light bands: 20% ---------- */
+  --color-cloud: #f7f9fc;       /* the light section ground AND primary type on dark */
+  --color-mist: #e8edf5;        /* alternate light band */
+  --color-haze: #dbe3ef;        /* recessed on light: wells, row stripes, mats */
 
   /* ---------- Type on dark ---------- */
-  --color-bone: #f4f1ea;        /* primary. Identical to alabaster BY DESIGN — the
-                                   wells are the page inverted, not a second palette. */
-  --color-bone-dim: #bdb6a6;    /* secondary inside a well */
-  --color-ash: #a69e90;         /* meta inside a well and on the film stock */
+  /* cloud is the primary; these two step down from it.
+     NOTE the name: this used to be declared as a second --color-pewter, which
+     silently lost to the light-ground pewter below it, so every `text-slate`
+     on the site resolved to NOTHING and inherited whatever the ground gave it.
+     On the dark cards inside a light band that was ink on well — invisible. */
+  --color-slate: #94a3b8;       /* secondary on dark — 7.66 on midnight */
+  --color-steel: #7c8da4;       /* meta on dark — 5.80 on midnight */
 
-  /* ---------- The one accent ---------- */
-  --color-cognac: #7a4a1e;      /* light-ground form. A COGNAC FILL TAKES BONE (6.59).
-                                   Ink on cognac is 2.44 and is BANNED. */
-  --color-cognac-hi: #c18a4e;   /* dark-ground form. A COGNAC-HI FILL TAKES INK (6.07).
-                                   Bone on cognac-hi is 2.65 and is BANNED. */
+  /* ---------- Type on light ---------- */
+  --color-ink: #070b17;         /* primary on light. Same value as the ground it
+                                   inverts, by design — the light bands are the
+                                   page turned inside out, not a second palette. */
+  --color-graphite: #475569;    /* secondary on light — 7.18 on cloud */
+  --color-pewter: #5b6b80;      /* meta on light — 5.16 on cloud */
+
+  /* ---------- The spectrum: the logo's own colours ----------
+     Sampled from public/logo/reelative-mark.png, which runs indigo → violet →
+     magenta → pink. THE ONE RULE: the solid accent FLIPS WITH THE GROUND.
+       PINK     5.68 on midnight, 5.28 on well, 5.79 on stock: DARK grounds,
+                body-safe. On the LIGHT bands it is 3.28 cloud, 2.94 mist and
+                2.67 haze — so it is not even large-text safe there. Never put
+                a solid pink on a light band; that is what violet is for.
+       VIOLET   6.51 on cloud, 5.84 on mist, 5.31 on haze: LIGHT grounds,
+                body-safe. 2.86 on midnight — never as text on a dark ground.
+       INDIGO   8.17 on cloud, 2.28 on midnight. Fills and gradient stops only.
+       MAGENTA  5.12 on cloud, 3.63 on midnight. Gradient stop only.
+       BERRY    the pink deepened until WHITE clears 4.5 on it (4.64). It exists
+                so the fill gradient can carry button text; white on the logo
+                pink itself is 3.46 and fails.
+       PERIWINKLE / LILAC are the dark-ground headline stops: 5.59 / 5.04 on
+                midnight. 3.33 / 3.69 on cloud — never on a light band. */
+  --color-indigo: #3a1ae3;
+  --color-violet: #6f24e5;
+  --color-magenta: #b426b5;
+  --color-pink: #f44394;
+  --color-berry: #d62d7d;
+  --color-periwinkle: #6d7cff;
+  --color-lilac: #b44bff;
 
   /* ---------- Borders, split by function and NOT interchangeable ----------
      rule/rule-dark are DECORATIVE: no contrast requirement, never a text
      colour, never the only indicator of an affordance.
-     edge/edge-dark are INTERACTIVE BOUNDARIES: tuned to clear 3:1 on every
-     ground they can appear on. Putting `rule` on an input border is a bug. */
-  --color-rule: #d9d2c2;        /* decorative hairline on light (1.33 by design) */
-  --color-edge: #7a6f5c;        /* interactive boundary on light (4.37 on alabaster) */
-  --color-rule-dark: #2a2720;   /* decorative hairline in a well */
-  --color-edge-dark: #736b5c;   /* interactive boundary in a flat well (3.25 on well) */
-  --color-edge-media: #a7a5a0;  /* interactive boundary over UNPREDICTABLE footage.
-                                   edge-dark was tuned against the flat #1F1B15 well and
-                                   measures only 1.74:1 over a scrimmed video highlight —
-                                   below the 3:1 non-text minimum. This clears it on every
-                                   dark ground the site has: 3.72 over the worst-case hero
-                                   rail, 6.96 on well, 7.60 on noir. */
-  --color-line: rgba(25, 21, 16, 0.11); /* GridRules pencil texture */
+     edge/edge-dark are INTERACTIVE BOUNDARIES: tuned to clear 3:1. */
+  --color-rule: #d3dceb;        /* decorative hairline on a light band */
+  --color-edge: #5b6b80;        /* interactive boundary on light (5.18 on cloud) */
+  --color-rule-dark: #1b2437;   /* decorative hairline on a dark ground */
+  --color-edge-dark: #46566e;   /* interactive boundary on dark (3.06 on midnight) */
+  --color-edge-media: #a7a5a0;  /* interactive boundary over UNPREDICTABLE footage */
+  --color-line: rgba(247, 249, 252, 0.10); /* GridRules pencil texture */
 
-  /* The migration aliases (bg-paper / bg-base / bg-band / bg-elevated /
-     bg-raised / bg-deep / bg-night / text-primary / text-muted / text-faint /
-     brass*) have been deleted: every call site was re-pointed to a real token.
-     Do not reintroduce them. */
-
-  /* ---------- Type families ----------
-     Newsreader is the VOICE: hero, H1s, section headlines, the
-     statement, prices, the footer wordmark. Instrument Sans is
-     everything a customer has to read in order to buy something.
-     The division is absolute: a price in Newsreader, its terms in
-     Instrument Sans.
-
-     Newsreader replaced Bodoni Moda. A Didone is beautiful at 100px
-     and tiring everywhere else — its hairlines go spindly as soon as
-     the size drops, which is why the old scale needed a hard 24px
-     floor and a low-DPI weight bump. Newsreader is a variable TEXT
-     face with real optical sizes (6-72), so it holds its colour from
-     a 12px label to a 188px hero with neither crutch. Readable
-     first, elegant second. */
   --font-display: var(--font-serif), "Iowan Old Style", "Palatino", Georgia, serif;
   --font-sans: var(--font-sans-v), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-sans-v), ui-sans-serif, system-ui, sans-serif;
@@ -163,12 +167,68 @@
 
 :root {
   --nav-h: 76px;
-  color-scheme: light;
+  color-scheme: dark;
+
+  /* The spectrum as gradients. Literal hex rather than var(--color-*) so the
+     gradients never depend on which theme tokens Tailwind decided to emit.
+     --g-brand is for anything FILLED: it ends in berry, not pink, so white
+     type clears 4.5 on every stop (indigo 8.62, magenta 5.41, berry 4.64).
+     --g-voice is the ONE accent line of a headline. The stops differ per
+     ground because a stop that reads on midnight is lost on cloud and vice
+     versa; the ground rules below resolve --g-voice, so a headline never has
+     to know which band it is in. Every stop clears 3.0 for large text on EVERY
+     ground it can land on — the light stops are quoted on MIST, the worst of
+     the three light bands and the one both light accent lines actually sit on:
+       dark  5.59 / 5.04 / 5.68 on midnight
+       light 7.33 / 4.60 / 3.94 on mist (8.17 / 5.12 / 4.39 on cloud) */
+  --g-brand: linear-gradient(100deg, #3a1ae3 0%, #b426b5 55%, #d62d7d 100%);
+  --g-voice-dark: linear-gradient(90deg, #6d7cff 0%, #b44bff 50%, #f44394 100%);
+  /* Ends in BERRY, not the logo pink. Both light accent lines on this site sit
+     on MIST, not cloud, and pink is 2.94 there (2.67 on haze) — under the 3.0
+     large-text floor, so the last glyphs of "Amplify what works." and "matches
+     your growth stage." would have failed. Berry is 4.39 cloud / 3.94 mist /
+     3.59 haze and holds on all three. */
+  --g-voice-light: linear-gradient(90deg, #3a1ae3 0%, #b426b5 50%, #d62d7d 100%);
+  --g-voice: var(--g-voice-dark);
 }
 
 /* ---------- Base ---------- */
+
+/* The page default is now LIGHT type on a dark ground, which means anything
+   inside a light band that does not set its own colour inherits cloud-on-cloud
+   and disappears. Rather than annotate every element, the light grounds carry
+   their own type colour and the dark ones restate the default — so a section
+   only ever has to declare its GROUND and the type follows.
+   This was 45 measured contrast failures before it existed, most of them at a
+   literal 1.00 ratio. */
+/* --color-line is resolved here too. It is the GridRules pencil texture, and
+   its default is a 10% CLOUD line for the dark page — which on the FilmStrip's
+   cloud band was cloud-on-cloud, 1.00:1, so the six drafting rules that
+   section is built around simply did not paint. */
+.bg-cloud, .bg-mist, .bg-haze {
+  color: var(--color-ink);
+  --g-voice: var(--g-voice-light);
+  --color-line: rgba(7, 11, 23, 0.11);
+}
+.bg-midnight, .bg-abyss, .bg-well, .bg-stock { color: var(--color-cloud); --g-voice: var(--g-voice-dark); }
+/* A dark card INSIDE a light band keeps the dark-ground hairline. Without this
+   `card-ink` carried --color-rule (#d3dceb) onto midnight, where it is 14.22:1
+   — every FunAsia pillar outlined in near-white — while the identical plate in
+   the FinalCTA used edge-dark. Same object, same ground, two borders. */
+.bg-midnight .card-ink,
+.bg-abyss .card-ink,
+[data-ground="dark"] .card-ink { border-color: var(--color-rule-dark); }
+/* ...and any subtree that declares itself dark, however its ground is painted.
+   FilmStrip sets the film stock with an inline style, so a class selector never
+   reaches it — the attribute does. */
+[data-ground="dark"] { color: var(--color-cloud); --g-voice: var(--g-voice-dark); }
+/* bg-stock is the 35mm film in FilmStrip: a near-black surface sitting INSIDE a
+   light band, so it has to restate the dark-ground type or the rule above
+   cascades ink onto it and the frame captions vanish at 1.02:1. */
+
+
 html {
-  background: var(--color-alabaster);
+  background: var(--color-midnight);
   scroll-behavior: auto;
 }
 
@@ -178,8 +238,8 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 body {
-  background: var(--color-alabaster);
-  color: var(--color-ink);
+  background: var(--color-midnight);
+  color: var(--color-cloud);
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.62;
@@ -193,20 +253,34 @@ body {
   font-synthesis: none; /* nobody can fake a weight Bodoni does not have */
 }
 
+/* Pink under midnight type: 5.68. */
 ::selection {
-  background: var(--color-cognac);
-  color: var(--color-alabaster);
+  background: var(--color-pink);
+  color: var(--color-midnight);
 }
 
-:focus-visible {
-  outline: 2px solid var(--color-cognac);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-[data-ground="dark"] :focus-visible { outline-color: var(--color-cognac-hi); }
+/* The focus ring follows the solid-accent rule: violet on light, pink on dark.
+   IN @layer base, deliberately. Unlayered author rules beat every layered one
+   regardless of specificity, so as plain rules these outranked Tailwind's own
+   `focus:outline-none` utility and the form inputs drew a 2px ring 3px outside
+   their 1px focus border — two concentric pink rectangles. In the base layer a
+   component can still opt out.
 
-@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: none; }
+   NOTE the ground list does NOT include a body-level class: <body> used to
+   carry `bg-midnight`, which made `.bg-midnight :focus-visible` match every
+   focusable element on the site and painted the ring pink even on the light
+   bands, where pink is 2.94 on mist. The body class is gone (html and body are
+   painted midnight by the rules above), so these now mean what they say. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-violet);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  [data-ground="dark"] :focus-visible,
+  .bg-midnight :focus-visible,
+  .bg-abyss :focus-visible,
+  .bg-well :focus-visible { outline-color: var(--color-pink); }
 }
 
 /* ---------- Type scale ----------
@@ -398,29 +472,59 @@ body {
   transition:
     background-color 0.35s var(--ease-expo),
     color 0.35s var(--ease-expo),
-    border-color 0.35s var(--ease-expo);
+    border-color 0.35s var(--ease-expo),
+    box-shadow 0.5s var(--ease-expo),
+    background-position 0.7s var(--ease-expo);
 }
-/* The ONE filled button per screen. A cognac fill takes BONE (6.59:1).
-   Ink on cognac is 2.44:1 — this inverts the old Ink & Brass rule. */
+/* The ONE filled button per screen: the logo's gradient, WHITE type.
+   The gradient is drawn at 160% width and slides on hover, so the button
+   moves from the indigo end toward the berry end instead of just darkening.
+   Every stop under the type clears 4.5 with white — that is what berry is
+   for. Pure #fff rather than cloud: cloud on berry is 4.37 and fails. */
 @utility btn-primary {
-  background: var(--color-cognac);
-  color: var(--color-bone);
-  border-color: var(--color-cognac);
-  &:hover { background: #6b4019; border-color: #6b4019; }
+  background-image: var(--g-brand);
+  /* 100%, NOT the 160% this shipped with. At 160%/position 0 the button showed
+     only the first 62.5% of the gradient — indigo to magenta, with the pink end
+     cut off — and the hover slide dropped the indigo instead. Neither state was
+     the logo. The discs and badges use the same gradient at 100%, so buttons
+     and discs were two different gradients. The hover now lifts on the shadow
+     alone, which is the honest move: the colour IS the brand. */
+  background-size: 100% 100%;
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 10px 26px -12px rgba(244, 67, 148, 0.55);
+  &:hover:not(:disabled) {
+    box-shadow: 0 14px 34px -12px rgba(244, 67, 148, 0.72);
+  }
+  /* The submit button is disabled while the server action runs. Without this it
+     kept its full glow and hover response and read as interactive. */
+  &:disabled {
+    opacity: 0.55;
+    box-shadow: none;
+    cursor: default;
+  }
 }
 @utility btn-secondary {
   background: transparent;
   color: var(--color-ink);
   border-color: var(--color-edge);
-  &:hover { background: var(--color-ink); color: var(--color-alabaster); border-color: var(--color-ink); }
+  &:hover { background: var(--color-ink); color: var(--color-cloud); border-color: var(--color-ink); }
+}
+/* The outlined button has no fill of its own, so its type has to follow the
+   ground it is sitting on. Defaulting to cloud made every "Start with …" CTA in
+   the pricing grid cloud-on-cloud: a measured 1.00:1. */
+[data-ground="dark"] .btn-secondary {
+  color: var(--color-cloud);
+  border-color: var(--color-edge-dark);
+  &:hover { background: var(--color-cloud); color: var(--color-midnight); border-color: var(--color-cloud); }
 }
 /* No longer "for the rare light surface": this is the outlined button
    INSIDE a dark well. */
 @utility btn-invert {
   background: transparent;
-  color: var(--color-bone);
+  color: var(--color-cloud);
   border-color: var(--color-edge-media);
-  &:hover { background: var(--color-bone); color: var(--color-ink); border-color: var(--color-bone); }
+  &:hover { background: var(--color-cloud); color: var(--color-ink); border-color: var(--color-cloud); }
 }
 @utility link-underline {
   position: relative;
@@ -432,14 +536,13 @@ body {
     bottom: -2px;
     width: 100%;
     height: 1px;
-    background: var(--color-cognac);
+    background: var(--g-brand);
     transform: scaleX(0);
     transform-origin: right;
     transition: transform 0.55s var(--ease-expo);
   }
   &:hover::after { transform: scaleX(1); transform-origin: left; }
 }
-[data-ground="dark"] .link-underline::after { background: var(--color-cognac-hi); }
 
 /* ---------- Kinetic split text ---------- */
 @utility kinetic {
@@ -494,6 +597,48 @@ body {
   transform: translate3d(0, 168%, 0);
   opacity: 0.16;
 }
+/* THE ACCENT LINE. One line of a headline set in the voice gradient.
+   Each character is its own box, so a plain background-clip: text would
+   restart the gradient on every letter. Kinetic measures the line's text run
+   and writes --k-bs / --k-bp on each .k-char — the run's width, and the
+   character's offset into it, both in LAYOUT px so an ancestor transform (the
+   hero scales its headline) cannot skew them — and the gradient is painted per
+   character but positioned as one continuous run. The echo takes the same
+   treatment through the same two variables.
+
+   THE HORIZONTAL PADDING IS LOAD-BEARING, NOT SPACING. A background is only
+   painted inside the element's own box, and background-clip: text then cuts it
+   to the glyph — so any ink that overhangs the box is painted with NOTHING and
+   is silently chopped off. Measured on the real faces at the real sizes:
+   Newsreader italic overhangs by up to 0.089em on the left ("p", "y") and the
+   roman "f" by 0.126em on the right, which at the hero clamp is about 8px of
+   sliced letter. 0.2em is roughly twice the worst case.
+
+   The negative margin gives every one of those pixels back to layout, so the
+   line's advance width, its centring and the characters' positions are all
+   unchanged — only the paint box grows. It is deliberately HORIZONTAL ONLY:
+   the glyphs measure comfortably inside the line box vertically (ink starts
+   0.5-0.8px below the top and ends 0.3-9px above the bottom), and vertical
+   padding would inflate the box that the GSAP entrance's `yPercent: 108`
+   is a percentage of, making the characters fly in from further away. */
+.kinetic .k-accent .k-solid,
+.kinetic .k-accent .k-char::after {
+  background-image: var(--g-voice);
+  background-repeat: no-repeat;
+  background-size: var(--k-bs, 100% 100%);
+  background-position: var(--k-bp, 0 0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  padding-inline: 0.2em;
+  margin-inline: -0.2em;
+}
+/* The echo is absolutely positioned against .k-char, so it has to be shifted
+   by the same 0.2em for its padding box to sit exactly on the solid's — if the
+   two paint boxes disagree, the echo shows a different part of the gradient
+   from the letter it is echoing. */
+.kinetic .k-accent .k-char::after { left: -0.2em; }
 
 /* ---------- Structural decoration ---------- */
 /* Six vertical hairlines. Hero and FilmStrip only. Must read as drafting,
@@ -517,8 +662,11 @@ body {
    glitch. Worse, the hero is `sticky top-0` and the nav is transparent until you
    scroll, so a bar at y=0 painted black behind the nav and knocked out the dark
    logo and links entirely.
+   (The second half of that argument is now moot anyway: the nav is an opaque
+   cloud bar in every state, because the wordmark's type is navy. It is kept
+   here because the geometry argument above it still holds.)
    The bottom bar stays because it does real work: it grounds the copy rail and
-   hands straight off to the noir TrustMarquee with no rule between them, so the
+   hands straight off to the midnight band below it with no rule between them, so the
    FunAsia radio brands read as the crawl at the bottom of the frame. Do not put
    a rule or a margin there.
    Pseudo-elements do not participate in layout or transforms, so this is safe on
@@ -535,7 +683,7 @@ body {
     right: 0;
     bottom: 0;
     height: var(--bar, 34px);
-    background: var(--color-obsidian);
+    background: var(--color-abyss);
     z-index: 30;
     pointer-events: none;
     box-shadow: 0 -1px 0 rgba(244, 241, 234, 0.1);
@@ -556,7 +704,7 @@ body {
   }
 }
 
-/* The replacement for the highlighter swipe. A 40px 1px cognac rule, a 12px
+/* The replacement for the highlighter swipe. A 40px 1px spectrum rule, a 12px
    gap, then the label. The swipe-with-forced-ink-text device was the loudest
    surviving piece of the poster vocabulary. */
 @utility marker-rule {
@@ -568,23 +716,28 @@ body {
     display: block;
     width: 40px;
     height: 1px;
-    background: var(--color-cognac);
+    background: var(--g-brand);
     flex: none;
   }
 }
 
 /* ---------- Cards ---------- */
+/* A dark card, on ANY ground. It carries its own type colour and its own
+   voice gradient because it is used inside the light bands (WhatWeDo), where
+   the band's ink would otherwise cascade onto a well surface at 1.08:1. */
 @utility card-ink {
   border: 1px solid var(--color-rule);
-  background: var(--color-chalk);
+  background: var(--color-well);
   border-radius: var(--radius-card);
+  color: var(--color-cloud);
+  --g-voice: var(--g-voice-dark);
 }
-/* Emphasis comes from a cognac top edge and a soft shadow — from MATERIAL —
+/* Emphasis comes from a spectrum top edge and a soft shadow — from MATERIAL —
    rather than from a fourth near-identical ground value. */
 @utility card-pop {
   border: 1px solid var(--color-rule);
-  border-top: 2px solid var(--color-cognac);
-  background: var(--color-chalk);
+  border-top: 2px solid var(--color-violet);
+  background: var(--color-well);
   border-radius: var(--radius-card);
   box-shadow: 0 18px 44px -28px rgba(25, 21, 16, 0.22);
 }
@@ -597,11 +750,18 @@ body {
    IMPORTANT: in the xl comparison table the featured plate must NOT be
    translated or scaled — its rows have to stay on the same baselines as the
    other four columns or the table stops being comparable. It earns its emphasis
-   from a cognac top edge and a deeper cast shadow only. Lifting is allowed in
-   the stacked card view below xl, where the cards are independent. */
+   from a blue top edge and a deeper cast shadow only. Lifting is allowed in
+   the stacked card view below xl, where the cards are independent.
+   The emphasis is a 3px spectrum strip along the top edge, drawn as a
+   pseudo-element because a border cannot take a gradient. */
+/* LIFTED CARD ON A LIGHT BAND — cloud, not well.
+   The rename mapped the old `chalk` (a light surface lifted above a light page)
+   onto `well`, which in this palette is a DARK surface. That made every price
+   card dark inside a light section while its type stayed ink: a measured 1.08:1
+   across the entire pricing grid. On a mist band, "lifted" means LIGHTER. */
 @utility plate {
   position: relative;
-  background: var(--color-chalk);
+  background: var(--color-cloud);
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-card);
   box-shadow:
@@ -622,10 +782,21 @@ body {
   }
 }
 @utility plate-featured {
-  background: var(--color-chalk);
+  position: relative;
+  background: var(--color-cloud);
   border: 1px solid var(--color-rule);
-  border-top: 2px solid var(--color-cognac);
   border-radius: var(--radius-card);
+  &::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: -1px;
+    height: 3px;
+    background: var(--g-brand);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    pointer-events: none;
+  }
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.95),
     0 2px 4px rgba(25, 21, 16, 0.07),
@@ -648,18 +819,42 @@ body {
   color: var(--color-graphite);
   white-space: nowrap;
   transition: color 0.3s var(--ease-expo), background-color 0.3s var(--ease-expo), border-color 0.3s var(--ease-expo);
+  /* CLOUD, not midnight. --color-ink and --color-midnight are the SAME value
+     (#070b17) by design — the light bands are the page turned inside out — so
+     `color: midnight` on an ink fill was a measured 1.00:1 and the add-on names
+     vanished the moment the pointer entered. The light bands' own type colour
+     does not apply inside a dark fill; the fill takes the dark-ground type. */
   &:hover, &[data-active="true"] {
     background: var(--color-ink);
-    color: var(--color-alabaster);
+    color: var(--color-cloud);
     border-color: var(--color-ink);
   }
+}
+
+/* ---------- The spectrum as paint ----------
+   A gradient cannot be a colour token, so the fill is its own utility. It
+   composes with variants like any other (after:bg-brand, hover:bg-brand).
+   WHITE type on it, always — see the note on --g-brand. */
+@utility bg-brand {
+  background-image: var(--g-brand);
+  color: #fff;
+}
+/* Gradient type for a STATIC span. The kinetic headline has its own rules
+   below, because its characters are separate boxes. Large text only: the
+   light stops bottom out at 3.28 on cloud. */
+@utility text-brand {
+  background-image: var(--g-voice);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 /* A missing asset should read as an empty frame on paper, not a dark hole. */
 @utility placeholder-block {
   position: relative;
   overflow: hidden;
-  background-color: var(--color-linen);
+  background-color: var(--color-haze);
   background-image:
     repeating-linear-gradient(135deg, rgba(25, 21, 16, 0.06) 0 2px, transparent 2px 13px);
   border: 1px dashed var(--color-edge);
@@ -671,7 +866,7 @@ body {
    where a screen announces that it is a screen. Same inline SVG as before,
    three values changed — a warm dark instead of mid-grey, multiply instead of
    screen (screen FOGS a light page), and 0.055 instead of 0.1. At 0.055
-   multiply it is effectively invisible over noir and obsidian, so one fixed
+   multiply it is effectively invisible over midnight and abyss, so one fixed
    overlay serves both halves of the palette. */
 .grain {
   position: fixed;

@@ -322,14 +322,17 @@ export const streamPoster = (id: string) => `https://${STREAM_HOST}/${id}/thumbn
  * the lightbox caption is already conditional on those being present.
  */
 export const TESTIMONIALS = [
-  { id: "t1", streamId: "a00017ba33ff639bf2b5864f1bab212b" },
+  /* A designed 9:16 cover rather than a still lifted from the video. The reel
+     itself is unchanged — this is the card art only, and clicking still plays
+     the same 9:16 stream. */
+  { id: "t1", streamId: "a00017ba33ff639bf2b5864f1bab212b", poster: "/images/reel-01-poster.webp" },
   {
     id: "t2",
     streamId: "bc53986a0f0dfc220b43674961711a03",
     poster: "/images/marc-samuels-poster.webp",
     aspect: "16/9" as const,
   },
-  { id: "t3", streamId: "02fc0c4c2158dd913a80992a3c907923" },
+  { id: "t3", streamId: "27a2e8d44e4cc363ba04420bd3f676b1" },
 ] as const;
 
 /* ------------------------------------------------------------------ */

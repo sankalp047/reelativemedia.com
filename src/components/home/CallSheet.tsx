@@ -14,19 +14,19 @@ const VERDICT: Record<number, "keep" | "stop" | "test" | "amplify"> = {
 };
 
 /**
- * Three named tints, named for what they mean on the sheet. The old map keyed
- * on violet / magenta / orange — colour names from two palettes ago that no
- * longer described anything they resolved to. Every value is a palette token:
- * cognac for capture, cognac-hi for publish, graphite for review.
+ * Three named tints, named for what they MEAN on the sheet rather than for the
+ * colour they happen to be — the colour has changed three times and the meaning
+ * has not. Every value is a palette token: violet for capture, pink for
+ * publish, graphite for review.
  */
 const TINT = {
-  capture: "#7A4A1E",   // --color-cognac
-  publish: "#C18A4E",   // --color-cognac-hi
-  review: "#52493C",    // --color-graphite
+  capture: "#6f24e5",   // --color-violet
+  publish: "#f44394",   // --color-pink (non-text on the cloud plate: 3.28)
+  review: "#475569",    // --color-graphite
   /* NOT transparent. `none` means "planned, not yet actioned" (a content day)
      and "stopped" — both are real states that need a visible neutral mark.
      A transparent one just read as a missing swatch. */
-  none: "#7A6F5C",      // --color-edge
+  none: "#5b6b80",      // --color-edge
 } as const;
 
 type Tint = keyof typeof TINT;
@@ -90,10 +90,10 @@ const STATUS = ["Planned", "Shoot day set", "Published", "Reviewed"];
 /* Sheet furniture                                                     */
 /* ------------------------------------------------------------------ */
 
-/** Registration marks. Slate, not bone — on paper a bone crosshair is invisible. */
+/** Registration marks. Slate, not cloud — on paper a cloud crosshair is invisible. */
 function Crosshair({ className }: { className: string }) {
   return (
-    <svg viewBox="0 0 24 24" className={`absolute h-4 w-4 ${className}`} fill="none" stroke="var(--color-slate)" strokeWidth="1.2" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className={`absolute h-4 w-4 ${className}`} fill="none" stroke="var(--color-pewter)" strokeWidth="1.2" aria-hidden="true">
       <circle cx="12" cy="12" r="6.5" />
       <path d="M12 0v7M12 17v7M0 12h7M17 12h7" />
     </svg>
@@ -158,7 +158,7 @@ export function CallSheet({ step }: { step: number }) {
           {Array.from({ length: 6 }).map((_, i) => (
             <span
               key={i}
-              className="h-3 w-3 rounded-full bg-alabaster"
+              className="h-3 w-3 rounded-full bg-midnight"
               style={{ boxShadow: "inset 0 1px 2px rgba(25, 21, 16, 0.22), 0 1px 0 rgba(255, 255, 255, 0.9)" }}
             />
           ))}
@@ -169,19 +169,19 @@ export function CallSheet({ step }: { step: number }) {
             <p className="mono leading-[1.5]">
               Content month
               <br />
-              <span className="text-slate">Monthly schedule</span>
+              <span className="text-pewter">Monthly schedule</span>
             </p>
             <p className="mono text-right leading-[1.5]">
               RM-001
               <br />
-              <span className="text-slate">Rev A</span>
+              <span className="text-pewter">Rev A</span>
             </p>
           </div>
 
           <dl className="mt-0 grid grid-cols-2 border-b border-rule sm:grid-cols-4">
             {FACTS.map((f) => (
               <div key={f.k} className="border-r border-rule py-2.5 pr-3 last:border-r-0">
-                <dt className="mono text-[10px] text-slate">{f.k}</dt>
+                <dt className="mono text-[10px] text-pewter">{f.k}</dt>
                 <dd className="t-body mt-1 !text-[14px]">{f.v}</dd>
               </div>
             ))}
@@ -189,19 +189,19 @@ export function CallSheet({ step }: { step: number }) {
 
           <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="t-h3">Four weeks · 28 days</h3>
-            <p className="mono text-slate">{STATUS[step]}</p>
+            <p className="mono text-pewter">{STATUS[step]}</p>
           </div>
 
           <div className="mt-3 grid grid-cols-7 border-l border-t border-rule">
             {WEEKDAYS.map((d) => (
-              <div key={d} className="border-b border-r border-rule bg-linen px-2 py-1.5">
+              <div key={d} className="border-b border-r border-rule bg-haze px-2 py-1.5">
                 <span className="mono text-[10px] text-ink">{d}</span>
               </div>
             ))}
             {Array.from({ length: DAYS }).map((_, i) => {
               const c = cellFor(i, step);
               const marked = Boolean(c.shape || c.label);
-              // Marked days used to take a linen fill. With seven or eight of
+              // Marked days used to take a haze fill. With seven or eight of
               // them scattered across 28 cells that produced a random
               // checkerboard and destroyed the rhythm of the month — you could
               // not see the weeks any more. The only banding now is the WEEKEND
@@ -213,15 +213,15 @@ export function CallSheet({ step }: { step: number }) {
                 <div
                   key={i}
                   className={`relative min-h-[66px] border-b border-r border-rule px-2 py-1.5 xl:min-h-[78px] ${
-                    weekend ? "bg-sheet-shade" : ""
+                    weekend ? "bg-haze" : ""
                   }`}
                 >
                   {c.boxed ? (
-                    <span className="pointer-events-none absolute inset-0 border-2 border-cognac" aria-hidden="true" />
+                    <span className="pointer-events-none absolute inset-0 border-2 border-violet" aria-hidden="true" />
                   ) : null}
                   <span
                     className={`num relative block text-[12.5px] leading-none ${
-                      marked ? "text-ink" : "text-slate"
+                      marked ? "text-ink" : "text-pewter"
                     }`}
                   >
                     {i + 1}
@@ -240,7 +240,7 @@ export function CallSheet({ step }: { step: number }) {
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-rule pt-3">
-            <span className="mono text-slate">Symbols</span>
+            <span className="mono text-pewter">Symbols</span>
             {(LEGEND[step] ?? LEGEND[0]).map((l) => (
               <span key={l.label} className="mono flex items-center gap-2 text-[10px]">
                 <Marker shape={l.shape} tint={l.tint} />
@@ -250,8 +250,8 @@ export function CallSheet({ step }: { step: number }) {
           </div>
 
           <div className="mt-4 flex items-end justify-between border-t border-rule pt-3">
-            <p className="mono text-slate">RM-001 · Content month</p>
-            <p className="mono text-slate">Page 1 of 1</p>
+            <p className="mono text-pewter">RM-001 · Content month</p>
+            <p className="mono text-pewter">Page 1 of 1</p>
           </div>
         </div>
       </div>

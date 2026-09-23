@@ -3,11 +3,10 @@ import { FUNASIA_BRANDS } from "@/lib/data";
 import { SITE } from "@/lib/site";
 
 /**
- * Footer links are the TEXT face at 15px in bone-dim (9.86:1 on obsidian), not
+ * Footer links are the TEXT face at 15px in slate (7.86:1 on abyss), not
  * the uppercase t-body-caps they used to be — a column of uppercase links is the
  * single densest patch of poster vocabulary left on the site. The underline is
- * the shared `link-underline`, which resolves to cognac-hi under
- * data-ground="dark".
+ * the shared `link-underline`, which draws in the spectrum gradient.
  *
  * The Services and Company link columns are gone. Every destination in them was
  * an anchor to a section already reachable from the nav, so the footer was
@@ -16,33 +15,33 @@ import { SITE } from "@/lib/site";
  * it. The FooterLink helper went with them — it existed to switch between
  * next/link and a plain anchor, and nothing here routes any more.
  */
-const FOOTER_LINK = "link-underline t-body !text-[15px] text-bone-dim hover:text-bone transition-colors duration-300";
+const FOOTER_LINK = "link-underline t-body !text-[15px] text-slate hover:text-cloud transition-colors duration-300";
 
 export function Footer() {
   return (
     // No top border: the FinalCTA well runs straight into this one, and a rule
     // between two dark grounds only announces the seam.
-    <footer className="relative z-10 bg-obsidian" data-ground="dark" aria-label="Footer">
+    <footer className="relative z-10 bg-abyss" data-ground="dark" aria-label="Footer">
       <div className="wrap grid gap-12 py-16 md:grid-cols-2 lg:py-24">
         <div>
-          <p className="eyebrow mb-6 text-ash">FunAsia Network</p>
+          <p className="eyebrow mb-6 text-steel">FunAsia Network</p>
           <ul className="flex flex-col gap-3">
             {FUNASIA_BRANDS.map((b) => (
               <li key={b.id}>
                 <a href={b.href} target="_blank" rel="noopener noreferrer" className={FOOTER_LINK}>
                   {b.name}
                 </a>
-                <span className="mono ml-2 text-ash">{b.meta}</span>
+                <span className="mono ml-2 text-steel">{b.meta}</span>
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <p className="eyebrow mb-6 text-ash">Contact</p>
+          <p className="eyebrow mb-6 text-steel">Contact</p>
           <ul className="flex flex-col gap-3">
             <li><a href={SITE.phoneTel} className={FOOTER_LINK}>{SITE.phone}</a></li>
             <li><a href={`mailto:${SITE.salesEmail}`} className={FOOTER_LINK}>{SITE.salesEmail}</a></li>
-            <li className="t-body !text-[15px] text-ash">{SITE.address}</li>
+            <li className="t-body !text-[15px] text-steel">{SITE.address}</li>
             {/* Social icons — parked. All four were href="#", so they looked
                 like working links and went nowhere, which is worse than not
                 showing them: a visitor who clicks Instagram and stays on the
@@ -53,7 +52,7 @@ export function Footer() {
                 <a
                   key={s}
                   href="#"
-                  className="mono flex h-9 w-9 items-center justify-center rounded-[2px] border border-edge-dark text-ash transition-colors duration-300 hover:bg-bone hover:text-ink"
+                  className="mono flex h-9 w-9 items-center justify-center rounded-[2px] border border-edge-dark text-steel transition-colors duration-300 hover:bg-cloud hover:text-ink"
                   aria-label={`${s} (link pending)`}
                 >
                   {s}
@@ -93,15 +92,15 @@ export function Footer() {
 
       <div className="wrap flex flex-col gap-5 border-t border-rule-dark py-7 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-3">
-          {/* The ONLY place on the site that takes the bone knockout lockup. */}
+          {/* The ONLY place on the site that takes the cloud knockout lockup. */}
           <Logo height={24} tone="dark" />
           <span className="hidden h-4 w-px bg-rule-dark md:block" />
-          <p className="t-body !text-[13px] text-ash">Reelative Media is a FunAsia Network company.</p>
+          <p className="t-body !text-[13px] text-steel">Reelative Media is a FunAsia Network company.</p>
         </div>
-        <p className="mono text-ash">
+        <p className="mono text-steel">
           © {new Date().getFullYear()} Reelative Media ·{" "}
-          <a href="#" className="link-underline hover:text-bone">Privacy</a> ·{" "}
-          <a href="#" className="link-underline hover:text-bone">Terms</a>
+          <a href="#" className="link-underline hover:text-cloud">Privacy</a> ·{" "}
+          <a href="#" className="link-underline hover:text-cloud">Terms</a>
         </p>
       </div>
     </footer>

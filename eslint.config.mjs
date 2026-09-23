@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // A frozen snapshot of the previous design. It is reference material, not
+    // code that ships — linting it would just report on decisions already made.
+    "design-archive/**",
   ]),
 ]);
 

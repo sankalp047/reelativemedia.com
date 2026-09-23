@@ -1,4 +1,49 @@
-# Reelative Media — design system ("Alabaster & Cognac")
+# Reelative Media — design system
+
+## Current: "Spectrum" (22 Sep 2026)
+
+The fourth system. Midnight ground, cloud/mist light bands, and ONE accent
+family: the colours already inside the logo mark — indigo `#3A1AE3`, violet
+`#6F24E5`, magenta `#B426B5`, pink `#F44394` — run as a gradient on anything
+FILLED and used as a single solid on anything that has to be READ. The full,
+measured rule set lives at the top of `src/app/globals.css`; this is the short
+version.
+
+| | on a DARK ground | on a LIGHT band |
+|---|---|---|
+| Solid accent (counters, links, icons, labels) | **pink** — 5.68 on midnight, 5.28 on well | **violet** — 6.51 on cloud, 5.84 on mist |
+| Headline accent line (`accent` prop on `Kinetic` / `SectionHead`) | `--g-voice-dark` periwinkle→lilac→pink, stops 5.59 / 5.04 / 5.68 | `--g-voice-light` indigo→magenta→pink, stops 8.17 / 5.12 / 3.28 (large text only) |
+| Fills (`btn-primary`, `bg-brand`: buttons, badges, discs, rules) | `--g-brand` indigo→magenta→**berry**, WHITE type: 8.62 / 5.41 / 4.64 | same |
+
+- **Never swap the solids.** Pink on cloud is 3.28; violet on midnight is 2.86.
+- **A fill takes white, never midnight or cloud.** The fill gradient ends in
+  berry `#D62D7D`, one step deeper than the logo pink, because white on the
+  logo pink is 3.46 and fails for button text.
+- **`--g-voice` resolves from the ground** (`.bg-cloud/.bg-mist/.bg-haze` →
+  light stops; `.bg-midnight/.bg-abyss/.bg-well/.bg-stock`, `[data-ground="dark"]`
+  and `card-ink` → dark stops), so a component only ever says *which line*.
+- **The nav bar is cloud, always.** The wordmark's type is navy and there is no
+  knockout of it; on a midnight bar it was invisible. Same value as the System
+  band, so the bar and the band are one sheet.
+- **System and FilmStrip stay light bands** for the reasons under "Why the site
+  is light" below, and the System footage is graded to its own cream
+  (`#FDEFD7`, 1.08 on cloud, 17:1 on midnight) — regrade before ever moving it.
+- **The Proof reels and the System scroll sequence are unchanged by design**;
+  only the play disc and the active-step rule took the new tokens.
+
+Two defects the migration to this system exposed and fixed, worth knowing so
+they are not reintroduced: `--color-slate` had been declared as a second
+`--color-pewter` and silently resolved to nothing (every `text-slate` inherited
+its ground), and the custom cursor was an ink disc in an ink ring on a page that
+is 60% dark.
+
+---
+
+The sections below describe the PREVIOUS system, "Alabaster & Cognac", and are
+kept because the layout, type and background arguments in them still hold. Read
+any colour name in them as historical.
+
+# Previous: "Alabaster & Cognac"
 
 Adopted 17 Sep 2026. Third and current system, replacing "Ink & Brass" (a dark
 near-black palette) which itself replaced the light "poster" palette. The

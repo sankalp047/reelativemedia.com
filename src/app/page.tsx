@@ -1,5 +1,4 @@
 import { Hero } from "@/components/home/Hero";
-import { TrustMarquee } from "@/components/home/TrustMarquee";
 import { FilmStrip } from "@/components/home/FilmStrip";
 import { Statement } from "@/components/home/Statement";
 import { System } from "@/components/home/System";
@@ -13,7 +12,11 @@ export default function Home() {
   return (
     <main className="relative">
       <Hero />
-      <TrustMarquee />
+      {/* The scrolling FunAsia station marquee used to sit here. It was removed:
+          the five stations are already listed in full in the FunAsia section and
+          again in the footer, so the crawl was the third time the page said the
+          same thing, and it was the one place a visitor could not read them at
+          their own pace. */}
       <Statement />
       <System />
       <WhatWeDo />

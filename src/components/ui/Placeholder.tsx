@@ -25,7 +25,7 @@ export function Placeholder({
       aria-label={`Placeholder: ${label}`}
     >
       <span className="mono text-graphite">{label}</span>
-      {sub ? <span className="mono text-slate">{sub}</span> : null}
+      {sub ? <span className="mono text-pewter">{sub}</span> : null}
     </div>
   );
 }
@@ -33,7 +33,7 @@ export function Placeholder({
 export function PlaceholderTag({ children = "Placeholder", className = "" }: { children?: string; className?: string }) {
   return (
     <span
-      className={`mono inline-flex items-center rounded-[2px] border border-dashed border-edge bg-chalk px-2 py-1 text-graphite ${className}`}
+      className={`mono inline-flex items-center rounded-[2px] border border-dashed border-edge bg-well px-2 py-1 text-graphite ${className}`}
     >
       {children}
     </span>

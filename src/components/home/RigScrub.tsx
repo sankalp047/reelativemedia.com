@@ -4,12 +4,18 @@ import { useEffect, useRef, useSyncExternalStore, type RefObject } from "react";
 import manifest from "@/lib/scroll-video-manifest.json";
 
 type Variant = { base: string; frames: number; width: number; height: number; proxyWidth: number };
-const RIG = (manifest as { rig?: Variant }).rig;
+const RIG = (manifest as { stage?: Variant }).stage;
 
-/** The footage's own backdrop, flattened to one value at build time.
- *  Must stay identical to --color-studio, or the frame edge becomes visible
- *  against the section ground and the whole illusion collapses. */
-const STUDIO = "#fdefd7";
+/** The footage's own backdrop, flat-fielded to this exact value at build time.
+ *
+ *  IT IS --color-cloud, AND THAT IS THE WHOLE TRICK. The sequence is painted
+ *  edge to edge behind the copy, so every pixel the subject does not occupy has
+ *  to be indistinguishable from the section ground — otherwise the section
+ *  reads as "a video in a box" rather than as one continuous studio sweep. The
+ *  source drifts between 244 and 251 across the take; a per-frame gain measured
+ *  from each frame's own clean border pulls it onto this value, worst residual
+ *  2.4/255. Change this and the seam comes back. */
+const STUDIO = "#f7f9fc";
 
 const RM = "(prefers-reduced-motion: reduce)";
 const subscribeRM = (cb: () => void) => {
@@ -34,7 +40,8 @@ function supportsAvif() {
 }
 
 /**
- * The System pane: a 121-frame sequence scrubbed by the section's own runway.
+ * The System backdrop: a 121-frame sequence scrubbed by the section's own
+ * runway, painted FULL BLEED behind the copy.
  *
  * The rig glides in from the right, crosses to the left, and the television,
  * tablet and phone arrive in the space it vacates — one shoot, three platforms.
@@ -49,10 +56,10 @@ function supportsAvif() {
  * whole System section at 60fps for a canvas write that React cannot help with.
  * This reads the runway itself and paints directly — zero renders while scrubbing.
  *
- * The backdrop was flattened to a single value at build time (see the grade in
- * the commit that added /public/scroll/rig) so it meets --color-studio exactly.
- * Nothing here should letterbox, but the canvas is cleared to STUDIO anyway so a
- * mid-load or odd aspect never shows a dark band.
+ * The backdrop was flat-fielded to --color-cloud at build time, so the canvas
+ * clearing to STUDIO and the section ground are the same colour: the frame can
+ * letterbox in either axis at any viewport shape and no edge is ever visible.
+ * That is what lets this be a full-bleed background instead of a pane.
  */
 export function RigScrub({
   runwayRef,
@@ -102,16 +109,17 @@ export function RigScrub({
       if (!force && drawn === current && img === full[current]) return;
       ctx.fillStyle = STUDIO;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      // Contain, never cover. Content reaches to within 0.8% of the right edge
-      // of frame and 2.1% of the left, so a cover-fit crops the television and
-      // the gimbal handle — there is no safe margin to take.
+// Contain, never cover. MEASURED on the graded frames: subject ink runs
+      // from 25.9% to 99.9% horizontally and from 0.0% to 95.2% vertically, so
+      // there is no margin to crop in either axis — a cover-fit cuts the phone
+      // off the right or clips the boom at the top.
       const s = Math.min(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
       const dw = Math.round(img.naturalWidth * s);
       const dh = Math.round(img.naturalHeight * s);
-      // Flush to the RIGHT edge rather than centred: the box bleeds to the edge
-      // of the window, and anchoring there is what carries the shadow off the
-      // screen. Whatever is left over on the left fills with STUDIO, which is
-      // the backdrop's own value, so the pane has no boundary on that side.
+      // Flush RIGHT, centred vertically. The action lives in the right three
+      // quarters of frame, so anchoring right keeps the clean plate on the left
+      // where the copy sits. Any leftover fills with STUDIO — the backdrop's own
+      // value and the section ground — so the fill is invisible.
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, canvas.width - dw, Math.round((canvas.height - dh) / 2), dw, dh);
       if (img === full[current]) drawn = current;
@@ -237,15 +245,11 @@ export function RigScrub({
   }, [live, runwayRef]);
 
   return (
-    /* Square on phones, where it sits in normal flow and nothing else defines a
-       height. On desktop it stretches to the full height of the grid row so the
-       footage occupies the whole right-hand side rather than floating as an
-       inset panel. The frame is fitted to the WIDTH and the leftover height is
-       filled with STUDIO — the same value as the backdrop and the section
-       ground — so extending the pane extends the studio rather than adding
-       bars. It is not cropped to fill: content reaches to within 0.8% of the
-       right edge of frame, so a cover-fit would cut the television in half. */
-    <div ref={boxRef} className="relative aspect-square w-full lg:aspect-auto lg:h-full">
+    /* Fills whatever box it is given — here the whole section, edge to edge and
+       behind the copy. The frame is contained inside that box and the remainder
+       fills with STUDIO, which is the section ground, so the sequence has no
+       boundary on any side at any viewport shape. */
+    <div ref={boxRef} className="h-full w-full">
       {live ? (
         <canvas ref={canvasRef} className="block h-full w-full" aria-hidden="true" />
       ) : (
@@ -253,11 +257,11 @@ export function RigScrub({
            so both see the payoff frame: the rig plus all three platforms. */
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src="/scroll/rig-final.webp"
+          src="/scroll/stage-final.webp"
           alt="A camera rig on a gimbal beside a television, a tablet and a phone, each playing the same video."
-          width={1100}
-          height={1100}
-          className="block h-full w-full object-contain"
+          width={1600}
+          height={901}
+          className="block h-full w-full object-contain object-right"
           loading="lazy"
           decoding="async"
         />

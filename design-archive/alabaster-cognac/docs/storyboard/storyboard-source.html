@@ -1,0 +1,271 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0A0F;--el:#12121A;--t:#F5F5F7;--m:#9A9AAF;--line:rgba(255,255,255,.10);--grad:linear-gradient(135deg,#5B2EFF 0%,#E23FA7 55%,#FF7A1A 100%);--v:#5B2EFF;--mg:#E23FA7;--o:#FF7A1A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;font-family:Inter,sans-serif;color:var(--t);-webkit-font-smoothing:antialiased}
+.frame{width:1920px;height:1080px;position:relative;overflow:hidden;background:var(--bg);margin:0 0 4px}
+.wrap{position:absolute;inset:0;padding:120px 300px}
+.tag{position:absolute;top:28px;right:300px;font:500 11px/1 "JetBrains Mono";letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.55);border:1px dashed rgba(255,255,255,.25);border-radius:999px;padding:8px 12px}
+.eyebrow{font:500 12px/1 "JetBrains Mono";letter-spacing:.18em;text-transform:uppercase;color:var(--m)}
+.mono{font:500 12px/1.4 "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase;color:var(--m)}
+.mono.w{color:var(--t)}
+.h2{font:700 72px/1 Syne;letter-spacing:-.02em}
+.h2 span{display:block}
+.crumb{font:700 22px/1.1 Syne;letter-spacing:-.01em;color:var(--m)}
+.intro{font-size:18px;line-height:1.6;color:var(--m);max-width:440px}
+.body{font-size:16px;line-height:1.6;color:var(--m)}
+.card{background:var(--el);border:1px solid var(--line);border-radius:24px;padding:32px}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.wave{display:flex;align-items:center;gap:3px;height:16px}
+.wave i{display:block;width:2px;background:rgba(255,255,255,.5);border-radius:1px}
+.row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);font-size:16px}
+.row:last-child{border-bottom:0}
+.chk{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.3);flex:none;position:relative}
+.chk.on{border:0;background:var(--grad)}
+.chk.on:after{content:"";position:absolute;left:5px;top:4px;width:6px;height:9px;border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+.cur{display:inline-block;width:2px;height:16px;background:var(--mg);vertical-align:-3px;margin-left:2px}
+.grid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:22px 26px;align-items:center}
+.grid .rl{font:500 11px/1 "JetBrains Mono";letter-spacing:.14em;color:var(--m);padding-right:8px}
+.dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.14);justify-self:center}
+.dot.on{background:var(--mg);box-shadow:0 0 16px rgba(226,63,167,.6)}
+.dot.ring{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--o)}
+.rail{display:flex;flex-direction:column;gap:38px;position:relative;padding-left:26px}
+.rail:before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:rgba(255,255,255,.12)}
+.rail .s{font:500 12px/1 "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase;color:rgba(154,154,175,.55);position:relative}
+.rail .s:before{content:"";position:absolute;left:-26px;top:0;width:13px;height:13px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:var(--bg)}
+.rail .s.on{color:var(--t)}
+.rail .s.on:before{background:#fff;border-color:#fff}
+.rail .s.done:before{background:rgba(255,255,255,.5);border-color:transparent}
+.tile{width:36px;height:64px;border-radius:6px;border:1px solid rgba(255,255,255,.12)}
+.sq{width:36px;height:36px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06)}
+.t1{background:linear-gradient(160deg,#3a2470,#12121A)}.t2{background:linear-gradient(160deg,#6a1b4f,#12121A)}.t3{background:linear-gradient(160deg,#6b3417,#12121A)}.t4{background:linear-gradient(160deg,#1b2f55,#12121A)}
+.chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font:500 11px/1 "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase;color:var(--m)}
+.chip.on{color:#fff;border-color:transparent;background:var(--grad)}
+.chip.sm{padding:4px 7px;font-size:9px}
+.pbar{height:2px;background:rgba(255,255,255,.1);border-radius:2px;position:relative;overflow:hidden}
+.pbar i{position:absolute;left:0;top:0;bottom:0;background:var(--grad);border-radius:2px}
+.line{height:1px;background:rgba(255,255,255,.14)}
+.node{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:var(--bg)}
+.node.on{border:0;background:var(--grad);box-shadow:0 0 24px rgba(226,63,167,.55)}
+.bar{width:28px;border-radius:4px 4px 0 0}
+.avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);position:relative}
+.avatar:before{content:"";position:absolute;left:9px;top:5px;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.6)}
+.avatar:after{content:"";position:absolute;left:5px;top:16px;width:17px;height:9px;border-radius:9px 9px 0 0;background:rgba(255,255,255,.6)}
+.widget{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;flex:none}
+.play{width:0;height:0;border-left:8px solid #fff;border-top:5px solid transparent;border-bottom:5px solid transparent;margin-left:2px}
+.cap{height:3px;border-radius:2px;background:rgba(255,255,255,.35)}
+.h3{font:600 26px/1.2 Inter;letter-spacing:-.01em}
+.closing{font:700 40px/1.15 Syne;letter-spacing:-.02em}
+.bullets .row{border:0;padding:10px 0}
+svg text{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.12em;fill:#9A9AAF}
+</style></head><body>
+
+<!-- FRAME 1 · HOLD A -->
+<section class="frame"><div class="tag">Storyboard · Hold A · 10%</div><div class="wrap">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;height:100%;align-items:center">
+    <div>
+      <p class="eyebrow" style="margin-bottom:28px">02 — The system</p>
+      <h2 class="h2"><span>One focused shoot</span><span>can power your</span><span>whole month.</span></h2>
+      <p class="intro" style="margin-top:34px">We plan the stories before the camera arrives, so every minute of capture produces usable content.</p>
+    </div>
+    <div style="padding-left:80px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:34px"><span class="mono w">Month · 4 weeks · 28 days</span><span class="mono">00 / 28 planned</span></div>
+      <div class="grid">
+        <span class="rl">W1</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+        <span class="rl">W2</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+        <span class="rl">W3</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+        <span class="rl">W4</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:26px" class="mono"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- FRAME 2 · HOLD B -->
+<section class="frame"><div class="tag">Storyboard · Hold B · 24%</div><div class="wrap">
+  <p class="eyebrow">02 — The system</p><p class="crumb" style="margin-top:12px">One focused shoot can power your whole month.</p>
+  <div style="display:grid;grid-template-columns:260px 560px 1fr;gap:70px;margin-top:90px;align-items:start">
+    <div class="rail" style="margin-top:16px"><span class="s on">01 — Strategy call</span><span class="s">02 — Planned shoot</span><span class="s">03 — Month of assets</span><span class="s">04 — Clear scorecard</span></div>
+    <div>
+      <div class="card">
+        <div class="hd"><span class="mono w">Step 01 · Strategy call</span><span class="wave"><i style="height:4px"></i><i style="height:10px"></i><i style="height:16px"></i><i style="height:8px"></i><i style="height:12px"></i><i style="height:5px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:3px"></i><i style="height:11px"></i><i style="height:6px"></i></span><span class="mono">00:32:10</span></div>
+        <div class="row"><i class="chk on"></i>Offers</div>
+        <div class="row"><i class="chk on"></i>Priorities</div>
+        <div class="row"><i class="chk on"></i>Audience</div>
+        <div class="row"><i class="chk"></i>Content angl<span class="cur"></span></div>
+      </div>
+      <p class="body" style="margin-top:22px">Offers, priorities, audience and content angles.</p>
+    </div>
+    <div style="position:relative;padding-top:8px">
+      <svg width="120" height="200" style="position:absolute;left:-110px;top:40px" viewBox="0 0 120 200"><path d="M0 110 C 60 110, 60 40, 118 40" fill="none" stroke="#E23FA7" stroke-width="1" stroke-dasharray="3 5" opacity=".7"/><circle cx="62" cy="76" r="4" fill="#E23FA7"/></svg>
+      <div style="display:flex;justify-content:space-between;margin-bottom:30px"><span class="mono w">Month</span><span class="mono">06 / 28 planned</span></div>
+      <div class="grid">
+        <span class="rl">W1</span><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i>
+        <span class="rl">W2</span><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+        <span class="rl">W3</span><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i>
+        <span class="rl">W4</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- FRAME 3 · HOLD C -->
+<section class="frame"><div class="tag">Storyboard · Hold C · 38%</div><div class="wrap">
+  <p class="eyebrow">02 — The system</p><p class="crumb" style="margin-top:12px">One focused shoot can power your whole month.</p>
+  <div style="display:grid;grid-template-columns:260px 620px 1fr;gap:70px;margin-top:90px;align-items:start">
+    <div class="rail" style="margin-top:16px"><span class="s done">01 — Strategy call</span><span class="s on">02 — Planned shoot</span><span class="s">03 — Month of assets</span><span class="s">04 — Clear scorecard</span></div>
+    <div>
+      <div class="card">
+        <div class="hd"><span class="mono w">Step 02 · Shoot day · Thu 14</span><span class="chip on">12 / 12</span></div>
+        <div class="pbar" style="margin-bottom:22px"><i style="width:100%"></i></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:36px">
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">01&nbsp;&nbsp;People <span style="float:right;color:var(--m)">00:00–00:40</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">07&nbsp;&nbsp;Products <span style="float:right;color:var(--m)">02:10–02:35</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">02&nbsp;&nbsp;People <span style="float:right;color:var(--m)">00:40–01:05</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">08&nbsp;&nbsp;Demonstrations <span style="float:right;color:var(--m)">02:35–03:10</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">03&nbsp;&nbsp;Products <span style="float:right;color:var(--m)">01:05–01:20</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">09&nbsp;&nbsp;Demonstrations <span style="float:right;color:var(--m)">03:10–03:30</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">04&nbsp;&nbsp;Products <span style="float:right;color:var(--m)">01:20–01:40</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">10&nbsp;&nbsp;Customer moments <span style="float:right;color:var(--m)">03:30–03:55</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">05&nbsp;&nbsp;Demonstrations <span style="float:right;color:var(--m)">01:40–01:55</span></div>
+          <div class="mono" style="padding:8px 0;border-bottom:1px solid var(--line);color:var(--t)">11&nbsp;&nbsp;Customer moments <span style="float:right;color:var(--m)">03:55–04:20</span></div>
+          <div class="mono" style="padding:8px 0;color:var(--t)">06&nbsp;&nbsp;People <span style="float:right;color:var(--m)">01:55–02:10</span></div>
+          <div class="mono" style="padding:8px 0;color:var(--t)">12&nbsp;&nbsp;Customer moments <span style="float:right;color:var(--m)">04:20–04:40</span></div>
+        </div>
+      </div>
+      <p class="body" style="margin-top:22px">People, products, demonstrations and customer moments.</p>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:26px"><span class="mono w">Raw clips</span><span class="mono">12 captured</span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,36px);gap:12px;margin-bottom:56px"><i class="tile t1"></i><i class="tile t2"></i><i class="tile t3"></i><i class="tile t4"></i><i class="tile t2"></i><i class="tile t3"></i><i class="tile t1"></i><i class="tile t4"></i><i class="tile t3"></i><i class="tile t1"></i><i class="tile t2"></i><i class="tile t4"></i></div>
+      <div style="transform:scale(.72);transform-origin:top left;width:420px">
+        <div class="grid">
+          <span class="rl">W1</span><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i>
+          <span class="rl">W2</span><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot on ring"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+          <span class="rl">W3</span><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i>
+          <span class="rl">W4</span><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- FRAME 4 · HOLD D -->
+<section class="frame"><div class="tag">Storyboard · Hold D · 52%</div><div class="wrap">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <div><p class="eyebrow">02 — The system · Step 03</p><p class="h3" style="margin-top:14px">Month of assets</p><p class="body" style="margin-top:8px">Reels, graphics, captions and platform variants.</p></div>
+    <p class="mono w">12 reels · 12 graphics · 4 weeks</p>
+  </div>
+  <div style="display:grid;grid-template-columns:60px repeat(7,1fr);gap:0 18px;margin-top:56px;align-items:end">
+    <span></span><span class="mono">Mon</span><span class="mono">Tue</span><span class="mono">Wed</span><span class="mono">Thu</span><span class="mono">Fri</span><span class="mono">Sat</span><span class="mono">Sun</span>
+  </div>
+  <div style="height:1px;background:var(--line);margin:16px 0 8px"></div>
+  <div id="cal" style="display:grid;grid-template-columns:60px repeat(7,1fr);gap:0 18px"></div>
+  <script>
+  (function(){var weeks=['W1','W2','W3','W4'];var tints=['t1','t2','t3','t4'];var html='';
+  for(var w=0;w<4;w++){html+='<div class="mono" style="padding-top:22px">'+weeks[w]+'</div>';
+   for(var d=0;d<7;d++){var reel=(d===0||d===3||d===5);var gfx=(d===1||d===4||d===6);
+    html+='<div style="padding:18px 0;border-bottom:1px solid var(--line);min-height:150px">';
+    if(reel){html+='<div style="position:relative;width:44px;height:78px"><i class="tile '+tints[(w+d)%4]+'" style="position:absolute;left:10px;top:-6px;width:44px;height:78px;opacity:.35"></i><i class="tile '+tints[(w+d)%4]+'" style="position:absolute;left:5px;top:-3px;width:44px;height:78px;opacity:.6"></i><i class="tile '+tints[(w+d)%4]+'" style="position:absolute;left:0;top:0;width:44px;height:78px"></i></div><div class="cap" style="width:70%;margin-top:12px"></div><div class="cap" style="width:45%;margin-top:6px;opacity:.5"></div><div style="display:flex;gap:4px;margin-top:10px"><span class="chip sm">IG</span><span class="chip sm">FB</span><span class="chip sm">YT</span></div>';}
+    else if(gfx){html+='<i class="sq" style="display:block;width:44px;height:44px"></i><div class="cap" style="width:55%;margin-top:12px"></div><div style="display:flex;gap:4px;margin-top:10px"><span class="chip sm">IG</span><span class="chip sm">G</span></div>';}
+    else{html+='<i class="dot" style="display:block;margin-top:14px"></i>';}
+    html+='</div>';}}
+  document.getElementById('cal').innerHTML=html;})();
+  </script>
+</div></section>
+
+<!-- FRAME 5 · HOLD E -->
+<section class="frame"><div class="tag">Storyboard · Hold E · 64%</div><div class="wrap">
+  <p class="eyebrow">02 — The system</p><p class="crumb" style="margin-top:12px">One focused shoot can power your whole month.</p>
+  <div style="display:grid;grid-template-columns:260px 1fr 220px;gap:70px;margin-top:90px;align-items:start">
+    <div class="rail" style="margin-top:16px"><span class="s done">01 — Strategy call</span><span class="s done">02 — Planned shoot</span><span class="s done">03 — Month of assets</span><span class="s on">04 — Clear scorecard</span></div>
+    <div>
+      <div class="card" style="padding:40px 48px">
+        <div class="hd"><span class="mono w">Step 04 · Scorecard · Month 01</span><span class="mono">12 reels reviewed</span></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:48px;align-items:end;height:260px;padding-top:20px">
+          <div style="display:flex;gap:8px;align-items:flex-end;height:100%"><i class="bar" style="height:70%;background:#5B2EFF"></i><i class="bar" style="height:86%;background:#5B2EFF"></i><i class="bar" style="height:62%;background:#5B2EFF"></i><i class="bar" style="height:78%;background:#5B2EFF"></i><i class="bar" style="height:58%;background:#5B2EFF"></i></div>
+          <div style="display:flex;gap:8px;align-items:flex-end;height:100%"><i class="bar" style="height:26%;background:rgba(255,255,255,.18)"></i><i class="bar" style="height:18%;background:rgba(255,255,255,.18)"></i></div>
+          <div style="display:flex;gap:8px;align-items:flex-end;height:100%"><i class="bar" style="height:48%;background:#E23FA7"></i><i class="bar" style="height:64%;background:#E23FA7"></i><i class="bar" style="height:40%;background:#E23FA7"></i></div>
+          <div style="display:flex;gap:8px;align-items:flex-end;height:100%"><i class="bar" style="height:100%;background:var(--grad);box-shadow:0 0 30px rgba(255,122,26,.35)"></i><i class="bar" style="height:92%;background:var(--grad);box-shadow:0 0 30px rgba(255,122,26,.35)"></i></div>
+        </div>
+        <div class="line" style="margin:0 0 16px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:48px">
+          <div class="mono w">Keep <span style="color:var(--m)">· 5</span></div><div class="mono">Stop · 2</div><div class="mono w">Test <span style="color:var(--m)">· 3</span></div><div class="mono w">Amplify <span style="color:var(--m)">· 2</span></div>
+        </div>
+      </div>
+      <p class="body" style="margin-top:22px">What worked, what changed and what comes next.<span class="cur"></span></p>
+    </div>
+    <div style="opacity:.7;transform:scale(.5);transform-origin:top left;width:420px">
+      <div class="grid"><span class="rl">W1</span><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><span class="rl">W2</span><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><span class="rl">W3</span><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><span class="rl">W4</span><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot on"></i></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- FRAME 6 · HOLD F -->
+<section class="frame"><div class="tag">Storyboard · Hold F · 70%</div><div class="wrap">
+  <div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
+    <div style="display:flex;align-items:center;gap:40px;margin-bottom:44px">
+      <div style="display:flex;align-items:center;gap:14px"><i class="avatar"></i><span class="mono">Strategist</span></div>
+      <div class="line" style="width:60px"></div>
+      <div style="display:flex;align-items:center;gap:14px"><div style="display:grid;grid-template-columns:repeat(7,4px);gap:3px"><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i><i class="dot" style="width:4px;height:4px"></i><i class="dot on" style="width:4px;height:4px;box-shadow:none"></i></div><span class="mono">Calendar</span></div>
+      <div class="line" style="width:60px"></div>
+      <div style="display:flex;align-items:center;gap:14px"><span class="chip on">48 hr</span><span class="mono">Approval window</span></div>
+    </div>
+    <p class="closing"><span style="display:block">One strategist. One calendar.</span><span style="display:block">One approval window.</span></p>
+  </div>
+  <div style="position:absolute;right:300px;top:120px;opacity:.55;transform:scale(.42);transform-origin:top right;width:520px">
+    <div class="card"><div class="hd"><span class="mono w">Scorecard · Month 01</span></div><div style="display:flex;gap:16px;align-items:flex-end;height:120px"><i class="bar" style="height:70%;background:#5B2EFF"></i><i class="bar" style="height:86%;background:#5B2EFF"></i><i class="bar" style="height:22%;background:rgba(255,255,255,.18)"></i><i class="bar" style="height:48%;background:#E23FA7"></i><i class="bar" style="height:64%;background:#E23FA7"></i><i class="bar" style="height:100%;background:var(--grad)"></i><i class="bar" style="height:92%;background:var(--grad)"></i></div></div>
+  </div>
+</div></section>
+
+<!-- FRAME 7 · HOLD G -->
+<section class="frame"><div class="tag">Storyboard · Hold G · 76%</div><div class="wrap">
+  <p class="eyebrow" style="margin-bottom:28px">03 — What we do</p>
+  <h2 class="h2"><span>Create the content.</span><span>Distribute it.</span><span>Amplify what works.</span></h2>
+  <div style="position:absolute;left:300px;right:300px;bottom:190px">
+    <div style="position:relative;height:16px;display:flex;align-items:center"><div class="line" style="position:absolute;left:0;right:0"></div>
+      <div style="position:absolute;left:0;right:0;display:flex;justify-content:space-between"><i class="node on"></i><i class="node"></i><i class="node"></i></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:22px"><span class="mono w">Create</span><span class="mono">Distribute</span><span class="mono">Amplify</span></div>
+  </div>
+</div></section>
+
+<!-- FRAME 8 · HOLD H -->
+<section class="frame"><div class="tag">Storyboard · Hold H · 100%</div><div class="wrap" style="padding-top:96px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end"><div><p class="eyebrow">03 — What we do</p><p class="crumb" style="margin-top:12px">Create the content. Distribute it. Amplify what works.</p></div></div>
+  <div style="position:relative;height:16px;display:flex;align-items:center;margin:44px 0 36px"><div class="line" style="position:absolute;left:0;right:0;background:var(--grad);opacity:.6"></div><div style="position:absolute;left:0;right:0;display:flex;justify-content:space-between;padding:0 205px"><i class="node on"></i><i class="node on"></i><i class="node on"></i></div></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+    <div class="card" style="padding:36px">
+      <p class="mono w" style="margin-bottom:10px">01 · Create</p><p class="h3">Create</p>
+      <div class="bullets" style="margin-top:22px">
+        <div class="row"><span class="widget"><i class="tile" style="width:16px;height:28px;border-color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center"><i class="play" style="border-left-width:5px;border-top-width:3px;border-bottom-width:3px"></i></i></span>Short-form reels</div>
+        <div class="row"><span class="widget"><i class="sq" style="width:18px;height:18px;background:var(--grad);border:0;transform:rotateY(35deg)"></i></span>Motion and static graphics</div>
+        <div class="row"><span class="widget"><span style="display:flex;flex-direction:column;gap:3px;width:22px"><i class="cap"></i><i class="cap" style="width:70%"></i></span></span>Scripts and captions</div>
+        <div class="row"><span class="widget"><span style="font:600 12px Inter;color:var(--t)">अ<span style="color:var(--m)">/A</span></span></span>Multilingual adaptations</div>
+      </div>
+    </div>
+    <div class="card" style="padding:36px">
+      <p class="mono w" style="margin-bottom:10px">02 · Distribute</p><p class="h3">Distribute</p>
+      <div class="bullets" style="margin-top:22px">
+        <div class="row"><i class="chk on"></i>Instagram and Facebook</div>
+        <div class="row"><i class="chk on"></i>YouTube Shorts</div>
+        <div class="row"><i class="chk on"></i>TikTok where suitable</div>
+        <div class="row"><i class="chk on"></i>Google and WhatsApp assets</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:22px"><span class="chip on">IG</span><span class="chip on">FB</span><span class="chip on">YT</span><span class="chip on">TT</span><span class="chip on">G</span><span class="chip on">WA</span></div>
+    </div>
+    <div class="card" style="padding:36px">
+      <p class="mono w" style="margin-bottom:10px">03 · Amplify</p><p class="h3">Amplify</p>
+      <div class="bullets" style="margin-top:22px">
+        <div class="row"><span class="widget"><span class="pbar" style="width:24px"><i style="width:65%"></i></span></span>Paid social campaigns</div>
+        <div class="row"><span class="widget"><span class="mono w" style="font-size:11px">27</span></span>Landing pages and lead tracking</div>
+        <div class="row"><span class="widget"><span class="wave" style="height:14px"><i style="height:4px"></i><i style="height:12px"></i><i style="height:8px"></i><i style="height:14px"></i><i style="height:6px"></i></span></span>FunAsia radio and social <span class="mono" style="margin-left:auto">104.1 FM</span></div>
+        <div class="row"><span class="widget"><span style="display:flex"><i class="avatar" style="width:16px;height:16px"></i><i class="avatar" style="width:16px;height:16px;margin-left:-5px"></i><i class="avatar" style="width:16px;height:16px;margin-left:-5px"></i></span></span>Events and creator partnerships</div>
+      </div>
+    </div>
+  </div>
+  <p class="body" style="margin-top:36px;max-width:640px">Start with consistent content. Add media only where it improves the business result.</p>
+</div></section>
+</body></html>

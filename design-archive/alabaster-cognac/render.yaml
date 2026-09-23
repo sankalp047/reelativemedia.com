@@ -1,0 +1,54 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# Deploys the site as a Node web service rather than a static site. It has to be
+# a server: the callback form is a Next.js server action that talks to Mailgun,
+# and MAILGUN_API_KEY must never reach the browser. A static export would drop
+# the form entirely.
+services:
+  - type: web
+    name: reelativemedia
+    runtime: node
+    # Free spins the instance down after ~15 minutes idle, and the next visitor
+    # waits through a cold start. That is the wrong first impression for a site
+    # whose job is winning enquiries — starter keeps it warm.
+    plan: starter
+    region: oregon
+    branch: main
+    # --include=dev is REQUIRED, not belt-and-braces. The entire build
+    # toolchain — @tailwindcss/postcss, tailwindcss, typescript, the @types —
+    # lives in devDependencies, and npm treats NODE_ENV=production as
+    # --omit=dev. Without this the install is 28 packages instead of ~190 and
+    # the build dies on "Cannot find module '@tailwindcss/postcss'".
+    # npm ci rather than npm install so the tree matches package-lock.json
+    # exactly and a deploy cannot quietly resolve different versions.
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.20.2
+      # NODE_ENV is deliberately NOT set. next build and next start each set it
+      # to production themselves, so declaring it buys nothing — and setting it
+      # at BUILD time makes npm skip devDependencies, which is what broke the
+      # first deploy here.
+
+      # Secrets. sync:false means Render prompts for the value in the dashboard
+      # and never stores it in this file — which is the whole point, since this
+      # file is committed to a public repository.
+      - key: MAILGUN_API_KEY
+        sync: false
+
+      - key: MAILGUN_DOMAIN
+        value: reelativemedia.com
+      - key: MAILGUN_HOST
+        value: api.mailgun.net
+      - key: LEAD_INBOX
+        value: sales@funasia.net
+
+      # Public by design: a measurement id is visible in the page source of
+      # every site that uses one.
+      - key: NEXT_PUBLIC_GA_ID
+        value: G-1X5BJWH1PC
+      - key: NEXT_PUBLIC_CLARITY_ID
+        value: ylx5awqzne

@@ -137,14 +137,12 @@ export function Icon({ name, size = 22, className = "" }: { name: IconName; size
   );
 }
 
-/* Brass and bone fills take INK text; the outlined disc is the default and
-   keeps bone type on the ground. */
-/* A COGNAC fill takes BONE (6.59:1). Ink on cognac is 2.44:1 and is banned —
-   this INVERTS the rule the old brass palette used, where a fill took ink. */
+/* The outlined disc is the default. A spectrum fill takes WHITE (4.64 at its
+   deepest stop); an ink fill takes cloud. Ink on the gradient is banned. */
 const TINTS = {
   outline: "border-edge text-graphite",
-  cognac: "bg-cognac text-bone",
-  ink: "bg-ink text-alabaster",
+  brand: "bg-brand text-white",
+  ink: "bg-ink text-cloud",
 } as const;
 
 /** 48px outlined disc with a line icon. */

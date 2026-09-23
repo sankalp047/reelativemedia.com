@@ -13,7 +13,7 @@
  *
  * The `-dark` set is derived from the raster master for the Ink & Brass ground:
  * the wordmark was dark navy and disappeared on #0e0e11, so it is knocked out to
- * bone through its own alpha; the mark's edge pixels were matted against white,
+ * cloud through its own alpha; the mark's edge pixels were matted against white,
  * so they are un-premultiplied and the leftover speckle on the silhouette is
  * cleared. The gradient mark is the one place saturated colour still survives.
  *
@@ -37,7 +37,7 @@ export function Logo({
   className?: string;
   height?: number;
   alt?: string;
-  /** `dark` is the bone knockout, for the footer well only. */
+  /** `dark` is the cloud knockout, for the footer well only. */
   tone?: "light" | "dark";
 }) {
   const width = Math.round(height * LOCKUP_RATIO);
@@ -65,8 +65,10 @@ export function Logo({
  * y 55–225): the symbol occupies columns 3–285 and the type 314–1050, with a
  * clean 28px gutter between them, so the split needed no masking.
  *
- * Light ground only. There is no dark knockout of this crop yet — the footer
- * still uses the full <Logo tone="dark" /> lockup.
+ * LIGHT GROUND ONLY: the type is navy (#041230) and there is no cloud knockout
+ * of this crop. This is why the nav bar is cloud — on the midnight bar it sat
+ * on before, the wordmark was invisible. The footer still uses the full
+ * <Logo tone="dark" /> lockup.
  */
 export function Wordmark({
   className = "",

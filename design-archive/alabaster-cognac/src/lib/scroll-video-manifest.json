@@ -1,0 +1,9 @@
+{
+  "rig": {
+    "base": "/scroll/rig",
+    "frames": 121,
+    "width": 1440,
+    "height": 1440,
+    "proxyWidth": 200
+  }
+}

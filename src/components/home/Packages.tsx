@@ -7,11 +7,11 @@ export function Packages() {
   return (
     <section
       id="packages"
-      className="relative z-10 bg-parchment laid section-pad"
+      className="relative z-10 bg-mist laid section-pad"
       aria-labelledby="packages-heading"
     >
       <div data-parallax="-30" className="wrap">
-        <SectionHead eyebrow="05 — Packages" lines={["Choose the package that", "matches your growth stage."]} />
+        <SectionHead eyebrow="05 — Packages" lines={["Choose the package that", "matches your growth stage."]} accent={[1]} />
         <span id="packages-heading" className="sr-only">Packages</span>
 
         <div className="mt-14 lg:mt-20">
@@ -29,7 +29,7 @@ export function Packages() {
             <ul className="flex flex-wrap gap-2">
               {ADDONS.map((a) => (
                 <li key={a.name} className="chip group cursor-default">
-                  {a.name} <span className="text-slate group-hover:text-bone-dim">{a.price}</span>
+                  {a.name} <span className="text-pewter group-hover:text-slate">{a.price}</span>
                 </li>
               ))}
             </ul>
