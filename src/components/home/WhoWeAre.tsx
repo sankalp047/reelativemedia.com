@@ -5,6 +5,7 @@ import { Kinetic } from "@/components/ui/Kinetic";
 import { Marker } from "@/components/ui/Marker";
 import { Reveal } from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
+import { SITE } from "@/lib/site";
 import { WHO_WE_ARE } from "@/lib/who-we-are";
 
 /**
@@ -140,7 +141,9 @@ export function WhoWeAre() {
 
             <Reveal delay={0.22}>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <ButtonLink href="#audit">Book your content audit</ButtonLink>
+                <ButtonLink href={SITE.phoneTel} aria-label={`Call ${SITE.phone}`}>
+                  Call us
+                </ButtonLink>
                 <ButtonLink href="#segments" variant="secondary">
                   See the work <span aria-hidden="true">↓</span>
                 </ButtonLink>

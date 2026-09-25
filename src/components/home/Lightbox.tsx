@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import { getLenis } from "@/lib/lenis-store";
 import { EXPO } from "@/lib/motion";
@@ -160,7 +161,27 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
     }
   };
 
-  return (
+  /**
+   * PORTALLED TO <body>, and that is a bug fix rather than a tidy-up.
+   *
+   * This renders from inside the carousel, whose <section> is `relative z-10`.
+   * A positioned element with a z-index opens a STACKING CONTEXT, so the
+   * lightbox's own z-[100] was only ever a rank among its siblings inside that
+   * section — against the rest of the page the whole overlay counted as 10. The
+   * nav is z-50 and a sibling of the section, so the nav painted straight over
+   * the top of the lightbox: the close cross and the counter were behind the
+   * nav bar and could not be clicked, and the top of the video was covered by
+   * an opaque white bar. Measured at 390x844 — elementFromPoint at the centre
+   * of the close button returned the nav's logo image, not the button.
+   *
+   * Raising z-[100] higher would not have helped; nothing inside a stacking
+   * context can outrank something outside it. The overlay has to leave the
+   * section, and body is the only ancestor guaranteed not to be inside one.
+   *
+   * Safe to portal during render because both mount points load this with
+   * next/dynamic and `ssr: false`, so it never renders on the server.
+   */
+  return createPortal(
     <AnimatePresence>
       {open && item ? (
         <motion.div
@@ -201,14 +222,27 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
 
           <motion.div
             key={item.id}
-            /* Portrait is height-led (fill the viewport, let width follow);
-               landscape is width-led. Sizing a 16:9 film by height would make
-               it wider than the screen on any normal window. */
-            className={`relative rounded-[2px] bg-haze p-[8px] shadow-[0_44px_120px_-24px_rgba(4,3,2,0.70)] ${
-              item.aspect === "16/9"
-                ? "aspect-video w-[min(94vw,1280px)] max-h-[88svh]"
-                : "aspect-[9/16] h-[min(88svh,900px)] max-w-[94vw]"
-            }`}
+            /* THE MAT SHRINK-WRAPS THE WINDOW; it is no longer the thing
+               being sized, and that is the fix for the frame being cropped.
+
+               The ratio has to belong to the window the video is poured into,
+               not to the plate around it: the window is the plate minus 8px of
+               mat on all four sides, and 8px is a bigger share of the short
+               edge than of the long one, so the two boxes cannot both be 9:16.
+               Sizing the plate left the window at 0.5515 and object-cover took
+               about 3px off each side of the frame.
+
+               EACH AXIS CARRIES BOTH LIMITS. Portrait is height-led (fill the
+               viewport, let width follow) and landscape is width-led — sizing a
+               16:9 film by height would make it wider than the screen on any
+               normal window — but the other axis is folded into the same min()
+               rather than left to a max-width. Those two fight: the leading
+               dimension is explicit, so when max-width bit there was nothing
+               left for aspect-ratio to give and the box simply stopped being
+               9:16. At 390x844 that produced 352x713, 0.49 against the 0.5625
+               it claimed, and cover cropped 28px off each side. The -16px is
+               the mat the plate adds back around this window. */
+            className="relative rounded-[2px] bg-haze p-[8px] shadow-[0_44px_120px_-24px_rgba(4,3,2,0.70)]"
             initial={{ opacity: 0, scale: 0.96, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: -16 }}
@@ -220,7 +254,13 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* The mat's inner hairline. Decorative, so it takes `rule`, not `edge`. */}
-            <div className="relative h-full w-full overflow-hidden rounded-[1px] ring-1 ring-rule">
+            <div
+              className={`relative overflow-hidden rounded-[1px] ring-1 ring-rule ${
+                item.aspect === "16/9"
+                  ? "aspect-video w-[min(calc(94vw_-_16px),1264px,calc((88svh_-_16px)*16/9))]"
+                  : "aspect-[9/16] h-[min(calc(88svh_-_16px),884px,calc((94vw_-_16px)*16/9))]"
+              }`}
+            >
               <video
                 ref={videoRef}
                 className={`h-full w-full ${item.aspect === "16/9" ? "object-contain" : "object-cover"}`}
@@ -266,6 +306,7 @@ export default function Lightbox({ items, index, onClose, onIndex }: Props) {
           </div>
         </motion.div>
       ) : null}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

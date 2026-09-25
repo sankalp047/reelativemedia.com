@@ -220,8 +220,17 @@ export function Nav() {
                 </li>
               ))}
             </ul>
-            <ButtonLink href="#audit" className="hidden !py-2.5 !px-5 !text-[11px] md:inline-flex">
-              Book an audit
+            {/* The bar's one filled button DIALS rather than scrolling to the
+                form. A phone call is the shortest path to a conversation, and
+                the form is still reachable from every package card. The number
+                is in the accessible name because "Call us" alone does not tell
+                a screen-reader user what they are about to dial. */}
+            <ButtonLink
+              href={SITE.phoneTel}
+              aria-label={`Call ${SITE.phone}`}
+              className="hidden !py-2.5 !px-5 !text-[11px] md:inline-flex"
+            >
+              Call us
             </ButtonLink>
             <a
               href={SITE.phoneTel}
@@ -273,11 +282,20 @@ export function Nav() {
             </motion.ul>
 
             <div className="relative mt-auto flex flex-col gap-3 pt-8">
-              <ButtonLink href="#audit" onClick={() => setOpen(false)} className="w-full">
-                Book a content audit
+              <ButtonLink
+                href={SITE.phoneTel}
+                aria-label={`Call ${SITE.phone}`}
+                onClick={() => setOpen(false)}
+                className="w-full"
+              >
+                Call us
               </ButtonLink>
-              <a href={SITE.phoneTel} className="mono text-center text-pewter">
-                Or call {SITE.phone}
+              {/* This line used to read "Or call <number>", which became the
+                  same action as the button above it. It now carries the OTHER
+                  route, so the menu still offers a way in for someone who will
+                  not make a call. */}
+              <a href="#audit" onClick={() => setOpen(false)} className="mono text-center text-pewter">
+                Or request a callback
               </a>
             </div>
           </motion.div>

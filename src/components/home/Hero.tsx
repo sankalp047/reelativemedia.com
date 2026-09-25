@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Kinetic } from "@/components/ui/Kinetic";
 import { Marker } from "@/components/ui/Marker";
 import { GridRules } from "@/components/ui/GridRules";
+import { SITE } from "@/lib/site";
 
 /**
  * The card opens up: the hero montage starts as a framed card on the ground and
@@ -286,7 +287,9 @@ export function Hero() {
               </p>
             </div>
             <div className="pointer-events-auto flex flex-col gap-2.5 sm:flex-row sm:items-center">
-              <ButtonLink href="#audit">Book your content audit</ButtonLink>
+              <ButtonLink href={SITE.phoneTel} aria-label={`Call ${SITE.phone}`}>
+                Call us
+              </ButtonLink>
               <ButtonLink href="#work" variant={onVideo ? "invert" : "secondary"}>
                 What we make <span aria-hidden="true">↓</span>
               </ButtonLink>
