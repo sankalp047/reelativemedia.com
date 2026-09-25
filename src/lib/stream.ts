@@ -14,7 +14,8 @@ import "server-only";
  *
  *      meta.business  the big line
  *      meta.info      the small line under it
- *      meta.order     sort position, lower first
+ *      meta.order     pins the card to a fixed position, lower first.
+ *                     WITHOUT one, a video joins the rotation — see below.
  *      meta.hidden    "true" keeps it off the site entirely
  *      meta.poster    https URL of a custom cover image
  *
@@ -39,6 +40,20 @@ import "server-only";
  *
  * Field 1 always beats field 2, so you can start in the dashboard and move to
  * structured fields later without anything changing on the page.
+ *
+ * ORDERED REELS ARE PINNED; THE REST ROTATE. Anything carrying meta.order sits
+ * exactly where you put it, every time. Everything else is shuffled, so a reel
+ * that would otherwise sit permanently on page two gets its turn at the front.
+ * With nine reels and five on a page, four of them would never be seen
+ * otherwise.
+ *
+ * The shuffle happens when the page is REGENERATED, not per visitor, and that
+ * is the right trade rather than a limitation. Reshuffling per request would
+ * mean either no caching — a Cloudflare call on every page view — or
+ * reordering in the browser after load, which flickers and trips React's
+ * hydration check. This way it costs nothing, every visitor inside a window
+ * sees the same page, which matters when you are telling someone on the phone
+ * to look at the second one, and over a day every reel leads many times.
  *
  * PORTRAIT VERSUS LANDSCAPE IS DETECTED, NOT DECLARED. Stream reports the
  * source dimensions, so a landscape reel opens in a landscape player on its own
@@ -134,6 +149,17 @@ function splitName(raw: string): { order: number; name: string; info: string } {
   };
 }
 
+/** Fisher-Yates. Runs once per page regeneration, never per request, so the
+ *  order is stable for everyone inside a cache window. */
+function shuffle<T>(xs: T[]): T[] {
+  const a = xs.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export async function getReels(): Promise<Reel[]> {
   if (!ACCOUNT || !TOKEN) return [];
 
@@ -161,7 +187,7 @@ export async function getReels(): Promise<Reel[]> {
     return [];
   }
 
-  return videos
+  const entries = videos
     // Still encoding means there is nothing to play and no thumbnail to show.
     .filter((v) => v.readyToStream && v.uid)
     // "true" on meta.hidden parks a video without deleting it.
@@ -199,8 +225,11 @@ export async function getReels(): Promise<Reel[]> {
         },
       };
     })
-    // Numbered videos first in their stated order, then everything else newest
-    // first, which is what you want the moment you upload something.
-    .sort((a, b) => a.order - b.order || b.created.localeCompare(a.created))
-    .map((x) => x.reel);
+    .slice();
+
+  // Pinned first, in the order given. Everything else is shuffled, so a reel
+  // that would otherwise live permanently on page two gets its turn in front.
+  const pinned = entries.filter((e) => Number.isFinite(e.order)).sort((a, b) => a.order - b.order);
+  const loose = shuffle(entries.filter((e) => !Number.isFinite(e.order)));
+  return [...pinned, ...loose].map((e) => e.reel);
 }
