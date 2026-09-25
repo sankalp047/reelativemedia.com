@@ -427,7 +427,16 @@ export function FilmStrip() {
           end: () => `+=${Math.max(distance(), window.innerHeight * 1.5)}`,
           pin: true,
           scrub: 1,
-          anticipatePin: 1,
+          /* NO anticipatePin. It pins EARLY, using predicted scroll velocity to
+             hide the one-frame flicker native scrolling can show as an element
+             becomes position:fixed. Lenis does not scroll natively — it
+             interpolates toward a target and drives ScrollTrigger.update itself
+             — so there is no flicker to hide, and the prediction overshoots.
+             Measured at 1440x900: the pin engaged 68px early and the section
+             snapped 85px in a single frame while the scroll advanced 17px, a
+             5:1 jump landing hard at top:0. That is the "comes from below and
+             is suddenly there" artefact. Without it the pin lands on the
+             frame the scroll actually reaches it. */
           invalidateOnRefresh: true,
           onUpdate: (st) => setProgress(st.progress),
         },

@@ -39,6 +39,18 @@ services:
       - key: MAILGUN_API_KEY
         sync: false
 
+      # Cloudflare Stream, READ-ONLY. Without these the reel section silently
+      # falls back to the list committed in src/lib/data.ts — the page still
+      # renders, which is the point, but it stops tracking the video library.
+      # Deliberately NOT the Edit token: nothing deployed should be able to
+      # write to or delete the library.
+      - key: CLOUDFLARE_STREAM_TOKEN
+        sync: false
+
+      # Not a secret: it appears in every Cloudflare dashboard URL.
+      - key: CLOUDFLARE_ACCOUNT_ID
+        value: cca9a1e6cffbd1da3bd5fb2e68d6cb52
+
       - key: MAILGUN_DOMAIN
         value: reelativemedia.com
       - key: MAILGUN_HOST

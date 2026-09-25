@@ -62,6 +62,24 @@ export type Segment = {
   graphic: string;
   action: string;
   image: string;
+  /**
+   * Cloudflare Stream id for the reel this card plays when clicked.
+   *
+   * OPTIONAL ON PURPOSE. The ten segments were written before the footage
+   * existed, and the cards ship as they are filmed — the Segments section shows
+   * only the entries that carry an id, so adding one here is the single edit
+   * that puts a business on the page. The card art is the reel's own Cloudflare
+   * poster frame; `image` is now used only by the film strip.
+   */
+  streamId?: string;
+  /**
+   * Overrides the Stream poster frame with a designed still. Only needed when
+   * the video's own frames make a poor card, and the real case is a LANDSCAPE
+   * reel: cropping 16:9 into the card's 9:16 frame leaves a useless sliver.
+   */
+  poster?: string;
+  /** The shape the PLAYER opens at. The card stays 9:16 either way. */
+  aspect?: "9/16" | "16/9";
 };
 
 /**
@@ -74,31 +92,32 @@ export type Segment = {
 export const SEGMENTS: Segment[] = [
   { id: "restaurants", name: "Restaurants", category: "Restaurants",
     reel: "Dish reveal or chef story", graphic: "Weekend offer", action: "Reserve or visit",
-    image: "/images/segments/restaurants.webp" },
+    image: "/images/segments/restaurants.webp", streamId: "a00017ba33ff639bf2b5864f1bab212b" },
   { id: "cafes", name: "Chaat houses & caf\u00e9s", category: "Restaurants",
     reel: "The counter at rush hour", graphic: "New item drop", action: "Order or visit",
-    image: "/images/segments/cafes.webp" },
+    image: "/images/segments/cafes.webp", streamId: "80c482fe855fd147ea2bdfee65bc0eb3" },
   { id: "dental", name: "Dental practices", category: "Medical & Dental",
     reel: "The dentist answers one FAQ", graphic: "Service explainer", action: "Book an appointment",
-    image: "/images/segments/dental.webp" },
+    image: "/images/segments/dental.webp", streamId: "ed2e7aa95c05ede9207f6393aed130b6" },
   { id: "medspa", name: "Med spas & aesthetics", category: "Medical & Dental",
     reel: "A treatment explained end to end", graphic: "Package or seasonal offer", action: "Book a consultation",
-    image: "/images/segments/medspa.webp" },
+    image: "/images/segments/medspa.webp", streamId: "5a4a4b0e842b513a580fc41b9187b745" },
   { id: "jewellery", name: "Jewellery stores", category: "Jewelry & Retail",
     reel: "Product close-up or craftsmanship", graphic: "Collection launch", action: "Visit or message",
-    image: "/images/segments/jewellery.webp" },
+    image: "/images/segments/jewellery.webp", streamId: "bc53986a0f0dfc220b43674961711a03",
+    poster: "/images/marc-samuels-poster.webp", aspect: "16/9" },
   { id: "bridal", name: "Bridal & occasion wear", category: "Jewelry & Retail",
     reel: "Fitting-room reveal", graphic: "Season lookbook", action: "Book an appointment",
     image: "/images/segments/bridal.webp" },
   { id: "realestate", name: "Real estate teams", category: "Real Estate",
     reel: "Property tour or local insight", graphic: "Buyer or seller tip", action: "Schedule a consultation",
-    image: "/images/segments/realestate.webp" },
+    image: "/images/segments/realestate.webp", streamId: "27a2e8d44e4cc363ba04420bd3f676b1" },
   { id: "mortgage", name: "Mortgage & lending", category: "Real Estate",
     reel: "One question answered plainly", graphic: "Rate or checklist card", action: "Get pre-approved",
     image: "/images/segments/mortgage.webp" },
   { id: "law", name: "Law firms", category: "Professional Services",
     reel: "Expert answers a real question", graphic: "Myth versus fact", action: "Call or submit a lead",
-    image: "/images/segments/law.webp" },
+    image: "/images/segments/law.webp", streamId: "a533b5837d4882f1b6496982a047f28a" },
   { id: "accounting", name: "Accounting & tax", category: "Professional Services",
     reel: "One deadline explained", graphic: "Filing checklist", action: "Book a call",
     image: "/images/segments/accounting.webp" },
