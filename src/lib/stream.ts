@@ -16,7 +16,13 @@ import "server-only";
  *      meta.info      the small line under it
  *      meta.order     pins the card to a fixed position, lower first.
  *                     WITHOUT one, a video joins the rotation — see below.
- *      meta.hidden    "true" keeps it off the site entirely
+ *      meta.hidden    "true" moves it OUT of the main reels and INTO Behind
+ *                     the scenes. Hiding a reel and filing it under BTS are
+ *                     the same action here, which is how the field is used in
+ *                     practice.
+ *      meta.section   "bts" does the same thing explicitly. "none" is the
+ *                     escape hatch: gone from the site altogether, for a take
+ *                     that is not ready or a client who pulled out.
  *      meta.poster    https URL of a custom cover image
  *
  *    meta.poster exists because CLOUDFLARE STREAM CANNOT STORE A COVER IMAGE.
@@ -72,6 +78,8 @@ export type Reel = {
   info: string;
   poster: string;
   src: string;
+  /** Which band of the page it belongs to. */
+  section: "reels" | "bts";
   /** Derived from the source dimensions Stream reports. Describes the VIDEO,
    *  and therefore the shape the player opens at. */
   aspect: "9/16" | "16/9";
@@ -190,8 +198,8 @@ export async function getReels(): Promise<Reel[]> {
   const entries = videos
     // Still encoding means there is nothing to play and no thumbnail to show.
     .filter((v) => v.readyToStream && v.uid)
-    // "true" on meta.hidden parks a video without deleting it.
-    .filter((v) => str(v.meta?.hidden).toLowerCase() !== "true")
+    // "none" is the only thing that removes a video from the page completely.
+    .filter((v) => str(v.meta?.section).toLowerCase() !== "none")
     .map((v) => {
       const meta = v.meta ?? {};
       const parsed = splitName(str(meta.name));
@@ -212,6 +220,13 @@ export async function getReels(): Promise<Reel[]> {
           id: v.uid,
           name: name || v.uid.slice(0, 8),
           info,
+          // Either field sends a reel to BTS. `hidden` is the one people reach
+          // for, so it has to do the obvious thing rather than the tidy one.
+          section:
+            str(meta.section).toLowerCase() === "bts" ||
+            str(meta.hidden).toLowerCase() === "true"
+              ? ("bts" as const)
+              : ("reels" as const),
           customPoster: Boolean(custom),
           poster:
             custom ||

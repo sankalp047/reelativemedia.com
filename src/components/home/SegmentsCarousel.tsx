@@ -6,7 +6,6 @@ import { SectionHead } from "@/components/site/SectionHead";
 import { Item, Stagger } from "@/components/ui/Reveal";
 import type { LightboxItem } from "@/components/home/Lightbox";
 import type { Reel } from "@/lib/stream";
-import { SEGMENTS_NOTE } from "@/lib/data";
 
 const Lightbox = dynamic(() => import("@/components/home/Lightbox"), { ssr: false });
 
@@ -136,7 +135,35 @@ function Arrow({ dir }: { dir: "prev" | "next" }) {
   );
 }
 
-export function SegmentsCarousel({ reels }: { reels: Reel[] }) {
+type Props = {
+  reels: Reel[];
+  /** Anchor id, and the prefix for the heading's id. */
+  id: string;
+  eyebrow: string;
+  lines: string[];
+  intro: string;
+  /** Ground class. The card tokens assume a LIGHT band either way. */
+  ground?: string;
+  /** Names the carousel for assistive tech. */
+  label: string;
+  /** Which of `lines` takes the voice gradient. */
+  accent?: number[];
+  /** A supporting band: smaller header, and it sits close to the section
+   *  above instead of opening its own full-height chapter. */
+  compact?: boolean;
+};
+
+export function SegmentsCarousel({
+  reels,
+  id,
+  eyebrow,
+  lines,
+  intro,
+  ground = "bg-cloud",
+  label,
+  accent = [1],
+  compact = false,
+}: Props) {
   const [expanded, setExpanded] = useState(false);
   const [page, setPage] = useState(0);
   const [engaged, setEngaged] = useState(false);
@@ -200,25 +227,28 @@ export function SegmentsCarousel({ reels }: { reels: Reel[] }) {
   return (
     <section
       ref={sectionRef}
-      id="segments"
-      className="relative z-10 bg-cloud section-pad"
-      aria-labelledby="segments-heading"
+      id={id}
+      className={`relative z-10 ${ground} ${
+        compact ? "pb-24 pt-14 lg:pb-32 lg:pt-16" : "section-pad"
+      }`}
+      aria-labelledby={`${id}-heading`}
     >
       <div className="wrap">
-        <SectionHead
-          eyebrow="Segments"
-          lines={["Built for businesses people", "can see, visit and trust."]}
-          intro={SEGMENTS_NOTE}
-          accent={[1]}
-        />
-        <span id="segments-heading" className="sr-only">
-          The businesses we make content for
+        <SectionHead eyebrow={eyebrow} lines={lines} intro={intro} accent={accent} compact={compact} />
+        <span id={`${id}-heading`} className="sr-only">
+          {label}
         </span>
 
-        <div className="mt-14 border-t border-rule pt-12 lg:mt-20">
+        <div
+          className={
+            compact
+              ? "mt-8 border-t border-rule pt-8"
+              : "mt-14 border-t border-rule pt-12 lg:mt-20"
+          }
+        >
           {/* The id lives on a wrapper present in BOTH states, so the expand
               button's aria-controls never points at nothing. */}
-          <div id="segments-list">
+          <div id={`${id}-list`}>
             {showCarousel ? (
               // CLIP, NOT HIDDEN. `overflow: hidden` still makes a scroll
               // container, so anything that scrolls a slide into view sets
@@ -229,7 +259,7 @@ export function SegmentsCarousel({ reels }: { reels: Reel[] }) {
                 className="overflow-clip"
                 role="group"
                 aria-roledescription="carousel"
-                aria-label="Reels"
+                aria-label={label}
                 onPointerEnter={() => setPaused(true)}
                 onPointerLeave={() => setPaused(false)}
                 onFocusCapture={() => setPaused(true)}
@@ -332,7 +362,7 @@ export function SegmentsCarousel({ reels }: { reels: Reel[] }) {
                     setPage(0);
                   }}
                   aria-expanded={expanded}
-                  aria-controls="segments-list"
+                  aria-controls={`${id}-list`}
                   className="btn btn-secondary"
                 >
                   {expanded ? "Show fewer" : `View all ${total}`}

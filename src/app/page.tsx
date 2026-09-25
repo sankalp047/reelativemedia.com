@@ -1,5 +1,6 @@
 import { Hero } from "@/components/home/Hero";
-import { Segments } from "@/components/home/Segments";
+import { WhoWeAre } from "@/components/home/WhoWeAre";
+import { Segments, BehindTheScenes } from "@/components/home/Segments";
 import { System } from "@/components/home/System";
 import { WhatWeDo } from "@/components/home/WhatWeDo";
 import { FilmStrip } from "@/components/home/FilmStrip";
@@ -11,11 +12,19 @@ export default function Home() {
   return (
     <main className="relative">
       <Hero />
+      {/* Says what the business is, before the page starts showing evidence
+          for it. Dark ground so the hero and this read as one opening before
+          the reels step into light. */}
+      <WhoWeAre />
       {/* The reels, straight after the hero. This slot held the "Consistency
           and creativity" statement, which was removed on request. Segments is a
           SERVER component: it reads the live video list from Cloudflare Stream
           and falls back to the committed list if that call fails. */}
       <Segments />
+      {/* The same carousel, filtered to reels tagged `section: bts`. It renders
+          nothing until a video carries that tag, so the band appears and
+          disappears with the content rather than sitting empty. */}
+      <BehindTheScenes />
       <System />
       <WhatWeDo />
       <FilmStrip />

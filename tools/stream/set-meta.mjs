@@ -53,6 +53,14 @@ const api = (path, token, init) =>
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
   }).then((r) => r.json());
 
+/** Mirrors the resolution in src/lib/stream.ts. Keep the two in step. */
+function band(m = {}) {
+  const section = String(m.section ?? "").trim().toLowerCase();
+  if (section === "none") return "none";
+  if (section === "bts" || String(m.hidden ?? "").trim().toLowerCase() === "true") return "bts";
+  return "reels";
+}
+
 const [target, ...rest] = process.argv.slice(2);
 
 if (!target || target === "list") {
@@ -67,7 +75,7 @@ if (!target || target === "list") {
     process.exit(1);
   }
   console.log(
-    ["uid", "ready", "business", "info", "order", "hidden", "poster", "name"]
+    ["uid", "ready", "band", "business", "info", "order", "poster", "name"]
       .map((h) => h.toUpperCase())
       .join("  |  "),
   );
@@ -77,10 +85,13 @@ if (!target || target === "list") {
       [
         v.uid,
         v.readyToStream ? "yes" : "NO",
+        // The band the SITE will put it in, resolved the same way
+        // src/lib/stream.ts resolves it — not the raw field, which is easy to
+        // misread when two fields can decide the same thing.
+        band(m),
         m.business ?? "",
         m.info ?? "",
         m.order ?? "",
-        m.hidden ?? "",
         m.poster ? "custom" : "",
         m.name ?? "",
       ].join("  |  "),
