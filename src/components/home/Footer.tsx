@@ -95,13 +95,13 @@ export function Footer() {
           {/* The ONLY place on the site that takes the cloud knockout lockup. */}
           <Logo height={24} tone="dark" />
           <span className="hidden h-4 w-px bg-rule-dark md:block" />
-          <p className="t-body !text-[13px] text-steel">Reelative Media is a FunAsia Network company.</p>
+          <p className="t-body !text-[13px] text-steel">Reelative Media is a part of FunAsia Network</p>
         </div>
-        <p className="mono text-steel">
-          © {new Date().getFullYear()} Reelative Media ·{" "}
-          <a href="#" className="link-underline hover:text-cloud">Privacy</a> ·{" "}
-          <a href="#" className="link-underline hover:text-cloud">Terms</a>
-        </p>
+        {/* Privacy and Terms are gone. Both pointed at "#", so they looked like
+            working links and went nowhere — worse than not offering them, since
+            a visitor who clicks one and stays put assumes the site is broken.
+            Put them back only alongside real pages. */}
+        <p className="mono text-steel">© {new Date().getFullYear()} Reelative Media. All rights reserved.</p>
       </div>
     </footer>
   );

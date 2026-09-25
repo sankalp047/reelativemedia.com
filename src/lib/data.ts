@@ -142,7 +142,7 @@ export const CLIENT_LOGOS = Array.from({ length: 8 }, (_, i) => ({
    Radio Caravan is the exception — no separate site was supplied for it, so it
    still resolves to the network. Swap it when there is one. */
 export const FUNASIA_BRANDS = [
-  { id: "funasia", name: "FunAsia", meta: "Radio · Social · Events", href: "https://www.funasia.net/" },
+  { id: "funasia", name: "FunAsia", meta: "104.9 FM", href: "https://www.funasia.net/" },
   { id: "sangam", name: "Radio Sangam", meta: "104.1 FM · 104.9 FM HD4", href: "https://telugusangam.net/" },
   { id: "vanakkam", name: "Vanakkam FM", meta: "104.9 FM HD2", href: "https://vanakkamfm.net/" },
   { id: "caravan", name: "Radio Caravan", meta: "104.1 FM HD3", href: "https://www.funasia.net/" },
